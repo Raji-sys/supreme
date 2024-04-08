@@ -1,0 +1,51 @@
+{% load static %}
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+{% tailwind_css %} 
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="apple-touch-icon" sizes="180x180" href="{%static 'favicon/apple-touch-icon.png' %}">
+<link rel="icon" type="image/png" sizes="32x32" href="{%static 'favicon/favicon-32x32.png' %}">
+<link rel="icon" type="image/png" sizes="16x16" href="{%static 'favicon/favicon-16x16.png' %}">
+<link rel="manifest" href="{%static 'favicon/site.webmanifest' %}">
+<link rel="stylesheet" href="{% static 'fonts/fontstyle.css' %}" type='text/css'>
+<link rel="stylesheet" href="{% static 'uikit/css/uikit.min.css' %}" type="text/css">
+
+<link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+
+<!-- <link rel="stylesheet" href="{% static 'images/style.css' %}" type="text/css"> -->
+<script src="{%static 'js/_hyperscript.js' %}"></script>
+<script src="{%static 'js/htmx.min.js'%}"></script>
+<script src="{% static 'uikit/js/uikit.min.js' %}"></script>
+<script src="{% static 'uikit/js/uikit-icons.js' %}"></script>
+
+</head>
+
+<body>
+	<header class="bg-emerald-600 p-1 shadow-md border-b-2 border-gray-900">
+		<nav class="flex flex-row flex-wrap justify-between">
+			{% if request.user.is_authenticated %}
+			  <div class="bg-white rounded p-1 text-xs text-emerald-700 text-center flex justify-center items-center align-middle">
+				<a href="{% url 'get_started' %}" class="focus:opacity-10 text-white text-center" uk-icon="icon: home; ratio:2"></a>
+			</div> 
+			<span class="enom md:text-md text-center text-white font-semibold m-3">
+					{%block title%}{%endblock%}
+			</span>
+			<div class="flex">
+				<span class="text-white m-2 enom">{{request.user}}</span>
+				<div class="bg-red-500 rounded text-white text-center flex justify-center items-center align-middle p-1 text-xs">
+					<a href="{% url 'logout' %}" class="focus:opacity-10" uk-icon="icon: sign-out; ratio:2"></a>
+				</div>
+			</div>
+			{% endif %}
+		</nav>
+	</header>
+{% block content %}
+
+{% endblock %}
+</body>
+</html>
