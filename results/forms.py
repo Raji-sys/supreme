@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from .models import *
 User = get_user_model()
 
+
 class UserProfileForm(UserCreationForm):
     middle_name = forms.CharField(max_length=300, required=False)
     department = forms.ChoiceField(choices=Profile.dep, required=False)
@@ -19,13 +20,7 @@ class UserProfileForm(UserCreationForm):
 
         if commit:
             user.save()
-            Profile.objects.create(
-                user=user,
-                middle_name=self.cleaned_data["middle_name"],
-                department=self.cleaned_data["department"],
-                cadre=self.cleaned_data["cadre"]
-            )
-
+            Profile.objects.create(user=user, middle_name=self.cleaned_data["middle_name"], department=self.cleaned_data["department"], cadre=self.cleaned_data["cadre"])
         return user
 
 
@@ -40,7 +35,20 @@ class HematologyTestForm(forms.ModelForm):
         model = HematologyTest
         fields = ['name', 'reference_range']
 
+
 class HematologyResultForm(forms.ModelForm):
     class Meta:
         model = HematologyResult
+        fields = ['lab_user', 'patient', 'test', 'result', 'unit', 'date']
+
+
+class ChemicalPathologyTestForm(forms.ModelForm):
+    class Meta:
+        model = ChemicalPathologyTest
+        fields = ['name', 'reference_range']
+
+
+class ChemicalPathologyResultForm(forms.ModelForm):
+    class Meta:
+        model = ChemicalPathologyResult
         fields = ['lab_user', 'patient', 'test', 'result', 'unit', 'date']

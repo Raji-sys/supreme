@@ -9,21 +9,6 @@ admin.site.index_title="PATHOLOGY MANAGEMENT SYSTEM"
 admin.site.site_title="SUPREME DIAGNOSTIC LABORATORIES"
 
     
-
-@admin.register(HematologyResult)
-class HematologyResultAdmin(admin.ModelAdmin):
-    list_display = ('patient', 'test', 'result', 'unit', 'date_collected','date_reported')
-    list_filter = ('test', 'date_collected','date_reported','approved_by')
-    search_fields = ('patient__surname', 'patient__lab_no','patient__phone','approved_by')
-    list_per_page=10
-    ordering = ['test']
-
-    def save_model(self, request, obj, form, change):
-        if not obj.lab_user:
-            obj.lab_user=request.user
-        obj.save()
-
-
 # Register the User model with custom Profile inlines
 class ProfileInline(admin.StackedInline):
     model = Profile
@@ -54,3 +39,36 @@ class PatientAdmin(admin.ModelAdmin):
 class HematologyTestAdmin(admin.ModelAdmin):
     list_display = ('name', 'reference_range')
 
+
+@admin.register(HematologyResult)
+class HematologyResultAdmin(admin.ModelAdmin):
+    list_display = ('patient', 'test', 'result', 'unit', 'date_collected','date_reported')
+    list_filter = ('test', 'date_collected','date_reported','approved_by')
+    search_fields = ('patient__surname', 'patient__lab_no','patient__phone','approved_by')
+    list_per_page=10
+    ordering = ['test']
+
+    def save_model(self, request, obj, form, change):
+        if not obj.lab_user:
+            obj.lab_user=request.user
+        obj.save()
+
+
+# Register the HematologyTest model
+@admin.register(HematologyTest)
+class ChemicalPathologyTestAdmin(admin.ModelAdmin):
+    list_display = ('name', 'reference_range')
+
+
+@admin.register(HematologyResult)
+class ChemicalPathologyResultAdmin(admin.ModelAdmin):
+    list_display = ('patient', 'test', 'result', 'unit', 'date_collected','date_reported')
+    list_filter = ('test', 'date_collected','date_reported','approved_by')
+    search_fields = ('patient__surname', 'patient__lab_no','patient__phone','approved_by')
+    list_per_page=10
+    ordering = ['test']
+
+    def save_model(self, request, obj, form, change):
+        if not obj.lab_user:
+            obj.lab_user=request.user
+        obj.save()

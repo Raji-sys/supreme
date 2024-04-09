@@ -99,3 +99,93 @@ class HematologyResult(models.Model):
     date_collected = models.DateField(null=True, blank=True)
     approved_by = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='hematology_results', null=True, blank=True)
     date_reported = models.DateTimeField(auto_now_add=True)
+
+
+class ChemicalPathologyTest(models.Model):
+    CHEMICAL_PATHOLOGY_TEST_CHOICES=[
+    ('UREA 1.7-8.3','UREA 1.7-8.3'),('NA 135-145','NA 135-145'),('K 3.8-5.4','K 3.8-5.4'),
+    ('HCO2 24-32','HCO2 24-32'),('CL 98-108','CL 98-108'),('FASTING','FASTING'),
+    ('RANDOM 3.89-6.11','RANDOM 3.89-6.11'),('2HR PP','2HR PP'),('CSF GLUCOSE 2.78-4.44','CSF CLUCOSE 2.78-4.44'),
+    ('CSF PROTEIN 150-400','CSF PROTEIN 150-400'),('CSF CHLORIDE 120-130','CSF CHLORIDE 120-130'),('CHOLESTEROL 3.89-6.21','CHOLESTEROL 3.89-6.21'),
+    ('TRIGLYCERIDE 0.00-1.92','TRIGLYCERIDE 0.00-1.92'),('HDL-CHOL >1.68(FEMALE) >1.68(MALE)','HDL-CHOL > 1.68(FEMALE) > 1.68(MALE)'),('LDL-CHOL < 3.90','LDL-CHOL < 3.90'),
+    ('ALKALINE PHOSPHATES 9-35(ADULT) 35-100(CHILD)','ALKALINE PHOSPHATES 9-35(ADULT) 35-100(CHILD)'),('SGOT 0-12','SGOT 0-12'),('SGPT 0-12','SGPT 0-12'),
+    ('GAMA G. T 10-40','GAMA G. T 10-40'),('BILLIRUBIN TOTAL= <17','BILLIRUBIN TOTAL= <17'),('BILLIRUBIN DIRECT= <4.3','BILLIRUBIN DIRECT= <4.3'),
+    ('T:PROTEIN 6.5-8.7','T:PROTEIN 6.5-8.7'),('ALBUMIN 3.8-4.4','ALBUMIN 3.8-4.4'),('GLOBULIN 2-3.9','GLOBULIN 2-3.9'),
+    ('ALKALINE PHOSPHATES 9-35(ADULT) 35-100(CHILDREN)','ALKALINE PHOSPHATES 9-35(ADULT) 35-100(CHILDREN)'),('CALCIUM 2.02-2.60','CALCIUM 2.02-2.60'),('INORG. PHOSPHATES 0.81-1.62(ADULT) 1.30-2.26(CHILDREN)','INORG. PHOSPHATES 0.81-1.62(ADULT) 1.30-2.26(CHILDREN)'),
+    ('URIC ACID 202-416(MALE) 142-339(FEMALE)','URIC ACID 202-416(MALE) 142-339(FEMALE)'),('CREATININE 53-97(MALE) 44-80(FEMALE)','CREATININE 53-97(MALE) 44-80(FEMALE)'),('SERUM ANYLASE','SERUM ANYLASE'),
+    ('ACID PHOSPHATES: TOTAL (<11U/L)','ACID PHOSPHATES: PROSTATIC (<11U/L)'),('ACID PHOSPHATES: TOTAL (<11U/L)','ACID PHOSPHATES: PROSTATIC (<11U/L)')
+    ]
+    name = models.CharField(max_length=100, choices=CHEMICAL_PATHOLOGY_TEST_CHOICES)
+    reference_range = models.TextField()
+
+
+class ChemicalPathologyResult(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='chemical_pathology_results',null=True, blank=True)
+    test = models.ForeignKey(HematologyTest, on_delete=models.CASCADE, null=True, blank=True)
+    result = models.FloatField(null=True, blank=True)
+    unit = models.CharField(max_length=50, null=True, blank=True)
+    comments=models.TextField(null=True, blank=True)
+    natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
+    date_collected = models.DateField(null=True, blank=True)
+    approved_by = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='chemical_pathology_results', null=True, blank=True)
+    date_reported = models.DateTimeField(auto_now_add=True)
+
+
+class SerologyTest(models.Model):
+    SEROLOGY_TEST_CHOICES=[
+    ('',''),('',''),('','')
+    ]
+    name = models.CharField(max_length=100, choices=SEROLOGY_TEST_CHOICES)
+    reference_range = models.TextField()
+
+
+class SerologyResult(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='serology_results',null=True, blank=True)
+    test = models.ForeignKey(HematologyTest, on_delete=models.CASCADE, null=True, blank=True)
+    result = models.FloatField(null=True, blank=True)
+    unit = models.CharField(max_length=50, null=True, blank=True)
+    comments=models.TextField(null=True, blank=True)
+    natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
+    date_collected = models.DateField(null=True, blank=True)
+    approved_by = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='serology_results', null=True, blank=True)
+    date_reported = models.DateTimeField(auto_now_add=True)
+
+
+class MicrobiologyTest(models.Model):
+    MICROBIOLOGY_TEST_CHOICES=[
+    ('',''),('',''),('','')
+    ]
+    name = models.CharField(max_length=100, choices=MICROBIOLOGY_TEST_CHOICES)
+    reference_range = models.TextField()
+
+
+class MicrobiologyResult(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='microbiology_results',null=True, blank=True)
+    test = models.ForeignKey(HematologyTest, on_delete=models.CASCADE, null=True, blank=True)
+    result = models.FloatField(null=True, blank=True)
+    unit = models.CharField(max_length=50, null=True, blank=True)
+    comments=models.TextField(null=True, blank=True)
+    natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
+    date_collected = models.DateField(null=True, blank=True)
+    approved_by = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='microbiology_results', null=True, blank=True)
+    date_reported = models.DateTimeField(auto_now_add=True)
+
+
+class GeneralTest(models.Model):
+    GENERAL_TEST_CHOICES=[
+    ('',''),('',''),('','')
+    ]
+    name = models.CharField(max_length=100, choices=GENERAL_TEST_CHOICES)
+    reference_range = models.TextField()
+
+
+class GeneralResult(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='general_results', null=True, blank=True)
+    test = models.ForeignKey(HematologyTest, on_delete=models.CASCADE, null=True, blank=True)
+    result = models.FloatField(null=True, blank=True)
+    unit = models.CharField(max_length=50, null=True, blank=True)
+    comments=models.TextField(null=True, blank=True)
+    natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
+    date_collected = models.DateField(null=True, blank=True)
+    approved_by = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='general_results', null=True, blank=True)
+    date_reported = models.DateTimeField(auto_now_add=True)

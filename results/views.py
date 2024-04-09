@@ -34,15 +34,10 @@ def log_anonymous_required(view_function, redirect_to=None):
 
 @login_required
 def fetch_resources(uri, rel):
-    """
-    Handles fetching static and media resources when generating the PDF.
-    """
     if uri.startswith(settings.STATIC_URL):
-        path = os.path.join(settings.STATIC_ROOT,
-                            uri.replace(settings.STATIC_URL, ""))
+        path = os.path.join(settings.STATIC_ROOT,uri.replace(settings.STATIC_URL, ""))
     else:
-        path = os.path.join(settings.MEDIA_ROOT,
-                            uri.replace(settings.MEDIA_URL, ""))
+        path = os.path.join(settings.MEDIA_ROOT,uri.replace(settings.MEDIA_URL, ""))
     return path
 
 
@@ -121,12 +116,12 @@ class PatientUpdateView(UpdateView):
     success_url = '/hematology/create/'
 
 
-
 class HematologyTestCreateView(CreateView):
     model = HematologyTest
     fields = ['name', 'reference_range']
     template_name = 'hematology_test_form.html'
     success_url = '/hematology/result/create/'
+
 
 class HematologyResultCreateView(CreateView):
     model = HematologyResult
@@ -134,8 +129,30 @@ class HematologyResultCreateView(CreateView):
     template_name = 'hematology_result_form.html'
     success_url = '/hematology/result/list/'
 
+
 class HematologyResultUpdateView(UpdateView):
     model = HematologyResult
     fields = ['lab_user', 'patient', 'test', 'result', 'unit', 'date']
     template_name = 'hematology_result_form.html'
     success_url = '/hematology/result/list/'
+
+
+class ChemicalPathologyTestCreateView(CreateView):
+    model = ChemicalPathologyTest
+    fields = ['name', 'reference_range']
+    template_name = 'chemical_pathology_test.html'
+    success_url = '/chemical_pathology/result/create/'
+
+
+class ChemicalPathologyResultCreateView(CreateView):
+    model = ChemicalPathologyResult
+    fields = ['lab_user', 'patient', 'test', 'result', 'unit', 'date']
+    template_name = 'chemical_pathology_result.html'
+    success_url = '/chemical_pathology/result/list/'
+
+
+class ChemicalPathologyResultUpdateView(UpdateView):
+    model = ChemicalPathologyResult
+    fields = ['lab_user', 'patient', 'test', 'result', 'unit', 'date']
+    template_name = 'chemical_pathology_result_form.html'
+    success_url = '/chemical_pathology/result/list/'
