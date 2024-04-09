@@ -1,0 +1,26 @@
+<!-- hematology_result_list.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Hematology Results</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Test</th>
+        <th>Result</th>
+        <th>Unit</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for result in hematology_results %}
+      <tr>
+        <td>{{ result.test.name }}</td>
+        <td>{{ result.result }}</td>
+        <td>{{ result.unit }}</td>
+        <td>{{ result.date }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
