@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+{%block title%}home{%endblock%}
+
+{%block content %}
+    <div class="bgd uk-background-cover uk-background-fixed uk-height-viewport uk-panel uk-flex uk-flex-right uk-flex-top">
+    <style>
+        .bgd{background-image: url('{% static "images/4.jpg" %}');}
+    </style>
+        <div class="uk-overlay rounded-3xl uk-margin-large-right">
+            <div class="flex justify-items-center justify-center items-center flex-col mt-20">
+                <div>
+                    <h1 class="enom  md:text-7xl text-center text-gray-800 font-semibold">EHR-NOW</h1>
+                </div>
+                <div class="uk-margin">
+                    <a href="{%url 'get_started' %}" class="py-4 px-8 h-20 bg-green-600 text-white rounded focus:opacity-10">get started</a>
+                </div>
+            </div>
+            <div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

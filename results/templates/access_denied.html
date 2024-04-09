@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}ACCESS DENIED {% endblock %}
+{% load static %}
+{% block content %}
+    <div class="">
+        <i class=""></i>
+    <p class="">
+      ACCESS DENIED! 
+    </p>
+    <p class="">
+       <span class="">
+           {{request.user}},
+       </span> 
+        YOU DO NOT HAVE PERMISSION TO VIEW THIS PAGE
+    </p>
+  </div>
+{% endblock %}
