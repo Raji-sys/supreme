@@ -27,28 +27,23 @@ class UserProfileForm(UserCreationForm):
 class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient
-        fields = ['surname', 'other_names', 'gender', 'dob', 'phone']
+        fields = ['surname', 'other_names', 'gender', 'phone']
 
-
-class HematologyTestForm(forms.ModelForm):
-    class Meta:
-        model = HematologyTest
-        fields = ['name', 'reference_range']
 
 
 class HematologyResultForm(forms.ModelForm):
     class Meta:
         model = HematologyResult
-        fields = ['approved_by', 'patient', 'test', 'result', 'unit']
+        fields = ['test', 'result', 'unit']
 
 
-class ChemicalPathologyTestForm(forms.ModelForm):
-    class Meta:
-        model = ChemicalPathologyTest
-        fields = ['name', 'reference_range']
+# class ChemicalPathologyTestForm(forms.ModelForm):
+#     class Meta:
+#         model = ChemicalPathologyTest
+#         fields = ['name', 'reference_range']
 
 
-class ChemicalPathologyResultForm(forms.ModelForm):
-    class Meta:
-        model = ChemicalPathologyResult
-        fields = ['approved_by', 'patient', 'test', 'result', 'unit']
+# class ChemicalPathologyResultForm(forms.ModelForm):
+#     class Meta:
+#         model = ChemicalPathologyResult
+#         fields = ['approved_by', 'patient', 'test', 'result', 'unit']

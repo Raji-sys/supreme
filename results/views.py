@@ -21,6 +21,7 @@ import datetime
 from django.conf import settings
 import os
 import csv
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
 User = get_user_model()
 
@@ -109,14 +110,11 @@ class UserProfileUpdateView(UpdateView):
     
 class PatientCreateView(CreateView):
     model = Patient
-    fields = ['surname', 'other_names', 'gender', 'dob', 'phone']
+    form_class= PatientForm
     template_name = 'patient_create.html'
     success_url = reverse_lazy('patients_list')
 
     def form_valid(self, form):
-        patient = form.save(commit=False)
-        patient.user = self.request.user
-        patient.save()
         messages.success(self.request,'Patient created successfully')
         return super().form_valid(form)
 
@@ -142,45 +140,65 @@ class PatientDetailView(DetailView):
     model=Patient
     template_name='patient_details.html'
     context_object_name='patient'
+    
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        patient=self.get_object()
+        context['hematology_results']=patient.hematology_result.all()
+        return context
+    
+class HematologyListView(ListView):
+    model=HematologyResult
+    template_name='hematology_list.html'
+    context_object_name='hematology_results'
 
 
-class HematologyTestCreateView(CreateView):
-    model = HematologyTest
-    fields = ['name', 'reference_range']
-    template_name = 'hematology_test_form.html'
-    success_url = '/hematology/result/create/'
-
-
-class HematologyResultCreateView(CreateView):
+class HematologyResultCreateView(LoginRequiredMixin, CreateView):
     model = HematologyResult
-    fields = ['lab_user', 'patient', 'test', 'result', 'unit', 'date']
-    template_name = 'hematology_result_form.html'
-    success_url = '/hematology/result/list/'
+    form_class = HematologyResultForm
+    template_name = 'hematology_result.html'
 
+    def form_valid(self, form):
+        # Set the approved_by field to the current user
+        form.instance.approved_by = self.request.user
+
+        # Get the patient instance from the request
+        patient = Patient.objects.get(surname=self.kwargs['surname'])
+        form.instance.patient = patient
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return self.object.patient.get_absolute_url()
 
 class HematologyResultUpdateView(UpdateView):
     model = HematologyResult
-    fields = ['lab_user', 'patient', 'test', 'result', 'unit', 'date']
-    template_name = 'hematology_result_form.html'
-    success_url = '/hematology/result/list/'
+    form_class= HematologyResultForm
+    template_name = 'hematology_result.html'
+    context_object_name= 'result'
+
+    def form_valid(self, form):
+        messages.success(self.request,'Patient updated successfully')
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return reverse('patiten_details',kwargs={'surname':self.kwargs['surname']})
+
+# class ChemicalPathologyTestCreateView(CreateView):
+#     model = ChemicalPathologyTest
+#     fields = ['name', 'reference_range']
+#     template_name = 'chemical_pathology_test.html'
+#     success_url = '/chemical_pathology/result/create/'
 
 
-class ChemicalPathologyTestCreateView(CreateView):
-    model = ChemicalPathologyTest
-    fields = ['name', 'reference_range']
-    template_name = 'chemical_pathology_test.html'
-    success_url = '/chemical_pathology/result/create/'
+# class ChemicalPathologyResultCreateView(CreateView):
+#     model = ChemicalPathologyResult
+#     fields = ['lab_user', 'patient', 'test', 'result', 'unit', 'date']
+#     template_name = 'chemical_pathology_result.html'
+#     success_url = '/chemical_pathology/result/list/'
 
 
-class ChemicalPathologyResultCreateView(CreateView):
-    model = ChemicalPathologyResult
-    fields = ['lab_user', 'patient', 'test', 'result', 'unit', 'date']
-    template_name = 'chemical_pathology_result.html'
-    success_url = '/chemical_pathology/result/list/'
-
-
-class ChemicalPathologyResultUpdateView(UpdateView):
-    model = ChemicalPathologyResult
-    fields = ['lab_user', 'patient', 'test', 'result', 'unit', 'date']
-    template_name = 'chemical_pathology_result_form.html'
-    success_url = '/chemical_pathology/result/list/'
+# class ChemicalPathologyResultUpdateView(UpdateView):
+#     model = ChemicalPathologyResult
+#     fields = ['lab_user', 'patient', 'test', 'result', 'unit', 'date']
+#     template_name = 'chemical_pathology_result_form.html'
+#     success_url = '/chemical_pathology/result/list/'

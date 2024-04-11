@@ -7,18 +7,22 @@
     <thead>
       <tr>
         <th>Test</th>
+        <th>Patient</th>
         <th>Result</th>
         <th>Unit</th>
         <th>Date</th>
+        <th>report by</th>
       </tr>
     </thead>
     <tbody>
       {% for result in hematology_results %}
       <tr>
-        <td>{{ result.test.name }}</td>
+        <td>{{ result.test }}</td>
+        <td>{{ result.patient }}</td>
         <td>{{ result.result }}</td>
         <td>{{ result.unit }}</td>
-        <td>{{ result.date }}</td>
+        <td>{{ result.date_reported }}</td>
+        <td>{{ result.approved_by }}</td>
       </tr>
       {% endfor %}
     </tbody>

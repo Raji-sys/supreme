@@ -4,7 +4,6 @@
 
 {%block content %}
 <div class="mt-7 md:mt-8 p-4">
- 
     <div class="text-center rounded-xl p-4 md:p-10 shadow-black shadow-2xl bg-gray-50">
         <div>
             <p>{{patient.surname}}</p>
@@ -14,5 +13,32 @@
             <p>{{patient.dob}}</p>
         </div>
     </div>
+
+    <h2>Hematology Results</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Test</th>
+                <th>Result</th>
+                <th>Unit</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <a href="{% url 'hematology_result' patient.surname %}" class="text-xl">Add result</a>
+            {% for r in hematology_results %}
+            <tr>
+                <td>{{ r.test }}</td>
+                <td>{{ r.result }}</td>
+                <td>{{ r.unit }}</td>
+                <td>{{ r.date_reported }}</td>
+                <td>
+                    <a href="{% url 'hematology_update' patient.surname %}">Update</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {%endblock%}

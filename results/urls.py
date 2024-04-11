@@ -12,19 +12,19 @@ urlpatterns = [
     path('update-profile/', UserProfileUpdateView.as_view(), name='update_profile'),
 
     path('create-patient/', PatientCreateView.as_view(), name='create_patient'),
-    path('patients/', PatientListView.as_view(), name='patients_list'),
-    path('update-patient/', PatientUpdateView.as_view(), name='update_patient'),
+    path('patients-list/', PatientListView.as_view(), name='patients_list'),
+    path('update-patient/<int:pk>', PatientUpdateView.as_view(), name='update_patient'),
     path('patient/<int:pk>/', PatientDetailView.as_view(), name='patient_details'),
 
+    
     path('hematology/', HematologyView.as_view(), name='hematology'),
-    path('hametology-test/',HematologyTestCreateView.as_view(), name='hametology_test'),
-    path('hametology-result/',HematologyResultCreateView.as_view(), name='hametology_result'),
-    path('hametology-result-update/',HematologyResultUpdateView.as_view(), name='hametology_update'),
+    path('hematology-list/', HematologyListView.as_view(), name='hematology_list'),
+    path('hematology-result/create/<str:surname>/', HematologyResultCreateView.as_view(), name='hematology_result'),
+    path('hematology-result-update/<str:surname>/update/',HematologyResultUpdateView.as_view(), name='hematology_update'),
 
-    path('chempath/', ChempathView.as_view(), name='chempath'),    
-    path('chem-path-test/',HematologyTestCreateView.as_view(), name='chem_path_test'),
-    path('chem-path-result/',HematologyResultCreateView.as_view(), name='chem_path_result'),
-    path('chem-path-result-update/',HematologyResultUpdateView.as_view(), name='chem_path_update'),
+    # path('chempath/', ChempathView.as_view(), name='chempath'),    
+    # path('chem-path-result/<int:pk>',ChemicalPathologyResultCreateView.as_view(), name='chem_path_result'),
+    # path('chem-path-result-update/<int:pk>',ChemicalPathologyResultUpdateView.as_view(), name='chem_path_update'),
 
 
     path('logout/', CustomLogoutView.as_view(), name='logout'),
