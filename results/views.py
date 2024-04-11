@@ -140,6 +140,9 @@ class PatientDetailView(DetailView):
     model=Patient
     template_name='patient_details.html'
     context_object_name='patient'
+
+    def get_object(self, queryset=None):
+        return Patient.objects.get(surname=self.kwargs['surname'])
     
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
