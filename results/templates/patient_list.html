@@ -3,9 +3,17 @@
 {%block title%}patient list{%endblock%}
 
 {%block content %}
-<div class="class">
-    {%for p in patients%}
-    <p>{{p.surname}}</p>
-    {%endfor%}
+<div class="mt-7 md:mt-8 p-4">
+ 
+    <div class="text-center rounded-xl p-4 md:p-10 shadow-black shadow-2xl bg-gray-50">
+        <div>
+            {%for p in patients %}
+            <p>{{p.surname}}</p>
+            <p><a href="{%url 'patient_details' p.pk %}">patient file</a>
+            {% empty %}
+            <p>no patients found</p>
+            {%endfor%}
+        </div>
+    </div>
 </div>
 {%endblock%}

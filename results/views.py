@@ -131,10 +131,18 @@ class PatientUpdateView(UpdateView):
         messages.success(self.request,'Patient updated successfully')
         return super().form_valid(form)
 
+
 class PatientListView(ListView):
     model=Patient
-    template_name='patient_list'
-    context_object='patients'
+    template_name='patient_list.html'
+    context_object_name='patients'
+
+
+class PatientDetailView(DetailView):
+    model=Patient
+    template_name='patient_details.html'
+    context_object_name='patient'
+
 
 class HematologyTestCreateView(CreateView):
     model = HematologyTest

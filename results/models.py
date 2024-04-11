@@ -64,7 +64,7 @@ class Patient(models.Model):
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse('file_details', args=[self.phone])
+        return reverse('patient_details', args=[self.id])
 
     def full_name(self):
         return f"{self.surname} {self.other_names}"

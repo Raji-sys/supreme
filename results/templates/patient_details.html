@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+{%block title%}{{patient.surname}}{%endblock%}
+
+{%block content %}
+<div class="mt-7 md:mt-8 p-4">
+ 
+    <div class="text-center rounded-xl p-4 md:p-10 shadow-black shadow-2xl bg-gray-50">
+        <div>
+            <p>{{patient.surname}}</p>
+            <p>{{patient.other}}</p>
+            <p>{{patient.phone}}</p>
+            <p>{{patient.gender}}</p>
+            <p>{{patient.dob}}</p>
+        </div>
+    </div>
+</div>
+{%endblock%}

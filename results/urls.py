@@ -14,6 +14,7 @@ urlpatterns = [
     path('create-patient/', PatientCreateView.as_view(), name='create_patient'),
     path('patients/', PatientListView.as_view(), name='patients_list'),
     path('update-patient/', PatientUpdateView.as_view(), name='update_patient'),
+    path('patient/<int:pk>/', PatientDetailView.as_view(), name='patient_details'),
 
     path('hematology/', HematologyView.as_view(), name='hematology'),
     path('hametology-test/',HematologyTestCreateView.as_view(), name='hametology_test'),
