@@ -29,8 +29,8 @@ class CustomUserAdmin(UserAdmin):
 # Register the Patient model
 @admin.register(Patient)
 class PatientAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'gender', 'dob', 'phone')
-    search_fields = ('first_name', 'last_name', 'other_name')
+    list_display = ('surname', 'other_names', 'gender', 'dob', 'phone')
+    search_fields = ('surname',)
     list_filter = ('gender',)
 
 
@@ -49,26 +49,26 @@ class HematologyResultAdmin(admin.ModelAdmin):
     ordering = ['test']
 
     def save_model(self, request, obj, form, change):
-        if not obj.lab_user:
-            obj.lab_user=request.user
+        if not obj.approved_by:
+            obj.approved_by=request.user
         obj.save()
 
 
 # Register the HematologyTest model
-@admin.register(HematologyTest)
-class ChemicalPathologyTestAdmin(admin.ModelAdmin):
-    list_display = ('name', 'reference_range')
+# @admin.register(HematologyTest)
+# class ChemicalPathologyTestAdmin(admin.ModelAdmin):
+#     list_display = ('name', 'reference_range')
 
 
-@admin.register(HematologyResult)
-class ChemicalPathologyResultAdmin(admin.ModelAdmin):
-    list_display = ('patient', 'test', 'result', 'unit', 'date_collected','date_reported')
-    list_filter = ('test', 'date_collected','date_reported','approved_by')
-    search_fields = ('patient__surname', 'patient__lab_no','patient__phone','approved_by')
-    list_per_page=10
-    ordering = ['test']
+# @admin.register(HematologyResult)
+# class ChemicalPathologyResultAdmin(admin.ModelAdmin):
+#     list_display = ('patient', 'test', 'result', 'unit', 'date_collected','date_reported')
+#     list_filter = ('test', 'date_collected','date_reported','approved_by')
+#     search_fields = ('patient__surname', 'patient__lab_no','patient__phone','approved_by')
+#     list_per_page=10
+#     ordering = ['test']
 
-    def save_model(self, request, obj, form, change):
-        if not obj.lab_user:
-            obj.lab_user=request.user
-        obj.save()
+#     def save_model(self, request, obj, form, change):
+#         if not obj.lab_user:
+#             obj.lab_user=request.user
+#         obj.save()

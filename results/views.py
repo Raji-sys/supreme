@@ -45,6 +45,18 @@ def fetch_resources(uri, rel):
 class IndexView(TemplateView):
     template_name = "index.html"
 
+@method_decorator(login_required(login_url='login'), name='dispatch')
+class DashboardView(TemplateView):
+    template_name = "dashboard.html"
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+class HematologyView(TemplateView):
+    template_name = "hematology.html"
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+class ChempathView(TemplateView):
+    template_name = "chempath.html"
+
 @method_decorator(log_anonymous_required, name='dispatch')
 class CustomLoginView(LoginView):
     template_name = 'login.html'
@@ -53,7 +65,8 @@ class CustomLoginView(LoginView):
         if self.request.user.is_superuser:
             return reverse_lazy('index')
         else:
-            return reverse_lazy('profile_details', args=[self.request.user.username])
+            pass
+            # return reverse_lazy('profile_details', args=[self.request.user.username])
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -70,7 +83,7 @@ class UserProfileCreateView(CreateView):
     form_class = UserProfileForm
     template_name = 'user_profile_form.html'
     success_url = '/patient/create/'
-
+    
     def form_valid(self, form):
         user = form.save()
         return super().form_valid(form)
@@ -86,35 +99,42 @@ class UserProfileUpdateView(UpdateView):
 
     def form_valid(self, form):
         user = form.save()
-
         profile = Profile.objects.get(user=user)
         profile.middle_name = form.cleaned_data['middle_name']
         profile.department = form.cleaned_data['department']
         profile.cadre = form.cleaned_data['cadre']
         profile.save()
-
         return super().form_valid(form)
     
     
 class PatientCreateView(CreateView):
     model = Patient
-    fields = ['first_name', 'last_name', 'other_name', 'gender', 'dob', 'phone']
-    template_name = 'patient_form.html'
-    success_url = '/hematology/create/'
+    fields = ['surname', 'other_names', 'gender', 'dob', 'phone']
+    template_name = 'patient_create.html'
+    success_url = reverse_lazy('patients_list')
 
     def form_valid(self, form):
         patient = form.save(commit=False)
         patient.user = self.request.user
         patient.save()
+        messages.success(self.request,'Patient created successfully')
         return super().form_valid(form)
 
 
 class PatientUpdateView(UpdateView):
     model = Patient
-    fields = ['first_name', 'last_name', 'other_name', 'gender', 'dob', 'phone']
-    template_name = 'patient_form.html'
-    success_url = '/hematology/create/'
+    fields = ['surname', 'other_names', 'gender', 'dob', 'phone']
+    template_name = 'patient_create.html'
+    success_url = reverse_lazy('patients_list')
+ 
+    def form_valid(self, form):
+        messages.success(self.request,'Patient updated successfully')
+        return super().form_valid(form)
 
+class PatientListView(ListView):
+    model=Patient
+    template_name='patient_list'
+    context_object='patients'
 
 class HematologyTestCreateView(CreateView):
     model = HematologyTest

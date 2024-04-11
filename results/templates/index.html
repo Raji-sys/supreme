@@ -3,21 +3,25 @@
 {%block title%}home{%endblock%}
 
 {%block content %}
-    <div class="bgd uk-background-cover uk-background-fixed uk-height-viewport uk-panel uk-flex uk-flex-right uk-flex-top">
-    <style>
-        .bgd{background-image: url('{% static "images/4.jpg" %}');}
-    </style>
-        <div class="uk-overlay rounded-3xl uk-margin-large-right">
-            <div class="flex justify-items-center justify-center items-center flex-col mt-20">
-                <div>
-                    <h1 class="enom  md:text-7xl text-center text-gray-800 font-semibold">EHR-NOW</h1>
+    <div class="mt-10">
+            <div class="md:w-fit md:p-10 p-20 bg-white shadow-md flex justify-items-center justify-center items-center flex-col md:mt-10 mt:20 md:mx-auto m-4 rounded">
+                <div class="rounded-full border-2 border-gray-800 p-4 shadow-xl m-3">
+                   <span>
+                       <i class="fa-solid fa-syringe text-rose-600 fa-3x"></i>
+                       <i class="fa-solid fa-flask-vial text-indigo-400 fa-3x"></i>
+                   </span>
+                   <p class="text-rose-600 text-3xl text-center">SDL</p>
                 </div>
-                <div class="uk-margin">
-                    <a href="{%url 'get_started' %}" class="py-4 px-8 h-20 bg-green-600 text-white rounded focus:opacity-10">get started</a>
+                <div class="p-2">
+                    <h1 class="enom md:text-6xl text-center text-rose-800 font-semibold text-2xl">SUPREME DIAGNOSIC</h1>
+                    <h1 class="enom md:text-4xl text-center text-rose-800 font-semibold text-xl">LABORATORIES</h1>
+                </div>
+                <div class="rounded mt-4 p-4">
+                    <a href="{%url 'dashboard' %}" class=" text-white bg-blue-600 rounded focus:opacity-10 text-xs md:text-lg p-4">DASHBOARD</a>
+                    <a href="{%url 'create_patient' %}" class=" text-white bg-green-600 rounded focus:opacity-10 text-xs md:text-lg p-4">NEW PATIENT</a>
                 </div>
             </div>
             <div>
             </div>
-        </div>
     </div>
 {% endblock %}

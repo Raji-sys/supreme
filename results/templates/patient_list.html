@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load static %}
+{%block title%}patient list{%endblock%}
+
+{%block content %}
+<div class="class">
+    {%for p in patients%}
+    <p>{{p.surname}}</p>
+    {%endfor%}
+</div>
+{%endblock%}

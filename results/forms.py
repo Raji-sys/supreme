@@ -39,7 +39,7 @@ class HematologyTestForm(forms.ModelForm):
 class HematologyResultForm(forms.ModelForm):
     class Meta:
         model = HematologyResult
-        fields = ['lab_user', 'patient', 'test', 'result', 'unit', 'date']
+        fields = ['approved_by', 'patient', 'test', 'result', 'unit']
 
 
 class ChemicalPathologyTestForm(forms.ModelForm):
@@ -51,4 +51,4 @@ class ChemicalPathologyTestForm(forms.ModelForm):
 class ChemicalPathologyResultForm(forms.ModelForm):
     class Meta:
         model = ChemicalPathologyResult
-        fields = ['lab_user', 'patient', 'test', 'result', 'unit', 'date']
+        fields = ['approved_by', 'patient', 'test', 'result', 'unit']

@@ -67,11 +67,11 @@ class Patient(models.Model):
         return reverse('file_details', args=[self.phone])
 
     def full_name(self):
-        return f"{self.user.get_full_name()} {self.other_name}"
+        return f"{self.surname} {self.other_names}"
 
     def __str__(self):
-        if self.user:
-            return f"{self.full_name}"
+        if self.surname:
+            return f"{self.full_name()}"
 
 
 class HematologyTest(models.Model):
@@ -89,6 +89,10 @@ class HematologyTest(models.Model):
     name = models.CharField(max_length=100, choices=HEMATOLOGY_TEST_CHOICES)
     reference_range = models.TextField()
 
+    def __str__(self):
+        if self.name:
+            return self.name
+    
 class HematologyResult(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='hematology_results',null=True, blank=True)
     test = models.ForeignKey(HematologyTest, on_delete=models.CASCADE, null=True, blank=True)
@@ -97,9 +101,12 @@ class HematologyResult(models.Model):
     comments=models.TextField(null=True, blank=True)
     natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
     date_collected = models.DateField(null=True, blank=True)
-    approved_by = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='hematology_results', null=True, blank=True)
+    approved_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hematology_results', null=True, blank=True)
     date_reported = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        if self.patient:
+            return f"{self.patient} -{self.test} - {self.result}"
 
 class ChemicalPathologyTest(models.Model):
     CHEMICAL_PATHOLOGY_TEST_CHOICES=[
@@ -129,7 +136,10 @@ class ChemicalPathologyResult(models.Model):
     date_collected = models.DateField(null=True, blank=True)
     approved_by = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='chemical_pathology_results', null=True, blank=True)
     date_reported = models.DateTimeField(auto_now_add=True)
-
+ 
+    def __str__(self):
+        if self.patient:
+            return f"{self.patient} -{self.test} - {self.result}"
 
 class SerologyTest(models.Model):
     SEROLOGY_TEST_CHOICES=[
@@ -150,6 +160,9 @@ class SerologyResult(models.Model):
     approved_by = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='serology_results', null=True, blank=True)
     date_reported = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        if self.patient:
+            return f"{self.patient} -{self.test} - {self.result}"
 
 class MicrobiologyTest(models.Model):
     MICROBIOLOGY_TEST_CHOICES=[
@@ -170,6 +183,9 @@ class MicrobiologyResult(models.Model):
     approved_by = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='microbiology_results', null=True, blank=True)
     date_reported = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        if self.patient:
+            return f"{self.patient} -{self.test} - {self.result}"
 
 class GeneralTest(models.Model):
     GENERAL_TEST_CHOICES=[
@@ -189,3 +205,7 @@ class GeneralResult(models.Model):
     date_collected = models.DateField(null=True, blank=True)
     approved_by = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='general_results', null=True, blank=True)
     date_reported = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        if self.patient:
+            return f"{self.patient} -{self.test} - {self.result}"
