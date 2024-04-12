@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{%block title%}patient list{%endblock%}
+{%block title%}profile list{%endblock%}
 
 {%block content %}
 <div class="mt-7 md:mt-8 p-4">
@@ -17,12 +17,11 @@
           {% endfor %}
         </section>
         <div>
-            {%for p in patients %}
-            <p>{{p.surname}}</p>
-            <p><a href="{%url 'patient_details' p.surname %}">open file</a>
-            <p><a href="{%url 'update_patient' p.id %}">update</a>
+            {%for p in profiles %}
+            <p>{{p.user}}</p>
+            <p><a href="{{p.get_absolute_url}}">open file</a>
             {% empty %}
-            <p>no patients found</p>
+            <p>no users found</p>
             {%endfor%}
         </div>
     </div>

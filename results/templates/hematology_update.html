@@ -1,0 +1,11 @@
+<!-- hematology_result_form.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Create Hematology Result</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">update</button>
+  </form>
+{% endblock %}

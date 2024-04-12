@@ -66,8 +66,7 @@ class CustomLoginView(LoginView):
         if self.request.user.is_superuser:
             return reverse_lazy('index')
         else:
-            pass
-            # return reverse_lazy('profile_details', args=[self.request.user.username])
+            return reverse_lazy('profile_details', args=[self.request.user.username])
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -79,34 +78,48 @@ class CustomLogoutView(LogoutView):
         messages.success(request, 'logout successful')
         return response
 
-
 class UserProfileCreateView(CreateView):
-    form_class = UserProfileForm
-    template_name = 'user_profile_form.html'
-    success_url = '/patient/create/'
-    
-    def form_valid(self, form):
-        user = form.save()
-        return super().form_valid(form)
-
-
-class UserProfileUpdateView(UpdateView):
-    form_class = UserProfileForm
-    template_name = 'user_profile_form.html'
-    success_url = '/patient/create/'
-
-    def get_object(self):
-        return self.request.user
+    form_class = CustomUserCreationForm
+    template_name = 'patient_create.html'
+    success_url = reverse_lazy('profile_list')
 
     def form_valid(self, form):
-        user = form.save()
-        profile = Profile.objects.get(user=user)
-        profile.middle_name = form.cleaned_data['middle_name']
-        profile.department = form.cleaned_data['department']
-        profile.cadre = form.cleaned_data['cadre']
-        profile.save()
-        return super().form_valid(form)
+        if form.is_valid():
+            response = super().form_valid(form)
+            user = User.objects.get(username=form.cleaned_data['username'])
+            profile_instance = Profile(user=user)
+            profile_instance.save()
+            messages.success(
+                self.request, f"Registration for: {user.get_full_name()} was successful")
+            return response
+        else:
+            print("Form errors:", form.errors)
+            return self.form_invalid(form)
     
+class ProfileDetailView(DetailView):
+    template_name = 'profile_details.html'
+    model = Profile
+    context_object_name='profile'
+
+    def get_object(self, queryset=None):
+        if self.request.user.is_superuser:
+            username_from_url = self.kwargs.get('username')
+            user = get_object_or_404(User, username=username_from_url)
+        else:
+            user = self.request.user
+        return get_object_or_404(Profile, user=user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        profile = context['object']
+        return context
+
+
+class ProfileListView(ListView):
+    model = Profile
+    template_name = "profile_list.html"
+    context_object_name = 'profiles'
+
     
 class PatientCreateView(CreateView):
     model = Patient
@@ -168,23 +181,28 @@ class HematologyResultCreateView(LoginRequiredMixin, CreateView):
         # Get the patient instance from the request
         patient = Patient.objects.get(surname=self.kwargs['surname'])
         form.instance.patient = patient
+        messages.success(self.request, 'Hematology result created successfully')
         return super().form_valid(form)
     
     def get_success_url(self):
         return self.object.patient.get_absolute_url()
 
-class HematologyResultUpdateView(UpdateView):
+class HematologyResultUpdateView(LoginRequiredMixin, UpdateView):
     model = HematologyResult
-    form_class= HematologyResultForm
-    template_name = 'hematology_result.html'
-    context_object_name= 'result'
+    form_class = HematologyResultForm
+    template_name = 'hematology_update.html'
+    context_object_name = 'result'
+
+    def get_object(self, queryset=None):
+        patient = Patient.objects.get(surname=self.kwargs['surname'])
+        return HematologyResult.objects.get(patient=patient, pk=self.kwargs['pk'])
 
     def form_valid(self, form):
-        messages.success(self.request,'Patient updated successfully')
+        messages.success(self.request, 'Hematology result updated successfully')
         return super().form_valid(form)
-    
+
     def get_success_url(self):
-        return reverse('patiten_details',kwargs={'surname':self.kwargs['surname']})
+        return reverse('patient_details', kwargs={'surname': self.kwargs['surname']})
 
 # class ChemicalPathologyTestCreateView(CreateView):
 #     model = ChemicalPathologyTest
