@@ -1,30 +1,57 @@
-<!-- hematology_result_list.html -->
 {% extends 'base.html' %}
-
+{%load static %}
 {% block content %}
-  <h1>Hematology Results</h1>
-  <table>
-    <thead>
+<div class="mt-5 p-4">
+  <div class="rounded-xl p-4 shadow-black shadow-2xl bg-gray-50">
+  <div class="overflow-x-auto">
+  <table class="min-w-full divide-y divide-gray-500">
+    <thead class="bg-gray-100">
       <tr>
-        <th>Test</th>
-        <th>Patient</th>
-        <th>Result</th>
-        <th>Unit</th>
-        <th>Date</th>
-        <th>report by</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S/N</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Test
+        </th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Patient
+        </th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Result
+        </th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Date Reported
+        </th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Report By
+        </th>
       </tr>
     </thead>
-    <tbody>
+    <tbody class="bg-white divide-y divide-gray-200">
       {% for result in hematology_results %}
-      <tr>
-        <td>{{ result.test }}</td>
-        <td>{{ result.patient }}</td>
-        <td>{{ result.result }}</td>
-        <td>{{ result.unit }}</td>
-        <td>{{ result.date_reported }}</td>
-        <td>{{ result.approved_by }}</td>
+      <tr class="bg-gray-50 hover:bg-gray-200 transition-colors duration-300">
+        <td class="px-6 py-4 whitespace-nowrap">
+          {{forloop.counter}}
+      </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          {{ result.test }}
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          {{ result.patient }}
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <span class="text-sm">{{ result.result }}</span>
+          <span class="text-xs">{{ result.unit }}</span>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          {{ result.date_reported }}
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          {{ result.approved_by }}
+        </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+</div>
+</div>
+</div>
 {% endblock %}

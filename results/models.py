@@ -85,7 +85,7 @@ class HematologyResult(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='hematology_result',null=True, blank=True)
     test = models.CharField(choices=TEST, max_length=100, null=True, blank=True)
     test_ref_range=models.CharField(max_length=50, null=True, blank=True)
-    result = models.FloatField(null=True, blank=True)
+    result = models.CharField(max_length=50, null=True, blank=True)
     unit = models.CharField(max_length=50, null=True, blank=True)
     comments=models.TextField(null=True, blank=True)
     natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)

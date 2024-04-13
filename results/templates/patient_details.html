@@ -2,53 +2,61 @@
 {% load static %}
 {%block title%}{{patient.surname}}{%endblock%}
 
-{%block content %}
-<div class="mt-7 md:mt-8 p-4">
-    <div class="text-center rounded-xl p-4 md:p-10 shadow-black shadow-2xl bg-gray-50">
-        <section class="text-center border-cyan-700 p-4 m-2">
-            {% for message in messages %}
-          <div class="">
-               <div class="uk-alert-success rounded-2xl text-sm" uk-alert>
-                <a href class="uk-alert-close font-bold" uk-close></a>
-                <p class="text-green-700 font-semibold">{{ message }}</p>
-                </div>
-          </div>
-          {% endfor %}
-        </section>
-        <div>
-            <p>{{patient.surname}}</p>
-            <p>{{patient.other}}</p>
-            <p>{{patient.phone}}</p>
-            <p>{{patient.gender}}</p>
-            <p>{{patient.dob}}</p>
-        </div>
-    </div>
 
-    <h2>Hematology Results</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Test</th>
-                <th>Result</th>
-                <th>Unit</th>
-                <th>Date</th>
-                <th>Actions</th>
-            </tr>
+{% block content %}
+<div class="mt-2 p-4">
+  <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-black shadow-2xl">
+    <div class="text-center rounded-xl p-4 md:p-10 bg-gray-50">
+      <section class="text-center border-cyan-700 p-4 m-2">
+        {% for message in messages %}
+        <div class="">
+          <div class="bg-green-100 rounded-2xl text-sm p-4" uk-alert>
+            <a href class="uk-alert-close font-bold" uk-close></a>
+            <p class="text-green-700 font-semibold">{{ message }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </section>
+      <div class="flex justify-center space-x-4">
+        <div>{{ patient.surname }}</div>
+        <div>{{ patient.other_names }}</div>
+        <div>{{ patient.phone }}</div>
+        <div>{{ patient.gender }}</div>
+        <div>{{ patient.dob }}</div>
+      </div>
+    </div>
+    <div class="text-center m-2">
+        <a href="{% url 'hematology_result' patient.surname %}" class="text-sm text-blue-500 hover:text-blue-700">Add result</a>
+    </div>
+    <div class="overflow-x-auto px-4 md:px-10 m-4 mb-4">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S/N</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Test</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Result</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
         </thead>
-        <tbody>
-            <a href="{% url 'hematology_result' patient.surname %}" class="text-xl">Add result</a>
-            {% for r in hematology_results %}
-            <tr>
-                <td>{{ r.test }}</td>
-                <td>{{ r.result }}</td>
-                <td>{{ r.unit }}</td>
-                <td>{{ r.date_reported }}</td>
-                <td>
-                    <a href="{% url 'hematology_update' r.patient.surname r.id %}">Update</a>
-                </td>
-            </tr>
-            {% endfor %}
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for r in hematology_results %}
+          <tr class="bg-gray-100 hover:bg-gray-200 transition-colors duration-300">
+            <td class="px-6 py-4 whitespace-nowrap">{{ forloop.counter }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ r.test }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="text-sm">{{ r.result }}</span>
+              <span class="text-xs">{{ r.unit }}</span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ r.date_reported }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <a href="{% url 'hematology_update' r.patient.surname r.id %}" class="text-blue-500 hover:text-blue-700">Update</a>
+            </td>
+          </tr>
+          {% endfor %}
         </tbody>
-    </table>
+      </table>
+    </div>
+  </div>
 </div>
-{%endblock%}
+{% endblock %}
