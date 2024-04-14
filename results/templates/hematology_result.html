@@ -1,10 +1,25 @@
 {% extends 'base.html' %}
-{%load static %}
+{% load static %}
+
 {% block content %}
-  <h1>Hematology Test</h1>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">add</button>
-  </form>
+<div class="bg-gray-100 py-10">
+  <div class="max-w-md mx-auto bg-white rounded-xl shadow-black shadow-2xl p-8">
+    <h1 class="text-2xl font-bold mb-6">Hematology Test</h1>
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="space-y-2">
+        <label for="{{ field.id_for_label }}" class="block text-gray-700 font-medium">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+        <p class="text-gray-500 text-sm">{{ field.help_text }}</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+      <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        Add
+      </button>
+    </form>
+  </div>
+</div>
 {% endblock %}
