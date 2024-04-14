@@ -168,6 +168,21 @@ class HematologyListView(ListView):
     template_name='hematology_list.html'
     context_object_name='hematology_results'
 
+    def get_queryset(self):
+        queryset=super().get_queryset()
+        queryset=queryset.filter(result__isnull=False)
+        return queryset
+
+class HematologyRequestListView(ListView):
+    model=HematologyResult
+    template_name='hematology_request.html'
+    context_object_name='hematology_request'
+
+    def get_queryset(self):
+        queryset=super().get_queryset()
+        queryset=queryset.filter(result__isnull=True)
+        return queryset
+
 
 class HematologyResultCreateView(LoginRequiredMixin, CreateView):
     model = HematologyResult

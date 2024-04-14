@@ -38,7 +38,7 @@ class PatientAdmin(admin.ModelAdmin):
 
 @admin.register(HematologyResult)
 class HematologyResultAdmin(admin.ModelAdmin):
-    list_display = ('patient', 'test', 'result', 'unit', 'date_collected','date_reported')
+    list_display = ('patient', 'test', 'result', 'unit', 'created','updated')
     # list_filter = ('test', 'date_collected','date_reported','approved_by')
     # search_fields = ('patient__surname', 'patient__lab_no','patient__phone','approved_by')
     # list_per_page=10

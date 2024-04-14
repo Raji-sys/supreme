@@ -20,6 +20,7 @@ urlpatterns = [
     
     path('hematology/', HematologyView.as_view(), name='hematology'),
     path('hematology-list/', HematologyListView.as_view(), name='hematology_list'),
+    path('hematology-request/', HematologyRequestListView.as_view(), name='hematology_request'),
     path('hematology-result/create/<str:surname>/', HematologyResultCreateView.as_view(), name='hematology_result'),
     path('hematology-result/<str:surname>/<int:pk>/update/', HematologyResultUpdateView.as_view(), name='hematology_update'),
    

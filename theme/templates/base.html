@@ -26,8 +26,8 @@
 			{% if request.user.is_authenticated %}
 			  <div class="bg-white rounded p-1 text-emerald-700 text-center flex justify-center items-center align-middle gap-2">
 				<span class="text-blue-700 m-2 enom"><a href="{%url 'index' %}">{{request.user}}</a></span>
-				<a href="{%url 'create_profile' %}" class=" text-white bg-amber-600 rounded focus:opacity-10 text-xs p-2">NEW USER</a>
-				<a href="{%url 'profiles_list' %}" class=" text-white bg-cyan-600 rounded focus:opacity-10 text-xs p-2">USER LIST</a>
+				<a href="{%url 'create_profile' %}" class=" text-white bg-amber-600 rounded focus:opacity-10 text-xs p-2">CREATE NEW USER</a>
+				<!-- <a href="{%url 'profiles_list' %}" class=" text-white bg-cyan-600 rounded focus:opacity-10 text-xs p-2">USER LIST</a> -->
 			</div> 
 			<span class="enom md:text-md text-center text-white font-semibold m-3">
 					{% if request.user.is_authenticated %}

@@ -89,10 +89,10 @@ class HematologyResult(models.Model):
     unit = models.CharField(max_length=50, null=True, blank=True)
     comments=models.TextField(null=True, blank=True)
     natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
-    date_collected = models.DateField(null=True, blank=True)
     collected_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hematology_tests', null=True, blank=True)
     approved_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hematology_results', null=True, blank=True)
-    date_reported = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         if self.patient:
