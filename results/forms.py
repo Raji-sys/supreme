@@ -39,6 +39,12 @@ class PatientForm(forms.ModelForm):
 
 
 
+class HematologyTestForm(forms.ModelForm):
+    class Meta:
+        model = HematologyResult
+        fields = ['test']
+
+
 class HematologyResultForm(forms.ModelForm):
     class Meta:
         model = HematologyResult

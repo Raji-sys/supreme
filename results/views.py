@@ -186,7 +186,7 @@ class HematologyRequestListView(ListView):
 
 class HematologyResultCreateView(LoginRequiredMixin, CreateView):
     model = HematologyResult
-    form_class = HematologyResultForm
+    form_class = HematologyTestForm
     template_name = 'hematology_result.html'
 
     def form_valid(self, form):
