@@ -18,8 +18,7 @@
   <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-black shadow-2xl">
     <div class="text-center rounded-xl p-4 md:p-10 bg-cyan-50">
       <div class="flex justify-center space-x-4">
-        <div>{{ patient.surname|default_if_none:'' }}</div>
-        <div>{{ patient.other_names|default_if_none:'' }}</div>
+        <div>{{ patient.full_name|default_if_none:'' }}</div>
         <div>{{ patient.phone|default_if_none:'' }}</div>
         <div>{{ patient.gender|default_if_none:'' }}</div>
         <div>{{ patient.dob|default_if_none:'' }}</div>
