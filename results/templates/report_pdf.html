@@ -1,0 +1,154 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GENERAL REPORT</title>
+     <style>
+table {
+            width: auto;
+            margin-top: 1px; /* Adjust the top margin as needed */
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 0.5px solid #060501; /* Adjust the color as needed */
+            padding: 6px; /* Adjust the padding as needed */
+        }
+
+        /* Table header cell styles */
+        th {
+            background: #130d00; /* Adjust the background color as needed */
+            color: #fff; /* Text color for header */
+        }
+        .table-auto {
+            width: auto;
+            table-layout: auto;
+        }
+
+        .max-sm\:flex {
+            display: flex;
+            max-width: 100%;
+        }
+        .items-center {
+            align-items: center;
+        }
+
+        .justify-center {
+            justify-content: center;
+        }
+
+        /* Table body styles */
+        .bg-white {
+            background-color: #fff;
+        }
+
+        .border-2 {
+            border: 1px solid #010603; /* Adjust the color as needed */
+        }
+
+        .max-sm\:p-2,
+        .p-2 {
+            padding: 0.2rem;
+        }
+
+        .border-green-900 {
+            border: 1px solid #565d59; /* Adjust the color as needed */
+        }
+
+        .text-xs {
+            font-size: 1rem;
+        }
+
+
+        .border-b-2 {
+            border-bottom: 1px solid #fff; /* Adjust the color as needed */
+            color: #000; /* Text color for header */
+        }
+
+        .border-t-2 {
+            border-top: 1px solid #fff; /* Adjust the color as needed */
+            color: #000; /* Text color for header */
+        }
+
+        .p-3 {
+            padding: 0.2rem;
+        }
+
+        /* Table data row styles */
+        .text-gray-600 {
+            color: #1c1e21; /* Adjust the color as needed */
+        }
+
+        /* Table data cell styles */
+        .text-center {
+            text-align: center;
+        }
+        
+        .center {
+            text-align: center;
+        }
+
+        .center img {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+<table class="table-auto max-sm:flex items-center justify-center">
+        <tbody class="bg-white border-2 max-sm:p-2 p-2 overflow-x-auto border-green-900 text-xs">            
+            <tr class="text-xs text-white">
+                <th scope="col" class="border-2  p-2">S/N</th>
+                <th scope="col" class="border-2  p-2">FULLNAME</th>
+                <th scope="col" class="border-2  p-2">FILE NO</th>
+                <th scope="col" class="border-2  p-2">IPPIS NO</th>
+                <th scope="col" class="border-2  p-2">SEX</th>
+                <th scope="col" class="border-2  p-2" >DEPARTMENT</th>
+                <th scope="col" class="border-2  p-2">CURRENT POST</th>
+                <th scope="col" class="border-2  p-2">DOFA</th>
+            </tr>
+        {% for p in f %}
+        <tr class="text-xs p-2">
+           <td class="border-2  text-center">
+            {{forloop.counter}}
+           </td> 
+            <td class="border-2  p-2 text-center">
+               {{p.get_full_name|default_if_none:''|upper}} {{p.middle_name|default_if_none:''|upper}}
+            </td>
+            <td class="border-2  p-1 text-center">
+                {{p.file_no|default_if_none:''}}
+            </td>
+            <td class="border-2  p-2 text-center">
+                {{p.governmentappointment.ippis_no|default_if_none:''}}
+            </td>
+            <td class="border-2  p-2 text-center">
+                {{p.gender|default_if_none:''|upper}}
+            </td>
+            <td class="border-2  p-2 text-center">                
+                {{p.governmentappointment.department|default_if_none:''|upper}}
+            </td>
+            <td class="border-2  p-2 text-center">
+                {{p.governmentappointment.cpost|default_if_none:''|upper}}
+            </td>
+            <td class="border-2  p-2 text-center">
+                {{p.governmentappointment.dofa|date:'d-M-Y'|default_if_none:''|upper}}
+            </td>
+            </tr>
+            {%empty%}
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="text-2xl font-bold text-orange-600">record not found!</td>
+                <td class="p-2 m-2 "><a href="?" class="p-2 focus:opacity-10 bg-orange-500 text-white rounded w-fit"><i class="fa-solid fa-rotate fa-2xl"></i></a></td>
+            </tr>
+            {% endfor %}  
+</tbody>
+</table>
+</body>
+</html>

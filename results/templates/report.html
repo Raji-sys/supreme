@@ -1,0 +1,131 @@
+{%extends "base.html" %}
+{% block title %}general report{% endblock%}
+{% block content %}
+<div class="grid grid-rows-2 mt-0 relative">
+    <!-- start of first grid  -->
+    <div class="center-2 h-full overflow-y-auto ">
+        <div class="flex flex-row justify-center items-center rounded-md bg-cyan-800 p-2 text-white m-2">
+            <form method="get" class="text-xs text-center">
+                {% for field in gen_filter.form %}
+                {{field.errors}}
+                {% endfor %}
+                <div class="flex flex-wrap flex-row gap-1 justify-center items-center text-center">
+                    {% for field in gen_filter.form %}
+                    <div class="flex justify-center items-start flex-col">
+                        <label class="form-label">{{ field.label_tag }}</label>
+                        <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default:'' }}"
+                        class="text-xs text-zinc-700 focus:outline-none border border-cyan-300 p-1 rounded shadow-lg hover:shadow-xl">
+                        <span class="form-error">{{ field.errors }}</span>
+                    </div>
+                    {% endfor %}
+                    <div class="mt-4 flex justify-center align-middle ">
+                        <button type="submit" class="text-cyan-900 w-fit p-1 focus:opacity-10  bg-white rounded">
+                            <i class="fa-solid fa-search fa-lg"></i>
+                        </button>                     
+                    </div>
+                </div>
+                {% if request.GET.urlencode %}
+                <div class="m-2">
+                    <a href="?" class="m-1 p-2 focus:opacity-10 bg-orange-500 text-white rounded w-fit"><i class="fa-solid fa-rotate fa-2xl"></i></a>
+                    <a class="text-xl text-white focus:opacity-10  bg-green-600 m-1 p-1 rounded w-fit" href="{% url 'gen_pdf' %}?{{request.GET.urlencode}}">
+                        <i class="fa-solid fa-file-pdf fa-xl"></i></a>
+                        <a class="text-xl text-gray-100 focus:opacity-10 m-1 p-1 rounded w-fit" href="{% url 'gen_csv' %}?{{request.GET.urlencode}}">
+                            <i class="fa-solid fa-table fa-xl"></i></a>
+                        </div>
+            {%endif%}
+            </form>
+        </div>
+    </div>
+    <!-- end of first grid -->
+
+    {% if request.GET.urlencode %}
+    <div class="">
+    <table class="w-fit table-auto max-sm:flex flex shadow-2xl shadow-black rounded-xl mb-10 items-center justify-center mx-auto"> 
+        <tbody class="text-cyan-800 border-2 shadow-2xl shadow-black rounded-xl max-sm:p-4 p-1 overflow-x-auto border-cyan-600">            
+            <tr class="text-xs bg-cyan-900 rounded-xl text-white">
+                <th scope="col" class="border-l-2 border-b-2 border-b-white border-cyan-800 border-t-2 border-t-white ">S/N</th>
+                <th scope="col" class="border-2  p-2">SURNAME</th>
+                <th scope="col" class="border-2  p-2">MIDDLE NAME</th>
+                <th scope="col" class="border-2  p-2">FIRST NAME</th>
+                <th scope="col" class="border-2  p-2">FILE NUMBER</th>
+                <th scope="col" class="border-2  p-2">IPPIS NUMBER</th>
+                <th scope="col" class="border-2  p-2">SEX</th>
+                <th scope="col" class="border-2  p-2" >DEPARTMENT</th>
+                <th scope="col" class="border-2  p-2">CURRENT POST</th>
+                <th scope="col" class="border-2  p-4">DATE OF FIRST APPOINTMENT</th>
+            </tr>
+        {% for p in users %}
+        <tr class="text-xs text-cyan-900">
+           <td class="border-2 border-cyan-800 text-center p-2">
+            {{forloop.counter}}
+           </td> 
+            <td class="border-2 border-cyan-800 p-2 text-center">
+               {{p.last_name|default_if_none:''|upper}}
+            </td>
+            <td class="border-2 border-cyan-800 p-2 text-center">
+                {{p.middle_name|default_if_none:''|upper}}
+            </td>
+            <td class="border-2 border-cyan-800 p-2 text-center">
+                {{p.first_name|default_if_none:''|upper}}
+            </td>
+            <td class="border-2 border-cyan-800 p-2 text-center">
+                {{p.file_no|default_if_none:''}}
+            </td>
+            <td class="border-2 border-cyan-800 p-2 text-center">
+                {{p.governmentappointment.ippis_no|default_if_none:''}}
+            </td>
+            <td class="border-2 border-cyan-800 p-2 text-center">
+                {{p.gender|default_if_none:''|upper}}
+            </td>
+            <td class="border-2 border-cyan-800 p-2 text-center">                
+                {{p.governmentappointment.department|default_if_none:''|upper}}
+            </td>
+            <td class="border-2 border-cyan-800 p-2 text-center">
+                {{p.governmentappointment.cpost|default_if_none:''|upper}}
+            </td>
+            <td class="border-2 border-cyan-800 p-2 text-center">
+                {{p.governmentappointment.date_fapt|date:'d-M-Y'|default_if_none:''|upper}}
+            </td>
+            </tr>
+            {%empty%}
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="text-2xl font-bold text-orange-600">record not found!</td>
+                <td class="p-2 m-2 "><a href="?" class="p-2 focus:opacity-10 bg-orange-500 text-white rounded w-fit"><i class="fa-solid fa-rotate fa-2xl"></i></a></td>
+    
+            </tr>
+            {% endfor %}
+         <tr class="flex justify-center text-center p-1">
+            <td class="">        
+       <div class="text-center flex justify-center items-center">
+            <span class=" items-center">
+                  {% if page_obj.has_previous %}
+                <a href="?page=1" class="p-2 px-2 rounded-lg bg-cyan-900 text-white mr-2"><i class="fa-solid fa-angle-double-left fa-lg"></i></a>
+                <a href="?page={{page_obj.previous_page_number}}" class="p-2 px-2 rounded-lg bg-cyan-900 text-white"><i class="fa-solid fa-angle-left fa-lg"></i></a>
+                {% endif %}
+            </span>
+                <span class="text-sm text-gray-700 m-2 font-semibold">
+                    {{page_obj.number}} of {{page_obj.paginator.num_pages}}
+                </span>
+                <span class="flex item-center">
+                    {% if page_obj.has_next %}
+                    <a href="?page={{page_obj.next_page_number}}" class="p-2 px-2 rounded-lg bg-cyan-900 text-white mr-2"><i class="fa-solid fa-angle-right fa-lg"></i></a>
+                    <a href="?page={{page_obj.paginator.num_pages}}" class="p-2 px-2 rounded-lg bg-cyan-900 text-white"><i class="fa-solid fa-angle-double-right fa-lg"></i></a>
+                    {% endif %}
+                </span>
+            </div>
+        </td>
+        </tr>
+</tbody>
+</table>
+</div>
+</div>
+{% endif %}
+
+  <!-- end of second grid  -->
+  </div>
+{% endblock %}

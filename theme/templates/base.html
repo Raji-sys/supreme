@@ -20,20 +20,20 @@
 
 </head>
 
-<body class="bg-gray-50">
-	<header class="bg-red-100 mx-4 p-2 shadow-md border-b-2 border-gray-900">
+<body class="bg-gray-200">
+	<header class="bg-red-600 mx-4 p-2 shadow-md border-b-2 border-gray-900">
 		<nav class="flex flex-row flex-wrap justify-between">
 			{% if request.user.is_authenticated %}
 			  <div class="rounded p-1 text-emerald-700 text-center flex justify-center items-center align-middle gap-2">
-				<span class="text-blue-700 m-2 enom"><a href="{%url 'index' %}">{{request.user}}</a></span>
-				<a href="{%url 'create_profile' %}" class=" text-white bg-amber-600 rounded focus:opacity-10 text-xs p-2">CREATE NEW USER</a>
+				<span class="text-white m-2"><a href="{%url 'index' %}">{{request.user}}</a></span>
+				<a href="{%url 'create_profile' %}" class=" text-green-700 bg-white rounded focus:opacity-10 text-xs p-2">CREATE NEW USER</a>
 				<!-- <a href="{%url 'profiles_list' %}" class=" text-white bg-cyan-600 rounded focus:opacity-10 text-xs p-2">USER LIST</a> -->
 			</div> 
 			<span class="enom md:text-md text-center text-white font-semibold m-3">
 					{% if request.user.is_authenticated %}
 					<form method="POST" action="{%url 'logout' %}">{%csrf_token%}
-					<button type="submit">
-						<i class="fa-solid fa-x bg-rose-700 p-4 rounded focus:opacity-10"></i>
+					<button type="submit" class="border-4 border-white rounded-xl focus:opacity-10">
+						<i class="fa-solid fa-x bg-rose-700 p-4 rounded-xl "></i>
 					</button>
 						</form>
 					{%else%}

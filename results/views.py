@@ -147,6 +147,20 @@ class PatientListView(ListView):
     model=Patient
     template_name='patient_list.html'
     context_object_name='patients'
+    paginate_by = 10
+
+    def get_queryset(self):
+        patients = super().get_queryset().order_by('created')
+        patient_filter = PatientFilter(self.request.GET, queryset=patients)
+        return patient_filter.qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        total_patient = self.get_queryset().count()
+        context['patientFilter'] = PatientFilter(
+            self.request.GET, queryset=self.get_queryset())
+        context['total_patient'] = total_patient
+        return context
 
 
 class PatientDetailView(DetailView):
@@ -238,3 +252,52 @@ class HematologyResultUpdateView(LoginRequiredMixin, UpdateView):
 #     fields = ['lab_user', 'patient', 'test', 'result', 'unit', 'date']
 #     template_name = 'chemical_pathology_result_form.html'
 #     success_url = '/chemical_pathology/result/list/'
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+class ReportView(ListView):
+    model = HematologyResult
+    template_name = 'report.html'
+    paginate_by = 10
+    context_object_name = 'patient'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        hema_filter = HemaFilter(self.request.GET, queryset=queryset)
+        patient = hema_filter.qs.order_by('created')
+
+        return patient
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['hema_filter'] = HemaFilter(self.request.GET, queryset=self.get_queryset())
+        return context
+
+
+@login_required
+def report_pdf(request):
+    ndate = datetime.datetime.now()
+    filename = ndate.strftime('on_%d/%m/%Y_at_%I.%M%p.pdf')
+    f = HemaFilter(request.GET, queryset=User.objects.all()).qs
+
+    result = ""
+    for key, value in request.GET.items():
+        if value:
+            result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {request.user.username.upper()}"
+
+    context = {'f': f, 'pagesize': 'A4',
+               'orientation': 'landscape', 'result': result}
+    response = HttpResponse(content_type='application/pdf',
+                            headers={'Content-Disposition': f'filename="Report__{filename}"'})
+
+    buffer = BytesIO()
+
+    pisa_status = pisa.CreatePDF(get_template('report_pdf.html').render(
+        context), dest=buffer, encoding='utf-8', link_callback=fetch_resources)
+
+    if not pisa_status.err:
+        pdf = buffer.getvalue()
+        buffer.close()
+        response.write(pdf)
+        return response
+    return HttpResponse('Error generating PDF', status=500)

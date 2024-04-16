@@ -15,6 +15,35 @@
         {% endfor %}
       </section>
     <div class="max-w-6xl mx-auto rounded-xl p-4 shadow-black shadow-2xl bg-emerald-50">
+      <div class="flex justify-between m-1">
+        <div class="">
+            <span class="shadow-xl shadow-cyan-900 gap-4 bg-cyan-900 text-white uppercase max-sm:text-lg text-sm border-b-2 border-cyan-900 py-2 px-4 rounded-xl mx-2 w-fit">total staff
+                <span class=" shadow-white text-sm p-1 rounded-full bg-white text-cyan-900">{{total_patient}}</span>
+                    {% if request.GET.urlencode %}
+                    <span>
+                        <a href="?" class=" p-2 focus:opacity-10  focus:border-cyan-600 bg-orange-500text-white rounded shadow-lg hover:shadow-xl text-center w-fit">
+                            <i class="fa-solid fa-rotate fa-lg text-white"></i></a>
+                        </span>
+                        {%endif%}
+                    </span>
+                </div>
+      <div class="text-cyan-900">
+        <form method="get" class="text-xs">
+            <div class="text-center">
+                {% for field in patientFilter.form %}
+                <label for="{{field.id_for_label}}" class="inline">{{ field.label_tag }}</label>
+                <input type="field.field.widget.input_type" name="{{field.name}}"
+                class="text-center text-sm focus:outline-none w-fit text-cyan-950 p-2
+                rounded shadow-xl shadow-cyan-900 border-cyan-900 border"
+                {%if field.value%} value="{{field.value}}"{%endif%}> 
+                {% endfor %}
+                <button type="submit" class="shadow-xl shadow-cyan-900 w-fit p-3 focus:opacity-10 uppercase border-gray-500 focus:border-cyan-600 bg-cyan-900 text-white rounded hover:border-cyan-700 ">
+                    <i class="fa-solid fa-search fa-xl "></i>
+                </button>
+            </div>
+        </form>
+    </div>
+    </div>
       <div class="overflow-x-auto px-4 md:px-10 m-4">
         <table class="min-w-full divide-y divide-emerald-200">
           <thead class="bg-emerald-50">
