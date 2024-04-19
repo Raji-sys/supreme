@@ -98,57 +98,58 @@ table {
 </head>
 <body>
 
-<table class="table-auto max-sm:flex items-center justify-center">
-        <tbody class="bg-white border-2 max-sm:p-2 p-2 overflow-x-auto border-green-900 text-xs">            
-            <tr class="text-xs text-white">
-                <th scope="col" class="border-2  p-2">S/N</th>
-                <th scope="col" class="border-2  p-2">FULLNAME</th>
-                <th scope="col" class="border-2  p-2">FILE NO</th>
-                <th scope="col" class="border-2  p-2">IPPIS NO</th>
-                <th scope="col" class="border-2  p-2">SEX</th>
-                <th scope="col" class="border-2  p-2" >DEPARTMENT</th>
-                <th scope="col" class="border-2  p-2">CURRENT POST</th>
-                <th scope="col" class="border-2  p-2">DOFA</th>
-            </tr>
-        {% for p in f %}
-        <tr class="text-xs p-2">
-           <td class="border-2  text-center">
-            {{forloop.counter}}
-           </td> 
-            <td class="border-2  p-2 text-center">
-               {{p.get_full_name|default_if_none:''|upper}} {{p.middle_name|default_if_none:''|upper}}
+    <table class="min-w-full divide-y divide-gray-500">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S/N</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Test
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Patient
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Phone
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Result
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Date Reported
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Report By
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for i in f %}
+          <tr class="bg-gray-50 hover:bg-gray-200 transition-colors duration-300">
+            <td class="px-6 py-4 whitespace-nowrap">
+              {{forloop.counter}}
+          </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              {{ i.test|default_if_none:''|upper }}
             </td>
-            <td class="border-2  p-1 text-center">
-                {{p.file_no|default_if_none:''}}
+            <td class="px-6 py-4 whitespace-nowrap">
+              {{ i.patient|default_if_none:''|upper }}
             </td>
-            <td class="border-2  p-2 text-center">
-                {{p.governmentappointment.ippis_no|default_if_none:''}}
+            <td class="px-6 py-4 whitespace-nowrap">
+                {{ i.patient.phone|default_if_none:''|upper }}
+              </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="text-sm">{{ i.result|default_if_none:''|upper }}</span>
+              <span class="text-xs">{{ i.unit|default_if_none:''|upper }}</span>
             </td>
-            <td class="border-2  p-2 text-center">
-                {{p.gender|default_if_none:''|upper}}
+            <td class="px-6 py-4 whitespace-nowrap">
+              {{ i.updated|default_if_none:''|upper }}
             </td>
-            <td class="border-2  p-2 text-center">                
-                {{p.governmentappointment.department|default_if_none:''|upper}}
+            <td class="px-6 py-4 whitespace-nowrap">
+              {{ i.approved_by|default_if_none:''|upper }}
             </td>
-            <td class="border-2  p-2 text-center">
-                {{p.governmentappointment.cpost|default_if_none:''|upper}}
-            </td>
-            <td class="border-2  p-2 text-center">
-                {{p.governmentappointment.dofa|date:'d-M-Y'|default_if_none:''|upper}}
-            </td>
-            </tr>
-            {%empty%}
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td class="text-2xl font-bold text-orange-600">record not found!</td>
-                <td class="p-2 m-2 "><a href="?" class="p-2 focus:opacity-10 bg-orange-500 text-white rounded w-fit"><i class="fa-solid fa-rotate fa-2xl"></i></a></td>
-            </tr>
-            {% endfor %}  
-</tbody>
-</table>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
 </body>
 </html>

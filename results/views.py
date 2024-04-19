@@ -278,7 +278,7 @@ class ReportView(ListView):
 def report_pdf(request):
     ndate = datetime.datetime.now()
     filename = ndate.strftime('on_%d/%m/%Y_at_%I.%M%p.pdf')
-    f = HemaFilter(request.GET, queryset=User.objects.all()).qs
+    f = HemaFilter(request.GET, queryset=HematologyResult.objects.all()).qs
 
     result = ""
     for key, value in request.GET.items():

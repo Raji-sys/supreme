@@ -1,5 +1,6 @@
 from django.urls import path, include
 from .views import *
+from . import views
 
 urlpatterns = [
 
@@ -23,6 +24,8 @@ urlpatterns = [
     path('hematology-request/', HematologyRequestListView.as_view(), name='hematology_request'),
     path('hematology-result/create/<str:surname>/', HematologyResultCreateView.as_view(), name='hematology_result'),
     path('hematology-result/<str:surname>/<int:pk>/update/', HematologyResultUpdateView.as_view(), name='hematology_update'),
+    path('report/', ReportView.as_view(), name='report'),
+    path('pdf/', views.report_pdf, name='report_pdf'),
    
     # path('chempath/', ChempathView.as_view(), name='chempath'),    
     # path('chem-path-result/<int:pk>',ChemicalPathologyResultCreateView.as_view(), name='chem_path_result'),
