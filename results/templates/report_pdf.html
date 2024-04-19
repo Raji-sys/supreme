@@ -1,155 +1,87 @@
-{%load static%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GENERAL REPORT</title>
-     <style>
-table {
-            width: auto;
-            margin-top: 1px; /* Adjust the top margin as needed */
+    <title>Test Result</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #FBF8F6;
+            color: #7F1D1D;
+        }
+        h1 {
+            text-align: center;
+            color: #BE185D;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
             border-collapse: collapse;
+            background-color: #FFFFFF;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
         }
-
         th, td {
-            border: 0.5px solid #060501; /* Adjust the color as needed */
-            padding: 6px; /* Adjust the padding as needed */
+            padding: 10px;
+            border: 1px solid #FECDD3;
         }
-
-        /* Table header cell styles */
+        tr {
+            background-color: #FFF5F7;
+            color: #000000;
+        }
         th {
-            background: #130d00; /* Adjust the background color as needed */
-            color: #fff; /* Text color for header */
-        }
-        .table-auto {
-            width: auto;
-            table-layout: auto;
-        }
-
-        .max-sm\:flex {
-            display: flex;
-            max-width: 100%;
-        }
-        .items-center {
-            align-items: center;
-        }
-
-        .justify-center {
-            justify-content: center;
-        }
-
-        /* Table body styles */
-        .bg-white {
-            background-color: #fff;
-        }
-
-        .border-2 {
-            border: 1px solid #010603; /* Adjust the color as needed */
-        }
-
-        .max-sm\:p-2,
-        .p-2 {
-            padding: 0.2rem;
-        }
-
-        .border-green-900 {
-            border: 1px solid #565d59; /* Adjust the color as needed */
-        }
-
-        .text-xs {
-            font-size: 1rem;
-        }
-
-
-        .border-b-2 {
-            border-bottom: 1px solid #fff; /* Adjust the color as needed */
-            color: #000; /* Text color for header */
-        }
-
-        .border-t-2 {
-            border-top: 1px solid #fff; /* Adjust the color as needed */
-            color: #000; /* Text color for header */
-        }
-
-        .p-3 {
-            padding: 0.2rem;
-        }
-
-        /* Table data row styles */
-        .text-gray-600 {
-            color: #1c1e21; /* Adjust the color as needed */
-        }
-
-        /* Table data cell styles */
-        .text-center {
             text-align: center;
+            font-size: 18px;
+            background-color: #BE185D;
+            color: #FFFFFF;
         }
-        
-        .center {
-            text-align: center;
+        .variable {
+            font-weight: bold;
+            background-color: #FDE4E1;
+            padding: 5px 10px;
+            border-radius: 5px;
         }
-
-        .center img {
-            display: block;
-            margin: 0 auto;
+        .divider {
+            border-bottom: 1px solid #FECDD3;
+            margin: 30px 0;
+        }
+        .sp{
+          font-size:3rem;
+          padding: auto;
         }
     </style>
 </head>
 <body>
-
-    <table class="min-w-full divide-y divide-gray-500">
-        <thead class="bg-gray-100">
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S/N</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Test
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Patient
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Phone
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Result
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Date Reported
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Report By
-            </th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          {% for i in f %}
-          <tr class="bg-gray-50 hover:bg-gray-200 transition-colors duration-300">
-            <td class="px-6 py-4 whitespace-nowrap">
-              {{forloop.counter}}
-          </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              {{ i.test|default_if_none:''|upper }}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              {{ i.patient|default_if_none:''|upper }}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-                {{ i.patient.phone|default_if_none:''|upper }}
-              </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="text-sm">{{ i.result|default_if_none:''|upper }}</span>
-              <span class="text-xs">{{ i.unit|default_if_none:''|upper }}</span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              {{ i.updated|default_if_none:''|upper }}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              {{ i.approved_by|default_if_none:''|upper }}
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+  <h1 class="sp">SUPREME DIAGNOSTIC LABORATORIES</h1>
+    <h1>Test Result</h1>
+    {% for i in f %}
+    <table>
+        <tr>
+            <th colspan="2">{{ i.patient|default_if_none:''|upper }}</th>
+        </tr>
+        <tr>
+            <td><span class="variable">Test:</span></td>
+            <td>{{ i.test|default_if_none:''|upper }}</td>
+        </tr>
+        <tr>
+            <td><span class="variable">Result:</span></td>
+            <td>{{ i.result|default_if_none:''|upper }} {{ i.unit|default_if_none:''|upper }}</td>
+        </tr>
+        <tr>
+            <td><span class="variable">Report By:</span></td>
+            <td>{{ i.approved_by }}</td>
+        </tr>
+        <tr>
+            <td><span class="variable">Date Reported:</span></td>
+            <td>{{ i.updated }}</td>
+        </tr>
+    </table>
+    {% if not forloop.last %}
+    <div class="divider"></div>
+    {% endif %}
+    {% endfor %}
 </body>
 </html>

@@ -6,7 +6,8 @@
 {% block content %}
 <div class=" py-10">
   <div class="max-w-4xl mx-auto">
-    <div class="text-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="bg-white rounded-xl shadow-black shadow-2xl">
+    <div class="p-8 md:p-10 text-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div>
         <a href="{% url 'hematology' %}" class="block">
           <div class="bg-emerald-500 hover:bg-white hover:text-gray-600 rounded-lg shadow-lg p-8 border-2 border-white transition duration-300">
@@ -50,6 +51,7 @@
         </a>
       </div>
     </div>
+  </div>
   </div>
 </div>
 {% endblock %}
