@@ -1,5 +1,9 @@
-/Include
+/include
 /Lib
-/manage.py
+/lib
+/bin
+/lib64
+manage.py
 /pyvenv.cfg
-/Scripts
+/share
+/supreme
