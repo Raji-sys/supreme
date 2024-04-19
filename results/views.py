@@ -128,7 +128,7 @@ class PatientCreateView(CreateView):
     success_url = reverse_lazy('patients_list')
 
     def form_valid(self, form):
-        messages.success(self.request,'Patient created successfully')
+        messages.success(self.request,'Patient -created successfully')
         return super().form_valid(form)
 
 
@@ -150,7 +150,7 @@ class PatientListView(ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        patients = super().get_queryset().order_by('created')
+        patients = super().get_queryset().order_by('-created')
         patient_filter = PatientFilter(self.request.GET, queryset=patients)
         return patient_filter.qs
 
@@ -210,7 +210,7 @@ class HematologyResultCreateView(LoginRequiredMixin, CreateView):
         # Get the patient instance from the request
         patient = Patient.objects.get(surname=self.kwargs['surname'])
         form.instance.patient = patient
-        messages.success(self.request, 'Hematology result created successfully')
+        messages.success(self.request, 'Hematology result -created successfully')
         return super().form_valid(form)
     
     def get_success_url(self):
@@ -264,7 +264,7 @@ class ReportView(ListView):
         queryset = super().get_queryset()
 
         hema_filter = HemaFilter(self.request.GET, queryset=queryset)
-        patient = hema_filter.qs.order_by('created')
+        patient = hema_filter.qs.order_by('-created')
 
         return patient
 

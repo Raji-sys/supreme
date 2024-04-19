@@ -83,7 +83,7 @@
                 <span class="text-xs">{{ i.unit|default_if_none:''|upper }}</span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                {{ i.updated }}
+                {{ i.reported|default_if_none:'' }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 {{ i.approved_by }}
