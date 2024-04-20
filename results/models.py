@@ -18,25 +18,6 @@ class SerialNumberField(models.CharField):
         del kwargs["unique"]
         return name, path, args, kwargs
 
-    def pre_save(self, model_instance, add):
-        if not model_instance.patient_no:  # Check if patient_no is not set
-            # Get the last serial number from the database
-            last_instance = model_instance.__class__.objects.order_by('patient_no').last()
-
-            if last_instance:
-                last_patient_no = int(last_instance.patient_no)
-                new_patient_no = f"{last_patient_no + 1:0{len(str(last_patient_no + 1))}d}"
-            else:
-                new_patient_no = "0000001"
-
-            # Assign the new serial number
-            model_instance.patient_no = new_patient_no
-
-        # Validate the new serial number
-        try:
-            super(models.CharField, self).pre_save(model_instance, add)
-        except ValidationError as e:
-            raise ValidationError({"patient_no": e.messages})
 
 class Profile(models.Model):
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
@@ -91,9 +72,19 @@ class Patient(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
-        if not self.created:
-            self.created = timezone.now()
+        if not self.patient_no:
+            last_instance = self.__class__.objects.order_by('patient_no').last()
+
+            if last_instance:
+                last_patient_no = int(last_instance.patient_no)
+                new_patient_no = f"{last_patient_no + 1:07d}"  # 07 for 7 leading zeros
+            else:
+                new_patient_no = "0000001"
+
+            self.patient_no = new_patient_no
+
         super().save(*args, **kwargs)
+
 
     def get_absolute_url(self):
         return reverse('patient_details', args=[self.surname])
@@ -116,7 +107,7 @@ TEST = (
 
 class HematologyResult(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='hematology_result', null=True, blank=True)
-    result_code=models.UUIDField(primary_key=True, editable=False)
+    result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
     test = models.CharField(choices=TEST, max_length=100, null=True, blank=True)
     test_ref_range=models.CharField(max_length=50, null=True, blank=True)
     result = models.CharField(max_length=50, null=True, blank=True)
@@ -129,6 +120,20 @@ class HematologyResult(models.Model):
     reported = models.DateField(auto_now=True, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if not self.result_code:
+            last_instance = self.__class__.objects.order_by('result_code').last()
+
+            if last_instance:
+                last_result_code = int(last_instance.result_code.removeprefix('HEM'))
+                new_result_code = f"HEM{last_result_code + 1:03d}"
+            else:
+                new_result_code = "HEM001"
+
+            self.result_code = new_result_code
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         if self.patient:
