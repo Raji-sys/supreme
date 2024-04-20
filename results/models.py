@@ -19,9 +19,10 @@ class SerialNumberField(models.CharField):
         return name, path, args, kwargs
 
     def pre_save(self, model_instance, add):
-        if add:
+        if not model_instance.patient_no:  # Check if patient_no is not set
             # Get the last serial number from the database
             last_instance = model_instance.__class__.objects.order_by('patient_no').last()
+
             if last_instance:
                 last_patient_no = int(last_instance.patient_no)
                 new_patient_no = f"{last_patient_no + 1:0{len(str(last_patient_no + 1))}d}"
@@ -31,11 +32,11 @@ class SerialNumberField(models.CharField):
             # Assign the new serial number
             model_instance.patient_no = new_patient_no
 
-            # Validate the new serial number
-            try:
-                super(models.CharField, self).pre_save(model_instance, add)
-            except ValidationError as e:
-                raise ValidationError({"patient_no": e.messages})
+        # Validate the new serial number
+        try:
+            super(models.CharField, self).pre_save(model_instance, add)
+        except ValidationError as e:
+            raise ValidationError({"patient_no": e.messages})
 
 class Profile(models.Model):
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
