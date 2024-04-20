@@ -128,7 +128,7 @@ class PatientCreateView(CreateView):
     success_url = reverse_lazy('patients_list')
 
     def form_valid(self, form):
-        messages.success(self.request,'Patient -created successfully')
+        messages.success(self.request,'Patient created successfully')
         return super().form_valid(form)
 
 

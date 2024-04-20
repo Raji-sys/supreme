@@ -8,6 +8,7 @@
     <thead class="bg-gray-100">
       <tr>
         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S/N</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
           Test
         </th>
@@ -31,6 +32,9 @@
         <td class="px-6 py-4 whitespace-nowrap">
           {{forloop.counter}}
       </td>
+      <td class="px-6 py-4 whitespace-nowrap">
+        {{ result.result_code }}
+      </td>
         <td class="px-6 py-4 whitespace-nowrap">
           {{ result.test }}
         </td>
@@ -45,7 +49,7 @@
           {{ result.updated }}
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
-          {{ result.approved_by }}
+          {{ request.user }}
         </td>
       </tr>
       {% endfor %}

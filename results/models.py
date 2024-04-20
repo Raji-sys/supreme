@@ -4,7 +4,38 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
+class SerialNumberField(models.CharField):
+    description = "A unique serial number field with leading zeros"
+
+    def __init__(self, *args, **kwargs):
+        kwargs['unique'] = True
+        super().__init__(*args, **kwargs)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        del kwargs["unique"]
+        return name, path, args, kwargs
+
+    def pre_save(self, model_instance, add):
+        if add:
+            # Get the last serial number from the database
+            last_instance = model_instance.__class__.objects.order_by('patient_no').last()
+            if last_instance:
+                last_patient_no = int(last_instance.patient_no)
+                new_patient_no = f"{last_patient_no + 1:0{len(str(last_patient_no + 1))}d}"
+            else:
+                new_patient_no = "0000001"
+
+            # Assign the new serial number
+            model_instance.patient_no = new_patient_no
+
+            # Validate the new serial number
+            try:
+                super(models.CharField, self).pre_save(model_instance, add)
+            except ValidationError as e:
+                raise ValidationError({"patient_no": e.messages})
 
 class Profile(models.Model):
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
@@ -45,6 +76,7 @@ class Profile(models.Model):
         
 class Patient(models.Model):
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+    patient_no = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
     surname = models.CharField(max_length=300, blank=True, null=True)
     other_names = models.CharField(max_length=300, blank=True, null=True)
     sex = (('MALE', 'MALE'), ('FEMALE', 'FEMALE'))
@@ -80,17 +112,18 @@ TEST = (
         ('SICKLE CELL','SICKLE CELL'),('HYPOCHROMIA','HYPOCHROMIA'),('POLYCHROMASIA','POLYCHROMASIA'),('NUCLEATED RBC','NUCLEATED RBC'),('NUET','NUET'),('EOSIN','EOSIN'),
         ('BASO','BASO'),('TRANS LYMPH','TRANS LYMPH'),('LYMP','LYMP'),('MONO','MONO')
     )
-    
+
 class HematologyResult(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='hematology_result',null=True, blank=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='hematology_result', null=True, blank=True)
+    result_code=models.UUIDField(primary_key=True, editable=False)
     test = models.CharField(choices=TEST, max_length=100, null=True, blank=True)
     test_ref_range=models.CharField(max_length=50, null=True, blank=True)
     result = models.CharField(max_length=50, null=True, blank=True)
     unit = models.CharField(max_length=50, null=True, blank=True)
     comments=models.TextField(null=True, blank=True)
     natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
-    collected_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hematology_tests', null=True, blank=True)
-    approved_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hematology_results', null=True, blank=True)
+    # collected_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hematology_tests', null=True, blank=True)
+    # approved_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hematology_results', null=True, blank=True)
     collected = models.DateField(auto_now=True, null=True,blank=True)
     reported = models.DateField(auto_now=True, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)

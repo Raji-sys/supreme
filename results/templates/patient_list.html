@@ -52,6 +52,9 @@
                     S/N
                 </th>
               <th class="px-6 py-3 text-left text-xs font-medium text-emerald-500 uppercase tracking-wider">
+                Patient Number
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-emerald-500 uppercase tracking-wider">
                 Surname
               </th>
               <th class="px-6 py-3 text-left text-xs font-medium text-emerald-500 uppercase tracking-wider">
@@ -65,14 +68,16 @@
                 <td class="px-6 py-4 whitespace-nowrap">
                     {{forloop.counter}}
                 </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  {{ p.patient_no }}
+                </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 {{ p.full_name }}
               </td>
             <td class="px-6 py-4 whitespace-nowrap">
                 <span class="space-x-4">
-                    <a href="{% url 'update_patient' p.id %}" class="text-blue-500 hover:text-blue-700">Update Patient Information</a>
-                    <!-- <a href="{% url 'patient_details' p.surname %}" class="text-blue-500 hover:text-blue-700">Open Patient File</a> -->
-                    <a href="{{p.get_absolute_url}}" class="text-blue-500 hover:text-blue-700">Open Patient File</a>
+                    <a href="{% url 'update_patient' p.patient_no %}" class="text-blue-500 hover:text-blue-700">Update</a>
+                    <a href="{{p.get_absolute_url}}" class="text-blue-500 hover:text-blue-700">File</a>
                 </span>
               </td>
               <td>

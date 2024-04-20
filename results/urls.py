@@ -15,7 +15,7 @@ urlpatterns = [
 
     path('create-patient/', PatientCreateView.as_view(), name='create_patient'),
     path('patients-list/', PatientListView.as_view(), name='patients_list'),
-    path('update-patient/<int:pk>', PatientUpdateView.as_view(), name='update_patient'),
+    path('update-patient/<int:patient_no>', PatientUpdateView.as_view(), name='update_patient'),
     path('patient/<str:surname>/', PatientDetailView.as_view(), name='patient_details'),
 
     
@@ -23,7 +23,7 @@ urlpatterns = [
     path('hematology-list/', HematologyListView.as_view(), name='hematology_list'),
     path('hematology-request/', HematologyRequestListView.as_view(), name='hematology_request'),
     path('hematology-result/create/<str:surname>/', HematologyResultCreateView.as_view(), name='hematology_result'),
-    path('hematology-result/<str:surname>/<int:pk>/update/', HematologyResultUpdateView.as_view(), name='hematology_update'),
+    path('hematology-result/<str:surname>/<str:result_code>/update/', HematologyResultUpdateView.as_view(), name='hematology_update'),
     path('report/', ReportView.as_view(), name='report'),
     path('pdf/', views.report_pdf, name='report_pdf'),
    

@@ -69,7 +69,7 @@
             <td class="px-6 py-4 whitespace-nowrap">{{ r.comment|default_if_none:'' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ r.updated|default_if_none:'' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <a href="{% url 'hematology_update' r.patient.surname r.id %}" class="text-blue-500 hover:text-blue-700">Update</a>
+              <a href="{% url 'hematology_update' r.patient.surname r.result_code %}" class="text-blue-500 hover:text-blue-700">Update</a>
             </td>
           </tr>
           {% endfor %}
