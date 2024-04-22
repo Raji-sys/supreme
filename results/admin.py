@@ -29,7 +29,7 @@ class CustomUserAdmin(UserAdmin):
 # Register the Patient model
 @admin.register(Patient)
 class PatientAdmin(admin.ModelAdmin):
-    list_display = ('surname', 'other_names', 'gender', 'dob', 'phone')
+    list_display = ('surname', 'other_names', 'gender', 'dob', 'phone',)
     search_fields = ('surname',)
     list_filter = ('gender',)
 
@@ -38,7 +38,20 @@ class PatientAdmin(admin.ModelAdmin):
 
 @admin.register(HematologyResult)
 class HematologyResultAdmin(admin.ModelAdmin):
-    list_display = ('patient', 'test', 'result', 'unit', 'created','updated')
+    list_display = ('patient', 'test', 'result', 'unit', 'created','updated',)
+    # list_filter = ('test', 'date_collected','date_reported','approved_by')
+    # search_fields = ('patient__surname', 'patient__lab_no','patient__phone','approved_by')
+    # list_per_page=10
+    # ordering = ['test']
+
+    # def save_model(self, request, obj, form, change):
+    #     if not obj.approved_by:
+    #         obj.approved_by=request.user
+    #     obj.save()
+
+@admin.register(ChemicalPathologyResult)
+class ChempathResultAdmin(admin.ModelAdmin):
+    list_display = ('patient', 'test', 'result', 'unit', 'created','updated',)
     # list_filter = ('test', 'date_collected','date_reported','approved_by')
     # search_fields = ('patient__surname', 'patient__lab_no','patient__phone','approved_by')
     # list_per_page=10
@@ -50,21 +63,25 @@ class HematologyResultAdmin(admin.ModelAdmin):
     #     obj.save()
 
 
-# Register the HematologyTest model
-# @admin.register(HematologyTest)
-# class ChemicalPathologyTestAdmin(admin.ModelAdmin):
-#     list_display = ('name', 'reference_range')
+@admin.register(MicrobiologyResult)
+class MicroResultAdmin(admin.ModelAdmin):
+    list_display = ('patient', 'test', 'result', 'unit', 'created','updated',)
+    # list_filter = ('test', 'date_collected','date_reported','approved_by')
+    # search_fields = ('patient__surname', 'patient__lab_no','patient__phone','approved_by')
+    # list_per_page=10
+    # ordering = ['test']
+
+    # def save_model(self, request, obj, form, change):
+    #     if not obj.approved_by:
+    #         obj.approved_by=request.user
+    #     obj.save()
 
 
-# @admin.register(HematologyResult)
-# class ChemicalPathologyResultAdmin(admin.ModelAdmin):
-#     list_display = ('patient', 'test', 'result', 'unit', 'date_collected','date_reported')
-#     list_filter = ('test', 'date_collected','date_reported','approved_by')
-#     search_fields = ('patient__surname', 'patient__lab_no','patient__phone','approved_by')
-#     list_per_page=10
-#     ordering = ['test']
+@admin.register(MicrobiologyTest)
+class MicroTestAdmin(admin.ModelAdmin):
+    list_display = ('name','category','reference_range',)
 
-#     def save_model(self, request, obj, form, change):
-#         if not obj.lab_user:
-#             obj.lab_user=request.user
-#         obj.save()
+
+@admin.register(MicroTestCategory)
+class MicroTestCategoryAdmin(admin.ModelAdmin):
+    list_display = ('name',)

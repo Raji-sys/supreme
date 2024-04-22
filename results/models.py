@@ -188,13 +188,22 @@ class ChemicalPathologyResult(models.Model):
             return f"{self.patient.surname} - {self.test} - {self.result}"
 
 
+class MicroTestCategory(models.Model):
+    name = models.CharField(max_length=100,null=True,blank=True)
+    def __str__(self):
+        return self.name
+    
 class MicrobiologyTest(models.Model):
     name = models.CharField(max_length=100,null=True,blank=True)
+    category=models.ForeignKey(MicroTestCategory,on_delete=models.CASCADE,null=True,blank=True)
     reference_range = models.CharField(max_length=200,null=True,blank=True)
+    def __str__(self):
+        return self.name
 
 
 class MicrobiologyResult(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='microbiology_results',null=True, blank=True)
+    category=models.ForeignKey(MicroTestCategory,on_delete=models.CASCADE,null=True,blank=True)
     test = models.ForeignKey(MicrobiologyTest, on_delete=models.CASCADE, null=True, blank=True)
     result = models.FloatField(null=True, blank=True)
     unit = models.CharField(max_length=50, null=True, blank=True)

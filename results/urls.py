@@ -32,10 +32,17 @@ urlpatterns = [
     path('chempath-request/',ChempathRequestListView.as_view(),name='chempath_request'),
     path('chempath-test/create/<str:surname>/',ChempathTestCreateView.as_view(), name='chempath_test'),
     path('chempath-result/create/<str:surname>/<int:pk>/',ChempathResultCreateView.as_view(), name='chempath_result'),
-
     path('chempath-report/', ChempathReportView.as_view(), name='chempath_report'),
     path('chempath-pdf/', views.chempath_report_pdf, name='chempath_report_pdf'),
 
+    path('micro/', MicrobiologyView.as_view(), name='micro'),    
+    path('micro-list/',MicroListView.as_view(),name='micro_list'),
+    path('micro-request/',MicroRequestListView.as_view(),name='micro_request'),
+    path('micro-test/create/<str:surname>/',MicroTestCreateView.as_view(), name='micro_test'),
+    path('micro-result/create/<str:surname>/<int:pk>/',MicroResultCreateView.as_view(), name='micro_result'),
+    path('micro-report/', MicroReportView.as_view(), name='micro_report'),
+    path('micro-pdf/', views.micro_report_pdf, name='micro_report_pdf'),
+    path('get_tests_for_category/',views.get_tests_for_category,name="get_tests_for_category"),
     path('logout/', CustomLogoutView.as_view(), name='logout'),
     path('', include('django.contrib.auth.urls')),
 ]

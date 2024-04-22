@@ -60,3 +60,25 @@ class ChempathResultForm(forms.ModelForm):
     class Meta:
         model = ChemicalPathologyResult
         fields = ['test', 'result', 'unit']
+
+
+class MicroTestForm(forms.ModelForm):
+    class Meta:
+        model = MicrobiologyResult
+        fields = ['category','test']
+
+    def __init__(self,*args, **kwargs):
+        super().__init__(*args,**kwargs)
+        self.fields['test'].queryset=MicrobiologyTest.objects.all()
+        for field in self.fields.values():
+            field.required=True
+
+    def clean(self):
+        cleaned_data=super().clean()
+        category=cleaned_data.get('category')
+        test=cleaned_data.get('test')
+
+class MicroResultForm(forms.ModelForm):
+    class Meta:
+        model = MicrobiologyResult
+        fields = ['category','test', 'result', 'unit']
