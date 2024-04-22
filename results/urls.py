@@ -25,7 +25,7 @@ urlpatterns = [
     path('hematology-test/create/<str:surname>/', HematologyTestCreateView.as_view(), name='hematology_test'),
     path('hematology-result/create/<str:surname>/<int:pk>/', HematologyResultCreateView.as_view(), name='hematology_result'),
     path('hematology-report/', ReportView.as_view(), name='report'),
-    path('hematology-pdf/', views.report_pdf, name='report_pdf'),
+    path('hematology-pdf/', views.hema_report_pdf, name='report_pdf'),
    
     path('chempath/', ChempathView.as_view(), name='chempath'),    
     path('chempath-list/',ChempathListView.as_view(),name='chempath_list'),

@@ -92,7 +92,7 @@
                 {{ i.reported|default_if_none:'' }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                {{ i.approved_by }}
+                {{ request.user }}
               </td>
             </tr>
             {% empty %}

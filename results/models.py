@@ -203,6 +203,7 @@ class MicrobiologyTest(models.Model):
 
 class MicrobiologyResult(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='microbiology_results',null=True, blank=True)
+    result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
     category=models.ForeignKey(MicroTestCategory,on_delete=models.CASCADE,null=True,blank=True)
     test = models.ForeignKey(MicrobiologyTest, on_delete=models.CASCADE, null=True, blank=True)
     result = models.FloatField(null=True, blank=True)
@@ -213,6 +214,20 @@ class MicrobiologyResult(models.Model):
     reported = models.DateField(auto_now=True, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.result_code:
+            last_instance = self.__class__.objects.order_by('result_code').last()
+
+            if last_instance:
+                last_result_code = int(last_instance.result_code.removeprefix('MIC'))
+                new_result_code = f"MIC{last_result_code + 1:03d}"
+            else:
+                new_result_code = "MIC001"
+
+            self.result_code = new_result_code
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         if self.patient:
