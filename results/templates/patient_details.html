@@ -31,13 +31,13 @@
     <a href="{% url 'chempath_test' patient.surname %}" class="text-sm text-blue-500 hover:text-blue-700">chemical pathology</a>
         </div>
         <div>
-    <a href="{% url 'hematology_result' patient.surname %}" class="text-sm text-blue-500 hover:text-blue-700">microbiology</a>
+    <a href="{% url 'chempath_test' patient.surname %}" class="text-sm text-blue-500 hover:text-blue-700">microbiology</a>
         </div>
         <div>
-    <a href="{% url 'hematology_result' patient.surname %}" class="text-sm text-blue-500 hover:text-blue-700">serology</a>
+    <a href="{% url 'chempath_test' patient.surname %}" class="text-sm text-blue-500 hover:text-blue-700">serology</a>
         </div>
         <div>
-    <a href="{% url 'hematology_result' patient.surname %}" class="text-sm text-blue-500 hover:text-blue-700">general</a>
+    <a href="{% url 'chempath_test' patient.surname %}" class="text-sm text-blue-500 hover:text-blue-700">general</a>
         </div>
       </div>
     </div>
@@ -105,7 +105,7 @@
             <td class="px-6 py-4 whitespace-nowrap">{{ c.comment|default_if_none:'' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ c.updated|default_if_none:'' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <a href="{% url 'chemapath_result' c.patient.surname c.id %}" class="text-blue-500 hover:text-blue-700">input result</a>
+              <a href="{% url 'chempath_result' c.patient.surname c.id %}" class="text-blue-500 hover:text-blue-700">input result</a>
             </td>
           </tr>
           {% endfor %}

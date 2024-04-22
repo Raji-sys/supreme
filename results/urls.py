@@ -33,8 +33,8 @@ urlpatterns = [
     path('chempath-test/create/<str:surname>/',ChempathTestCreateView.as_view(), name='chempath_test'),
     path('chempath-result/create/<str:surname>/<int:pk>/',ChempathResultCreateView.as_view(), name='chempath_result'),
 
-    path('chempath-report/', ReportView.as_view(), name='chempath_report'),
-    path('chempath-pdf/', views.report_pdf, name='chempath_report_pdf'),
+    path('chempath-report/', ChempathReportView.as_view(), name='chempath_report'),
+    path('chempath-pdf/', views.chempath_report_pdf, name='chempath_report_pdf'),
 
     path('logout/', CustomLogoutView.as_view(), name='logout'),
     path('', include('django.contrib.auth.urls')),

@@ -157,6 +157,7 @@ CHEMPATH_TEST=[
 
 class ChemicalPathologyResult(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='chemical_pathology_results',null=True, blank=True)
+    result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
     test = models.CharField(choices=CHEMPATH_TEST, max_length=100, null=True, blank=True)
     test_ref_range=models.CharField(max_length=50, null=True, blank=True)
     result = models.FloatField(null=True, blank=True)

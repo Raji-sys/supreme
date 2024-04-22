@@ -175,6 +175,7 @@ class PatientDetailView(DetailView):
         context=super().get_context_data(**kwargs)
         patient=self.get_object()
         context['hematology_results']=patient.hematology_result.all()
+        context['chempath_results']=patient.chemical_pathology_results.all()
         return context
     
 class HematologyListView(ListView):
@@ -332,7 +333,7 @@ class ChempathResultCreateView(LoginRequiredMixin, UpdateView):
 
     def get_object(self, queryset=None):
         patient = Patient.objects.get(surname=self.kwargs['surname'])
-        return HematologyResult.objects.get(patient=patient, pk=self.kwargs['pk'])
+        return ChemicalPathologyResult.objects.get(patient=patient, pk=self.kwargs['pk'])
 
     def form_valid(self, form):
         messages.success(self.request, 'Chemical pathology result updated successfully')
