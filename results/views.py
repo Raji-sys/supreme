@@ -51,11 +51,11 @@ class DashboardView(TemplateView):
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 class HematologyView(TemplateView):
-    template_name = "hematology.html"
+    template_name = "hema/hematology.html"
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 class ChempathView(TemplateView):
-    template_name = "chempath.html"
+    template_name = "chempath/chempath.html"
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 class MicrobiologyView(TemplateView):
@@ -83,7 +83,7 @@ class CustomLogoutView(LogoutView):
 
 class UserProfileCreateView(CreateView):
     form_class = CustomUserCreationForm
-    template_name = 'patient_create.html'
+    template_name = 'profile/profile_create.html'
     success_url = reverse_lazy('profile_list')
 
     def form_valid(self, form):
@@ -100,7 +100,7 @@ class UserProfileCreateView(CreateView):
             return self.form_invalid(form)
     
 class ProfileDetailView(DetailView):
-    template_name = 'profile_details.html'
+    template_name = 'profile/profile_details.html'
     model = Profile
     context_object_name='profile'
 
@@ -120,14 +120,14 @@ class ProfileDetailView(DetailView):
 
 class ProfileListView(ListView):
     model = Profile
-    template_name = "profile_list.html"
+    template_name = "profile/profile_list.html"
     context_object_name = 'profiles'
 
     
 class PatientCreateView(CreateView):
     model = Patient
     form_class= PatientForm
-    template_name = 'patient_create.html'
+    template_name = 'patient/patient_create.html'
     success_url = reverse_lazy('patients_list')
 
     def form_valid(self, form):
@@ -138,7 +138,7 @@ class PatientCreateView(CreateView):
 class PatientUpdateView(UpdateView):
     model = Patient
     fields = ['surname', 'other_names', 'gender', 'dob', 'phone']
-    template_name = 'patient_create.html'
+    template_name = 'patient/patient_create.html'
     success_url = reverse_lazy('patients_list')
  
     def form_valid(self, form):
@@ -148,7 +148,7 @@ class PatientUpdateView(UpdateView):
 
 class PatientListView(ListView):
     model=Patient
-    template_name='patient_list.html'
+    template_name='patient/patient_list.html'
     context_object_name='patients'
     paginate_by = 10
 
@@ -168,7 +168,7 @@ class PatientListView(ListView):
 
 class PatientDetailView(DetailView):
     model=Patient
-    template_name='patient_details.html'
+    template_name='patient/patient_details.html'
     context_object_name='patient'
 
     def get_object(self, queryset=None):
@@ -184,7 +184,7 @@ class PatientDetailView(DetailView):
     
 class HematologyListView(ListView):
     model=HematologyResult
-    template_name='hematology_list.html'
+    template_name='hema/hematology_list.html'
     context_object_name='hematology_results'
 
     def get_queryset(self):
@@ -194,7 +194,7 @@ class HematologyListView(ListView):
 
 class HematologyRequestListView(ListView):
     model=HematologyResult
-    template_name='hematology_request.html'
+    template_name='hema/hematology_request.html'
     context_object_name='hematology_request'
 
     def get_queryset(self):
@@ -206,7 +206,7 @@ class HematologyRequestListView(ListView):
 class HematologyTestCreateView(LoginRequiredMixin, CreateView):
     model = HematologyResult
     form_class = HematologyTestForm
-    template_name = 'hematology_result.html'
+    template_name = 'hema/hematology_result.html'
 
     def form_valid(self, form):
         # Set the approved_by field to the current user
@@ -224,7 +224,7 @@ class HematologyTestCreateView(LoginRequiredMixin, CreateView):
 class HematologyResultCreateView(LoginRequiredMixin, UpdateView):
     model = HematologyResult
     form_class = HematologyResultForm
-    template_name = 'hematology_update.html'
+    template_name = 'hema/hematology_update.html'
     context_object_name = 'result'
 
     def get_object(self, queryset=None):
@@ -242,7 +242,7 @@ class HematologyResultCreateView(LoginRequiredMixin, UpdateView):
 @method_decorator(login_required(login_url='login'), name='dispatch')
 class ReportView(ListView):
     model = HematologyResult
-    template_name = 'report.html'
+    template_name = 'hema/hema_report.html'
     paginate_by = 10
     context_object_name = 'patient'
 
@@ -261,7 +261,7 @@ class ReportView(ListView):
 
 
 @login_required
-def report_pdf(request):
+def hema_report_pdf(request):
     ndate = datetime.datetime.now()
     filename = ndate.strftime('on_%d/%m/%Y_at_%I.%M%p.pdf')
     f = HemaFilter(request.GET, queryset=HematologyResult.objects.all()).qs
@@ -291,7 +291,7 @@ def report_pdf(request):
 
 class ChempathListView(ListView):
     model=ChemicalPathologyResult
-    template_name='chempath_list.html'
+    template_name='chempath/chempath_list.html'
     context_object_name='chempath_results'
 
     def get_queryset(self):
@@ -301,7 +301,7 @@ class ChempathListView(ListView):
 
 class ChempathRequestListView(ListView):
     model=ChemicalPathologyResult
-    template_name='chempath_request.html'
+    template_name='chempath/chempath_request.html'
     context_object_name='chempath_request'
 
     def get_queryset(self):
@@ -313,7 +313,7 @@ class ChempathRequestListView(ListView):
 class ChempathTestCreateView(LoginRequiredMixin, CreateView):
     model=ChemicalPathologyResult
     form_class = ChempathTestForm
-    template_name = 'chempath_result.html'
+    template_name = 'chempath/chempath_result.html'
 
     def form_valid(self, form):
         # Set the approved_by field to the current user
@@ -332,7 +332,7 @@ class ChempathTestCreateView(LoginRequiredMixin, CreateView):
 class ChempathResultCreateView(LoginRequiredMixin, UpdateView):
     model=ChemicalPathologyResult
     form_class = ChempathResultForm
-    template_name = 'chempath_update.html'
+    template_name = 'chempath/chempath_update.html'
     context_object_name = 'result'
 
     def get_object(self, queryset=None):
@@ -350,7 +350,7 @@ class ChempathResultCreateView(LoginRequiredMixin, UpdateView):
 @method_decorator(login_required(login_url='login'), name='dispatch')
 class ChempathReportView(ListView):
     model=ChemicalPathologyResult
-    template_name = 'chempath_report.html'
+    template_name = 'chempath/chempath_report.html'
     paginate_by = 10
     context_object_name = 'patient'
 
