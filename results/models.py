@@ -187,6 +187,29 @@ class ChemicalPathologyResult(models.Model):
         if self.patient:
             return f"{self.patient.surname} - {self.test} - {self.result}"
 
+
+class MicrobiologyTest(models.Model):
+    name = models.CharField(max_length=100,null=True,blank=True)
+    reference_range = models.CharField(max_length=200,null=True,blank=True)
+
+
+class MicrobiologyResult(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='microbiology_results',null=True, blank=True)
+    test = models.ForeignKey(MicrobiologyTest, on_delete=models.CASCADE, null=True, blank=True)
+    result = models.FloatField(null=True, blank=True)
+    unit = models.CharField(max_length=50, null=True, blank=True)
+    comments=models.TextField(null=True, blank=True)
+    natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
+    collected = models.DateField(auto_now=True, null=True,blank=True)
+    reported = models.DateField(auto_now=True, null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        if self.patient:
+            return f"{self.patient} -{self.test} - {self.result}"
+
+
 # class SerologyTest(models.Model):
 #     SEROLOGY_TEST_CHOICES=[
 #     ('',''),('',''),('','')
@@ -210,28 +233,6 @@ class ChemicalPathologyResult(models.Model):
 #         if self.patient:
 #             return f"{self.patient} -{self.test} - {self.result}"
 
-# class MicrobiologyTest(models.Model):
-#     MICROBIOLOGY_TEST_CHOICES=[
-#     ('',''),('',''),('','')
-#     ]
-#     name = models.CharField(max_length=100, choices=MICROBIOLOGY_TEST_CHOICES)
-#     reference_range = models.TextField()
-
-
-# class MicrobiologyResult(models.Model):
-#     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='microbiology_results',null=True, blank=True)
-#     test = models.ForeignKey(HematologyTest, on_delete=models.CASCADE, null=True, blank=True)
-#     result = models.FloatField(null=True, blank=True)
-#     unit = models.CharField(max_length=50, null=True, blank=True)
-#     comments=models.TextField(null=True, blank=True)
-#     natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
-#     date_collected = models.DateField(null=True, blank=True)
-#     approved_by = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='microbiology_results', null=True, blank=True)
-#     date_reported = models.DateTimeField(auto_now_add=True)
-
-#     def __str__(self):
-#         if self.patient:
-#             return f"{self.patient} -{self.test} - {self.result}"
 
 # class GeneralTest(models.Model):
 #     GENERAL_TEST_CHOICES=[
