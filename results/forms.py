@@ -38,7 +38,6 @@ class PatientForm(forms.ModelForm):
         fields = ['surname', 'other_names', 'gender', 'phone']
 
 
-
 class HematologyTestForm(forms.ModelForm):
     class Meta:
         model = HematologyResult
@@ -51,13 +50,13 @@ class HematologyResultForm(forms.ModelForm):
         fields = ['test', 'result', 'unit']
 
 
-# class ChemicalPathologyTestForm(forms.ModelForm):
-#     class Meta:
-#         model = ChemicalPathologyTest
-#         fields = ['name', 'reference_range']
+class ChempathTestForm(forms.ModelForm):
+    class Meta:
+        model = ChemicalPathologyResult
+        fields = ['test']
 
 
-# class ChemicalPathologyResultForm(forms.ModelForm):
-#     class Meta:
-#         model = ChemicalPathologyResult
-#         fields = ['approved_by', 'patient', 'test', 'result', 'unit']
+class ChempathResultForm(forms.ModelForm):
+    class Meta:
+        model = ChemicalPathologyResult
+        fields = ['test', 'result', 'unit']

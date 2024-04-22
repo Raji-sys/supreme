@@ -25,10 +25,10 @@
       </div>
       <div class="uppercase flex justify-center gap-4">
         <div >
-    <a href="{% url 'hematology_result' patient.surname %}" class="text-sm text-blue-500 hover:text-blue-700">hematology</a>
+    <a href="{% url 'hematology_test' patient.surname %}" class="text-sm text-blue-500 hover:text-blue-700">hematology</a>
         </div>
         <div>
-    <a href="{% url 'hematology_result' patient.surname %}" class="text-sm text-blue-500 hover:text-blue-700">chemical pathology</a>
+    <a href="{% url 'chempath_test' patient.surname %}" class="text-sm text-blue-500 hover:text-blue-700">chemical pathology</a>
         </div>
         <div>
     <a href="{% url 'hematology_result' patient.surname %}" class="text-sm text-blue-500 hover:text-blue-700">microbiology</a>
@@ -69,7 +69,43 @@
             <td class="px-6 py-4 whitespace-nowrap">{{ r.comment|default_if_none:'' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ r.updated|default_if_none:'' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <a href="{% url 'hematology_update' r.patient.surname r.id %}" class="text-blue-500 hover:text-blue-700">Update</a>
+              <a href="{% url 'hematology_result' r.patient.surname r.id %}" class="text-blue-500 hover:text-blue-700">input result</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="overflow-x-auto px-4 md:px-10 m-4">
+      <table class="min-w-full divide-y divide-cyan-200 mb-4">
+        <thead class="bg-cyan-50">
+
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">S/N</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Test</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Date Collected</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Result</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Comment</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Date Reported</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Actions</th>
+          </tr>
+
+        </thead>
+        <tbody class="bg-white divide-y divide-cyan-200">
+          {% for c in chempath_results %}
+          <tr class="bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
+            <td class="px-6 py-4 whitespace-nowrap">{{ forloop.counter }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ c.test|default_if_none:''}}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ c.created|default_if_none:'' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="text-sm">{{ c.result|default_if_none:'' }}</span>
+              <span class="text-xs">{{ c.unit|default_if_none:'' }}</span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ c.comment|default_if_none:'' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ c.updated|default_if_none:'' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <a href="{% url 'chemapath_result' c.patient.surname c.id %}" class="text-blue-500 hover:text-blue-700">input result</a>
             </td>
           </tr>
           {% endfor %}

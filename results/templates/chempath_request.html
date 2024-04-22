@@ -16,40 +16,37 @@
           Patient
         </th>
         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          Result
+          Date Collected
         </th>
         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          Date Reported
-        </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          Report By
+          Collected By
         </th>
       </tr>
     </thead>
     <tbody class="bg-white divide-y divide-gray-200">
-      {% for result in hematology_results %}
+      {% for r in hematology_request %}
       <tr class="bg-gray-50 hover:bg-gray-200 transition-colors duration-300">
         <td class="px-6 py-4 whitespace-nowrap">
           {{forloop.counter}}
       </td>
       <td class="px-6 py-4 whitespace-nowrap">
-        {{ result.result_code }}
+        {{ r.result_code|default_if_none:'' }}
       </td>
         <td class="px-6 py-4 whitespace-nowrap">
-          {{ result.test }}
+          {{ r.test|default_if_none:'' }}
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
-          {{ result.patient }}
+            <a href="{{r.patient.get_absolute_url}}">
+                {{ r.patient|default_if_none:'' }}
+            </a>
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
-          <span class="text-sm">{{ result.result|default_if_none:'' }}</span>
-          <span class="text-xs">{{ result.unit|default_if_none:'' }}</span>
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap">
-          {{ result.updated }}
+          {{ r.created|default_if_none:'' }}
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
           {{ request.user }}
+        </td>
+        <td>
         </td>
       </tr>
       {% endfor %}

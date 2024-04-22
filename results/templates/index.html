@@ -4,8 +4,8 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<div class="py-16">
-  <div class="max-w-xl mx-auto bg-white shadow-md rounded-xl p-10 md:p-16">
+<div class="py-16 mt-14">
+  <div class="max-w-4xl mx-auto bg-white shadow-md rounded-xl p-10 md:p-16">
     <div class="flex justify-center items-center flex-col">
         <div class="rounded-full border-4 border-red-600 p-6 shadow-xl mb-2">
         <span>
@@ -21,6 +21,9 @@
       <div class="rounded mt-8 space-y-4 md:space-y-0 md:space-x-4 flex flex-col md:flex-row justify-center">
         <a href="{% url 'dashboard' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline">
           LABS
+        </a>
+        <a href="{% url 'report' %}" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline">
+          REPORT
         </a>
         <a href="{% url 'create_patient' %}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline">
           NEW PATIENT

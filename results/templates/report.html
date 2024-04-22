@@ -47,6 +47,9 @@
                 Test
               </th>
               <th class="px-6 py-3 text-left text-xs font-medium text-rose-500 uppercase tracking-wider">
+                Code
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-rose-500 uppercase tracking-wider">
                 Patient
               </th>
               <th class="px-6 py-3 text-left text-xs font-medium text-rose-500 uppercase tracking-wider">
@@ -73,6 +76,9 @@
                 {{ i.test|default_if_none:''|upper }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
+                {{ i.result_code|default_if_none:''|upper }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
                 {{ i.patient|default_if_none:''|upper }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
@@ -87,6 +93,12 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 {{ i.approved_by }}
+              </td>
+            </tr>
+            {% empty %}
+            <tr class="bg-white">
+              <td colspan="2" class="px-6 py-4 text-center text-emerald-500">
+                Not found
               </td>
             </tr>
             {% endfor %}
