@@ -239,20 +239,31 @@ class SerologyTest(models.Model):
     reference_range = models.CharField(max_length=200,null=True,blank=True)
     
     def __str__(self):
-        return self.name
+        return f"{self.name}, {self.reference_range}"
+
+
+# class SerologyValue(models.Model):
+#     name=models.CharField(max_length=200,null=True,blank=True)
+#     value=models.CharField(max_length=200,null=True,blank=True)
+
+#     def __str__(self):
+#         return self.name
 
 
 class SerologyResult(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='serology_results',null=True, blank=True)
     result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
-    test = models.ForeignKey(SerologyTest, on_delete=models.CASCADE, null=True, blank=True)
+    test = models.ForeignKey(SerologyTest, on_delete=models.CASCADE, null=True, blank=True,related_name='serology_test')
     result = models.FloatField(null=True, blank=True)
+    # serology_values = models.ManyToManyField(SerologyValue, related_name='serology_results', blank=True)
+    serology_values = models.ManyToManyField('SerologyValueLink', related_name='serology_results', blank=True)
     unit = models.CharField(max_length=50, null=True, blank=True)
     comments=models.TextField(null=True, blank=True)
-    natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
-    date_collected = models.DateField(null=True, blank=True)
-    approved_by = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='serology_results', null=True, blank=True)
-    date_reported = models.DateTimeField(auto_now_add=True)
+    natured_of_specimen = models.CharField(max_length=100, null=True, blank=True)
+    collected = models.DateField(auto_now=True, null=True,blank=True)
+    reported = models.DateField(auto_now=True, null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     
     def save(self, *args, **kwargs):
         if not self.result_code:
@@ -272,14 +283,21 @@ class SerologyResult(models.Model):
         if self.patient:
             return f"{self.patient} -{self.test} - {self.result}"
 
+
+
 class SerologyValue(models.Model):
-    result=models.ForeignKey(SerologyResult,on_delete=models.CASCADE,null=True,related_name='serology_values')
-    name=models.CharField(max_length=200,null=True,blank=True)
-    value=models.CharField(max_length=200,null=True,blank=True)
+    name = models.CharField(max_length=200, null=True, blank=True)
+    value = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         return self.name
 
+class SerologyValueLink(models.Model):
+    serology_result = models.ForeignKey(SerologyResult, on_delete=models.CASCADE)
+    serology_value = models.ForeignKey(SerologyValue, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('serology_result', 'serology_value')
 
 # class GeneralTest(models.Model):
 #     GENERAL_TEST_CHOICES=[

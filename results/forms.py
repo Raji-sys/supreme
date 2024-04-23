@@ -84,11 +84,10 @@ class MicroResultForm(forms.ModelForm):
         fields = ['category','test', 'result', 'unit']
 
 
-
 class SerologyTestForm(forms.ModelForm):
     class Meta:
-        model = SerologyTest
-        fields = ['name','reference_range']
+        model = SerologyResult
+        fields = ['test']
 
 
 class SerologyResultForm(forms.ModelForm):
@@ -102,4 +101,3 @@ class SerologyValueForm(forms.ModelForm):
         model = SerologyValue
         fields = ['name', 'value']
 
-TestValueFormSet = forms.inlineformset_factory(SerologyResult, SerologyValue, form=SerologyValueForm, extra=6)

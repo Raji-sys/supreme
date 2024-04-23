@@ -23,8 +23,8 @@ import os
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
 from django.forms import inlineformset_factory
+from django.db.models import Prefetch
 User = get_user_model()
-
 
 
 def log_anonymous_required(view_function, redirect_to=None):
@@ -185,6 +185,11 @@ class PatientDetailView(DetailView):
         context['hematology_results']=patient.hematology_result.all()
         context['chempath_results']=patient.chemical_pathology_results.all()
         context['micro_results']=patient.microbiology_results.all()
+        serology_results = patient.serology_results.prefetch_related(
+        'serology_values',
+        'test',
+    )
+        context['serology_results'] = serology_results
         return context
     
 class HematologyListView(ListView):
@@ -327,6 +332,7 @@ class ChempathTestCreateView(LoginRequiredMixin, CreateView):
         # Get the patient instance from the request
         patient = Patient.objects.get(surname=self.kwargs['surname'])
         form.instance.patient = patient
+
         messages.success(self.request, 'Chemical pathology result created successfully')
         return super().form_valid(form)
     
@@ -563,9 +569,6 @@ class SerologyTestCreateView(LoginRequiredMixin, CreateView):
         return self.object.patient.get_absolute_url()
 
 
-TestValueFormSet = inlineformset_factory(SerologyResult, SerologyValue, fields=('name', 'value'), extra=6)
-
-
 class SerologyResultCreateView(LoginRequiredMixin, UpdateView):
     model = SerologyResult
     form_class = SerologyResultForm
@@ -579,24 +582,93 @@ class SerologyResultCreateView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         serology_result = self.object
-        context['serologyvalues_formset'] = TestValueFormSet(instance=serology_result)
+        SerologyValueLinkFormSet = inlineformset_factory(
+            SerologyResult, SerologyValueLink, fields=('serology_value',), extra=3, can_delete=False
+        )
+        if serology_result.pk:
+            formset = SerologyValueLinkFormSet(instance=serology_result)
+        else:
+            formset = SerologyValueLinkFormSet(instance=serology_result)
+        context['serologyvaluelink_formset'] = formset
         return context
 
     def get_success_url(self):
         return reverse('patient_details', kwargs={'surname': self.kwargs['surname']})
 
     def form_valid(self, form):
-        formset = TestValueFormSet(self.request.POST, instance=self.object)
-        if formset.is_valid():
-            formset.save()
+        context = self.get_context_data()
+        serologyvaluelink_formset = context['serologyvaluelink_formset']
+        if serologyvaluelink_formset.is_valid():
+            # Save the main form
+            self.object = form.save()
+
+            # Save each form in the formset
+            instances = serologyvaluelink_formset.save(commit=False)
+            for instance in instances:
+                instance.serology_result = self.object  # Assign the foreign key to the main form
+                instance.save()
+
             messages.success(self.request, 'Serology result updated successfully')
-            return super().form_valid(form)
+            return HttpResponseRedirect(self.get_success_url())
         else:
-            return self.render_to_response(self.get_context_data(form=form, serologyvalues_formset=formset))
+            # If the formset is invalid, re-render the form with errors
+            return self.render_to_response(self.get_context_data(form=form, serologyvaluelink_formset=serologyvaluelink_formset))
 
     def form_invalid(self, form):
-        formset = TestValueFormSet(self.request.POST, instance=self.object)
-        return self.render_to_response(self.get_context_data(form=form, serologyvalues_formset=formset))
+        context = self.get_context_data()
+        serologyvaluelink_formset = context['serologyvaluelink_formset']
+        return self.render_to_response(self.get_context_data(form=form, serologyvaluelink_formset=serologyvaluelink_formset))
+
+# class SerologyResultCreateView(LoginRequiredMixin, UpdateView):
+#     model = SerologyResult
+#     form_class = SerologyResultForm
+#     template_name = 'serology/serology_update.html'
+#     context_object_name = 'result'
+
+#     def get_object(self, queryset=None):
+#         patient = Patient.objects.get(surname=self.kwargs['surname'])
+#         return SerologyResult.objects.get(patient=patient, pk=self.kwargs['pk'])
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         serology_result = self.object
+#         SerologyValueLinkFormSet = inlineformset_factory(
+#             SerologyResult, SerologyValueLink, fields=('serology_value',), extra=3, can_delete=False
+#         )
+#         if serology_result.pk:
+#             formset = SerologyValueLinkFormSet(instance=serology_result)
+#         else:
+#             formset = SerologyValueLinkFormSet(instance=serology_result)
+#         context['serologyvaluelink_formset'] = formset
+#         return context
+
+#     def get_success_url(self):
+#         return reverse('patient_details', kwargs={'surname': self.kwargs['surname']})
+
+#     def form_valid(self, form):
+#         context = self.get_context_data()
+#         serologyvaluelink_formset = context['serologyvaluelink_formset']
+#         if serologyvaluelink_formset.is_valid():
+#             # Save the main form
+#             self.object = form.save()
+
+#             # Save each form in the formset
+#             instances = serologyvaluelink_formset.save(commit=False)
+#             for instance in instances:
+#                 instance.serology_result = self.object  # Assign the foreign key to the main form
+#                 instance.save()
+
+#             messages.success(self.request, 'Serology result updated successfully')
+#             return HttpResponseRedirect(self.get_success_url())
+#         else:
+#             # If the formset is invalid, re-render the form with errors
+#             return self.render_to_response(self.get_context_data(form=form, serologyvaluelink_formset=serologyvaluelink_formset))
+
+
+#     def form_invalid(self, form):
+#         context = self.get_context_data()
+#         serologyvaluelink_formset = context['serologyvaluelink_formset']
+#         return self.render_to_response(self.get_context_data(form=form, serologyvaluelink_formset=serologyvaluelink_formset))
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -621,7 +693,7 @@ class SerologyReportView(ListView):
 
 
 @login_required
-def Serology_report_pdf(request):
+def serology_report_pdf(request):
     ndate = datetime.datetime.now()
     filename = ndate.strftime('on_%d/%m/%Y_at_%I.%M%p.pdf')
     f = SerologyFilter(request.GET, queryset=SerologyResult.objects.all()).qs

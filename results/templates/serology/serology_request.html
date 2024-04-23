@@ -24,24 +24,24 @@
       </tr>
     </thead>
     <tbody class="bg-white divide-y divide-gray-200">
-      {% for c in chempath_request %}
+      {% for s in serology_request %}
       <tr class="bg-gray-50 hover:bg-gray-200 transition-colors duration-300">
         <td class="px-6 py-4 whitespace-nowrap">
           {{forloop.counter}}
       </td>
       <td class="px-6 py-4 whitespace-nowrap">
-        {{ c.result_code|default_if_none:'' }}
+        {{ s.result_code|default_if_none:'' }}
       </td>
         <td class="px-6 py-4 whitespace-nowrap">
-          {{ c.test|default_if_none:'' }}
+          {{ s.test|default_if_none:'' }}
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
             <a href="{{r.patient.get_absolute_url}}">
-                {{ c.patient|default_if_none:'' }}
+                {{ s.patient|default_if_none:'' }}
             </a>
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
-          {{ c.created|default_if_none:'' }}
+          {{ s.created|default_if_none:'' }}
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
           {{ request.user }}

@@ -4,7 +4,7 @@
 {% block content %}
 <div class="py-10">
   <div class="max-w-2xl text-center mx-auto bg-white rounded-xl shadow-black shadow-2xl p-8">
-    <h1 class="text-2xl font-bold mb-6">Microbiology Result</h1>
+    <h1 class="text-2xl font-bold mb-6">Serology Result</h1>
     <form method="post" class="space-y-6">
       {% csrf_token %}
       {% for field in form %}
@@ -24,6 +24,15 @@
         {% endif %}
       </div>
       {% endfor %}
+      {{ serologyvaluelink_formset.management_form }}
+{% for form in serologyvaluelink_formset %}
+  <div class="inline-formset">
+    <label for="{{ form.prefix }}-serology_value">Name:</label>
+    <input type="text" name="{{ form.prefix }}-serology_value" id="{{ form.prefix }}-serology_value" value="{{ form.instance.serology_value.name }}">
+    <label for="{{ form.prefix }}-serology_value">Value:</label>
+    <input type="text" name="{{ form.prefix }}-serology_value" id="{{ form.prefix }}-serology_value" value="{{ form.instance.serology_value.value }}">
+  </div>
+{% endfor %}
       <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
         Enter
       </button>

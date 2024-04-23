@@ -85,3 +85,17 @@ class MicroTestAdmin(admin.ModelAdmin):
 @admin.register(MicroTestCategory)
 class MicroTestCategoryAdmin(admin.ModelAdmin):
     list_display = ('name',)
+
+
+@admin.register(SerologyTest)
+class SerologyTestAdmin(admin.ModelAdmin):
+    list_display = ('name','reference_range',)
+
+# @admin.register(SerologyValue)
+# class SerologyValueAdmin(admin.ModelAdmin):
+#     list_display = ('name','value',)
+
+
+@admin.register(SerologyResult)
+class SerologyResultAdmin(admin.ModelAdmin):
+    list_display = ('patient','test','result','unit','created','updated',)
