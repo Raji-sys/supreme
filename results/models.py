@@ -234,28 +234,51 @@ class MicrobiologyResult(models.Model):
             return f"{self.patient} -{self.test} - {self.result}"
 
 
-# class SerologyTest(models.Model):
-#     SEROLOGY_TEST_CHOICES=[
-#     ('',''),('',''),('','')
-#     ]
-#     name = models.CharField(max_length=100, choices=SEROLOGY_TEST_CHOICES)
-#     reference_range = models.TextField()
+class SerologyTest(models.Model):
+    name = models.CharField(max_length=100,null=True,blank=True)
+    reference_range = models.CharField(max_length=200,null=True,blank=True)
+    
+    def __str__(self):
+        return self.name
 
 
-# class SerologyResult(models.Model):
-#     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='serology_results',null=True, blank=True)
-#     test = models.ForeignKey(HematologyTest, on_delete=models.CASCADE, null=True, blank=True)
-#     result = models.FloatField(null=True, blank=True)
-#     unit = models.CharField(max_length=50, null=True, blank=True)
-#     comments=models.TextField(null=True, blank=True)
-#     natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
-#     date_collected = models.DateField(null=True, blank=True)
-#     approved_by = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='serology_results', null=True, blank=True)
-#     date_reported = models.DateTimeField(auto_now_add=True)
+class SerologyResult(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='serology_results',null=True, blank=True)
+    result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
+    test = models.ForeignKey(SerologyTest, on_delete=models.CASCADE, null=True, blank=True)
+    result = models.FloatField(null=True, blank=True)
+    unit = models.CharField(max_length=50, null=True, blank=True)
+    comments=models.TextField(null=True, blank=True)
+    natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
+    date_collected = models.DateField(null=True, blank=True)
+    approved_by = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='serology_results', null=True, blank=True)
+    date_reported = models.DateTimeField(auto_now_add=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.result_code:
+            last_instance = self.__class__.objects.order_by('result_code').last()
 
-#     def __str__(self):
-#         if self.patient:
-#             return f"{self.patient} -{self.test} - {self.result}"
+            if last_instance:
+                last_result_code = int(last_instance.result_code.removeprefix('SER'))
+                new_result_code = f"SER{last_result_code + 1:03d}"
+            else:
+                new_result_code = "SER001"
+
+            self.result_code = new_result_code
+
+        super().save(*args, **kwargs)
+    
+    def __str__(self):
+        if self.patient:
+            return f"{self.patient} -{self.test} - {self.result}"
+
+class SerologyValue(models.Model):
+    result=models.ForeignKey(SerologyResult,on_delete=models.CASCADE,null=True,related_name='serology_values')
+    name=models.CharField(max_length=200,null=True,blank=True)
+    value=models.CharField(max_length=200,null=True,blank=True)
+
+    def __str__(self):
+        return self.name
 
 
 # class GeneralTest(models.Model):

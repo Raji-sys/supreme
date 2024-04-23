@@ -82,3 +82,24 @@ class MicroResultForm(forms.ModelForm):
     class Meta:
         model = MicrobiologyResult
         fields = ['category','test', 'result', 'unit']
+
+
+
+class SerologyTestForm(forms.ModelForm):
+    class Meta:
+        model = SerologyTest
+        fields = ['name','reference_range']
+
+
+class SerologyResultForm(forms.ModelForm):
+    class Meta:
+        model = SerologyResult
+        fields = ['test', 'result', 'unit', 'comments',]
+
+
+class SerologyValueForm(forms.ModelForm):
+    class Meta:
+        model = SerologyValue
+        fields = ['name', 'value']
+
+TestValueFormSet = forms.inlineformset_factory(SerologyResult, SerologyValue, form=SerologyValueForm, extra=6)

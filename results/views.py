@@ -22,6 +22,7 @@ from django.conf import settings
 import os
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
+from django.forms import inlineformset_factory
 User = get_user_model()
 
 
@@ -60,6 +61,10 @@ class ChempathView(TemplateView):
 @method_decorator(login_required(login_url='login'), name='dispatch')
 class MicrobiologyView(TemplateView):
     template_name = "micro/micro.html"
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+class SerologyView(TemplateView):
+    template_name = "serology/serology.html"
 
 @method_decorator(log_anonymous_required, name='dispatch')
 class CustomLoginView(LoginView):
@@ -493,6 +498,133 @@ def micro_report_pdf(request):
     ndate = datetime.datetime.now()
     filename = ndate.strftime('on_%d/%m/%Y_at_%I.%M%p.pdf')
     f = MicroFilter(request.GET, queryset=MicrobiologyResult.objects.all()).qs
+
+    result = ""
+    for key, value in request.GET.items():
+        if value:
+            result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {request.user.username.upper()}"
+
+    context = {'f': f, 'pagesize': 'A4',
+               'orientation': 'landscape', 'result': result}
+    response = HttpResponse(content_type='application/pdf',
+                            headers={'Content-Disposition': f'filename="Report__{filename}"'})
+
+    buffer = BytesIO()
+
+    pisa_status = pisa.CreatePDF(get_template('report_pdf.html').render(
+        context), dest=buffer, encoding='utf-8', link_callback=fetch_resources)
+
+    if not pisa_status.err:
+        pdf = buffer.getvalue()
+        buffer.close()
+        response.write(pdf)
+        return response
+    return HttpResponse('Error generating PDF', status=500)
+
+
+class SerologyListView(ListView):
+    model=SerologyResult
+    template_name='serology/serology_list.html'
+    context_object_name='serology_results'
+
+    def get_queryset(self):
+        queryset=super().get_queryset()
+        queryset=queryset.filter(result__isnull=False)
+        return queryset
+
+class SerologyRequestListView(ListView):
+    model=SerologyResult
+    template_name='serology/serology_request.html'
+    context_object_name='serology_request'
+
+    def get_queryset(self):
+        queryset=super().get_queryset()
+        queryset=queryset.filter(result__isnull=True)
+        return queryset
+
+
+class SerologyTestCreateView(LoginRequiredMixin, CreateView):
+    model=SerologyResult
+    form_class = SerologyTestForm
+    template_name = 'serology/serology_result.html'
+
+    def form_valid(self, form):
+        # Set the approved_by field to the current user
+        form.instance.approved_by = self.request.user
+
+        # Get the patient instance from the request
+        patient = Patient.objects.get(surname=self.kwargs['surname'])
+        form.instance.patient = patient
+
+        messages.success(self.request, 'Serology result created successfully')
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return self.object.patient.get_absolute_url()
+
+
+TestValueFormSet = inlineformset_factory(SerologyResult, SerologyValue, fields=('name', 'value'), extra=6)
+
+
+class SerologyResultCreateView(LoginRequiredMixin, UpdateView):
+    model = SerologyResult
+    form_class = SerologyResultForm
+    template_name = 'serology/serology_update.html'
+    context_object_name = 'result'
+
+    def get_object(self, queryset=None):
+        patient = Patient.objects.get(surname=self.kwargs['surname'])
+        return SerologyResult.objects.get(patient=patient, pk=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        serology_result = self.object
+        context['serologyvalues_formset'] = TestValueFormSet(instance=serology_result)
+        return context
+
+    def get_success_url(self):
+        return reverse('patient_details', kwargs={'surname': self.kwargs['surname']})
+
+    def form_valid(self, form):
+        formset = TestValueFormSet(self.request.POST, instance=self.object)
+        if formset.is_valid():
+            formset.save()
+            messages.success(self.request, 'Serology result updated successfully')
+            return super().form_valid(form)
+        else:
+            return self.render_to_response(self.get_context_data(form=form, serologyvalues_formset=formset))
+
+    def form_invalid(self, form):
+        formset = TestValueFormSet(self.request.POST, instance=self.object)
+        return self.render_to_response(self.get_context_data(form=form, serologyvalues_formset=formset))
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+class SerologyReportView(ListView):
+    model=SerologyResult
+    template_name = 'serology/serology_report.html'
+    paginate_by = 10
+    context_object_name = 'patient'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        serology_filter = SerologyFilter(self.request.GET, queryset=queryset)
+        patient = serology_filter.qs.order_by('-created')
+
+        return patient
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['Serology_filter'] = SerologyFilter(self.request.GET, queryset=self.get_queryset())
+        return context
+
+
+@login_required
+def Serology_report_pdf(request):
+    ndate = datetime.datetime.now()
+    filename = ndate.strftime('on_%d/%m/%Y_at_%I.%M%p.pdf')
+    f = SerologyFilter(request.GET, queryset=SerologyResult.objects.all()).qs
 
     result = ""
     for key, value in request.GET.items():
