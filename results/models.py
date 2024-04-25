@@ -235,69 +235,50 @@ class MicrobiologyResult(models.Model):
 
 
 class SerologyTest(models.Model):
-    name = models.CharField(max_length=100,null=True,blank=True)
-    reference_range = models.CharField(max_length=200,null=True,blank=True)
-    
+    name = models.CharField(max_length=100, null=True, blank=True)
+    reference_range = models.CharField(max_length=200, null=True, blank=True)
+
     def __str__(self):
         return f"{self.name}, {self.reference_range}"
 
-
-# class SerologyValue(models.Model):
-#     name=models.CharField(max_length=200,null=True,blank=True)
-#     value=models.CharField(max_length=200,null=True,blank=True)
-
-#     def __str__(self):
-#         return self.name
-
-
 class SerologyResult(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='serology_results',null=True, blank=True)
-    result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
-    test = models.ForeignKey(SerologyTest, on_delete=models.CASCADE, null=True, blank=True,related_name='serology_test')
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='serology_results', null=True, blank=True)
+    result_code = models.CharField(max_length=20, unique=True, editable=False, default="")
+    test = models.ForeignKey(SerologyTest, on_delete=models.CASCADE, null=True, blank=True, related_name='results')
     result = models.FloatField(null=True, blank=True)
-    # serology_values = models.ManyToManyField(SerologyValue, related_name='serology_results', blank=True)
-    serology_values = models.ManyToManyField('SerologyValueLink', related_name='serology_results', blank=True)
     unit = models.CharField(max_length=50, null=True, blank=True)
-    comments=models.TextField(null=True, blank=True)
-    natured_of_specimen = models.CharField(max_length=100, null=True, blank=True)
-    collected = models.DateField(auto_now=True, null=True,blank=True)
+    comments = models.TextField(null=True, blank=True)
+    nature_of_specimen = models.CharField(max_length=100, null=True, blank=True)
+    collected = models.DateField(auto_now_add=True, null=True, blank=True)
     reported = models.DateField(auto_now=True, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    
+
     def save(self, *args, **kwargs):
         if not self.result_code:
-            last_instance = self.__class__.objects.order_by('result_code').last()
-
+            last_instance = SerologyResult.objects.order_by('result_code').last()
             if last_instance:
-                last_result_code = int(last_instance.result_code.removeprefix('SER'))
-                new_result_code = f"SER{last_result_code + 1:03d}"
+                last_result_code = int(last_instance.result_code.replace('RES', ''))
+                new_result_code = f"RES{last_result_code + 1:03d}"
             else:
-                new_result_code = "SER001"
-
+                new_result_code = "RES001"
             self.result_code = new_result_code
-
         super().save(*args, **kwargs)
-    
+
     def __str__(self):
         if self.patient:
-            return f"{self.patient} -{self.test} - {self.result}"
+            return f"{self.patient} - {self.test} - {self.result}"
+        else:
+            return f"{self.test} - {self.result}"
 
-
-
-class SerologyValue(models.Model):
+class SerologyParameter(models.Model):
+    result = models.ForeignKey(SerologyResult, on_delete=models.CASCADE, related_name='parameters', null=True, blank=True)
     name = models.CharField(max_length=200, null=True, blank=True)
     value = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         return self.name
 
-class SerologyValueLink(models.Model):
-    serology_result = models.ForeignKey(SerologyResult, on_delete=models.CASCADE)
-    serology_value = models.ForeignKey(SerologyValue, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('serology_result', 'serology_value')
 
 # class GeneralTest(models.Model):
 #     GENERAL_TEST_CHOICES=[
