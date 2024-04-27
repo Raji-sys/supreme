@@ -16,40 +16,37 @@
           Patient
         </th>
         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          Result
+          Date Collected
         </th>
         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          Date Reported
-        </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          Report By
+          Collected By
         </th>
       </tr>
     </thead>
     <tbody class="bg-white divide-y divide-gray-200">
-      {% for result in hematology_results %}
+      {% for g in general_request %}
       <tr class="bg-gray-50 hover:bg-gray-200 transition-colors duration-300">
         <td class="px-6 py-4 whitespace-nowrap">
           {{forloop.counter}}
       </td>
       <td class="px-6 py-4 whitespace-nowrap">
-        {{ result.result_code }}
+        {{ g.result_code|default_if_none:'' }}
       </td>
         <td class="px-6 py-4 whitespace-nowrap">
-          {{ result.test }}
+          {{ g.test|default_if_none:'' }}
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
-          {{ result.patient }}
+            <a href="{{r.patient.get_absolute_url}}">
+                {{ g.patient|default_if_none:'' }}
+            </a>
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
-          <span class="text-sm">{{ result.result|default_if_none:'' }}</span>
-          <span class="text-xs">{{ result.unit|default_if_none:'' }}</span>
+          {{ g.created|default_if_none:'' }}
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
-          {{ result.updated }}
+          {{ request.user }}
         </td>
-        <td class="px-6 py-4 whitespace-nowrap">
-          {{ result.updater.get_full_name }}
+        <td>
         </td>
       </tr>
       {% endfor %}

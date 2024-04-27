@@ -51,10 +51,16 @@ urlpatterns = [
     path('serology-test/create/<str:surname>/', SerologyTestCreateView.as_view(), name='serology_test'),
     path('serology-result/create/<int:pk>/', SerologyResultCreateView.as_view(), name='serology_result'),
     path('serology-report/', SerologyReportView.as_view(), name='serology_report'),
-    
     path('serology-pdf/', views.serology_report_pdf, name='serology_report_pdf'),
     
-
+    path('general/', GeneralView.as_view(), name='general'),    
+    path('general-list/',GeneralListView.as_view(),name='general_list'),
+    path('general-request/',GeneralRequestListView.as_view(),name='general_request'),
+    path('general-test/create/<str:surname>/',GeneralTestCreateView.as_view(), name='general_test'),
+    path('general-result/create/<str:surname>/<int:pk>/',GeneralResultCreateView.as_view(), name='general_result'),
+    path('general-report/', GeneralReportView.as_view(), name='general_report'),
+    path('general-pdf/', views.general_report_pdf, name='general_report_pdf'),
+ 
     path('get_tests_for_category/',views.get_tests_for_category,name="get_tests_for_category"),
     path('logout/', CustomLogoutView.as_view(), name='logout'),
     path('', include('django.contrib.auth.urls')),

@@ -66,6 +66,10 @@ class MicrobiologyView(TemplateView):
 class SerologyView(TemplateView):
     template_name = "serology/serology.html"
 
+@method_decorator(login_required(login_url='login'), name='dispatch')
+class GeneralView(TemplateView):
+    template_name = "general/general.html"
+
 @method_decorator(log_anonymous_required, name='dispatch')
 class CustomLoginView(LoginView):
     template_name = 'login.html'
@@ -187,6 +191,7 @@ class PatientDetailView(DetailView):
         context['micro_results']=patient.microbiology_results.all()
         # context['serology_results'] = patient.serology_results.prefetch_related('parameters').all()
         context['serology_results']=patient.serology_results.all()
+        context['general_results']=patient.general_results.all()
         return context
     
 class HematologyListView(ListView):
@@ -216,12 +221,10 @@ class HematologyTestCreateView(LoginRequiredMixin, CreateView):
     template_name = 'hema/hematology_result.html'
 
     def form_valid(self, form):
-        # Set the approved_by field to the current user
-        form.instance.approved_by = self.request.user
-
-        # Get the patient instance from the request
         patient = Patient.objects.get(surname=self.kwargs['surname'])
         form.instance.patient = patient
+        form.instance.creator = self.request.user
+        return super().form_valid(form)
         messages.success(self.request, 'Hematology result -created successfully')
         return super().form_valid(form)
     
@@ -239,6 +242,9 @@ class HematologyResultCreateView(LoginRequiredMixin, UpdateView):
         return HematologyResult.objects.get(patient=patient, pk=self.kwargs['pk'])
 
     def form_valid(self, form):
+        form.instance.updater = self.request.user
+        return super().form_valid(form)
+
         messages.success(self.request, 'Hematology result updated successfully')
         return super().form_valid(form)
 
@@ -323,9 +329,6 @@ class ChempathTestCreateView(LoginRequiredMixin, CreateView):
     template_name = 'chempath/chempath_result.html'
 
     def form_valid(self, form):
-        # Set the approved_by field to the current user
-        form.instance.approved_by = self.request.user
-
         # Get the patient instance from the request
         patient = Patient.objects.get(surname=self.kwargs['surname'])
         form.instance.patient = patient
@@ -432,10 +435,6 @@ class MicroTestCreateView(LoginRequiredMixin, CreateView):
     template_name = 'micro/micro_result.html'
 
     def form_valid(self, form):
-        # Set the approved_by field to the current user
-        form.instance.approved_by = self.request.user
-
-        # Get the patient instance from the request
         patient = Patient.objects.get(surname=self.kwargs['surname'])
         form.instance.patient = patient
         category_id=form.cleaned_data['category'].id
@@ -564,7 +563,7 @@ class SerologyTestCreateView(LoginRequiredMixin, CreateView):
     template_name = 'serology/serology_result.html'
 
     def form_valid(self, form):
-        form.instance.approved_by = self.request.user
+        
         patient = Patient.objects.get(surname=self.kwargs['surname'])
         form.instance.patient = patient
         messages.success(self.request, 'Serology result created successfully')
@@ -581,7 +580,7 @@ class SerologyResultCreateView(LoginRequiredMixin, CreateView):
     context_object_name = 'result'
 
     def form_valid(self, form):
-        form.instance.approved_by = self.request.user
+        
         try:
             result = SerologyTestResult.objects.get(pk=self.kwargs['pk'])
         except SerologyTestResult.DoesNotExist:
@@ -646,3 +645,109 @@ def serology_report_pdf(request):
         return response
     return HttpResponse('Error generating PDF', status=500)
 
+
+class GeneralListView(ListView):
+    model=GeneralTestResult
+    template_name='general/general_list.html'
+    context_object_name='general_results'
+
+    def get_queryset(self):
+        queryset=super().get_queryset()
+        queryset=queryset.filter(result__isnull=False)
+        return queryset
+
+class GeneralRequestListView(ListView):
+    model=GeneralTestResult
+    template_name='general/general_request.html'
+    context_object_name='general_request'
+
+    def get_queryset(self):
+        queryset=super().get_queryset()
+        queryset=queryset.filter(result__isnull=True)
+        return queryset
+
+
+class GeneralTestCreateView(LoginRequiredMixin, CreateView):
+    model=GeneralTestResult
+    form_class = GeneralTestForm
+    template_name = 'general/general_result.html'
+
+    def form_valid(self, form):
+        
+        
+
+        # Get the patient instance from the request
+        patient = Patient.objects.get(surname=self.kwargs['surname'])
+        form.instance.patient = patient
+
+        messages.success(self.request, 'general result created successfully')
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return self.object.patient.get_absolute_url()
+
+
+class GeneralResultCreateView(LoginRequiredMixin, UpdateView):
+    model=GeneralTestResult
+    form_class = GeneralTestResultForm
+    template_name = 'general/general_update.html'
+    context_object_name = 'result'
+
+    def get_object(self, queryset=None):
+        patient = Patient.objects.get(surname=self.kwargs['surname'])
+        return GeneralTestResult.objects.get(patient=patient, pk=self.kwargs['pk'])
+
+    def form_valid(self, form):
+        messages.success(self.request, 'general result updated successfully')
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('patient_details', kwargs={'surname': self.kwargs['surname']})
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+class GeneralReportView(ListView):
+    model=GeneralTestResult
+    template_name = 'general/general_report.html'
+    paginate_by = 10
+    context_object_name = 'patient'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        gen_filter = GenFilter(self.request.GET, queryset=queryset)
+        patient = gen_filter.qs.order_by('-created')
+
+        return patient
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['gen_filter'] = GenFilter(self.request.GET, queryset=self.get_queryset())
+        return context
+
+@login_required
+def general_report_pdf(request):
+    ndate = datetime.datetime.now()
+    filename = ndate.strftime('on_%d/%m/%Y_at_%I.%M%p.pdf')
+    f = GenFilter(request.GET, queryset=GeneralTestResult.objects.all()).qs
+    result = ""
+    for key, value in request.GET.items():
+        if value:
+            result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {request.user.username.upper()}"
+
+    context = {'f': f, 'pagesize': 'A4',
+               'orientation': 'landscape', 'result': result}
+    response = HttpResponse(content_type='application/pdf',
+                            headers={'Content-Disposition': f'filename="Report__{filename}"'})
+
+    buffer = BytesIO()
+
+    pisa_status = pisa.CreatePDF(get_template('report_pdf.html').render(
+        context), dest=buffer, encoding='utf-8', link_callback=fetch_resources)
+
+    if not pisa_status.err:
+        pdf = buffer.getvalue()
+        buffer.close()
+        response.write(pdf)
+        return response
+    return HttpResponse('Error generating PDF', status=500)

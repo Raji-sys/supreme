@@ -90,13 +90,19 @@ class SerologyTestForm(forms.ModelForm):
         fields = ['test',]
 
 
-# class SerologyResultForm(forms.ModelForm):
-#     class Meta:
-#         model = SerologyTestResult
-#         fields = ['test', 'result', 'unit']
-
-
 class SerologyParameterForm(forms.ModelForm):
     class Meta:
         model = SerologyParameter
         fields = ['name', 'value']
+
+
+class GeneralTestForm(forms.ModelForm):
+    class Meta:
+        model=GeneralTestResult
+        fields=['name']
+
+
+class GeneralTestResultForm(forms.ModelForm):
+    class Meta:
+        model=GeneralTestResult
+        fields=['result','unit','comments']

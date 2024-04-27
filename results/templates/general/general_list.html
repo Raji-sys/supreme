@@ -27,7 +27,7 @@
       </tr>
     </thead>
     <tbody class="bg-white divide-y divide-gray-200">
-      {% for result in hematology_results %}
+      {% for result in general_results %}
       <tr class="bg-gray-50 hover:bg-gray-200 transition-colors duration-300">
         <td class="px-6 py-4 whitespace-nowrap">
           {{forloop.counter}}
@@ -49,7 +49,7 @@
           {{ result.updated }}
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
-          {{ result.updater.get_full_name }}
+          {{ request.user }}
         </td>
       </tr>
       {% endfor %}

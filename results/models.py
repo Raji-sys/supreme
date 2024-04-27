@@ -106,6 +106,7 @@ TEST = (
     )
 
 class HematologyResult(models.Model):
+    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='hematology_result', null=True, blank=True)
     result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
     test = models.CharField(choices=TEST, max_length=100, null=True, blank=True)
@@ -114,10 +115,10 @@ class HematologyResult(models.Model):
     unit = models.CharField(max_length=50, null=True, blank=True)
     comments=models.TextField(null=True, blank=True)
     natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
-    # collected_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hematology_tests', null=True, blank=True)
-    # approved_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hematology_results', null=True, blank=True)
     collected = models.DateField(auto_now=True, null=True,blank=True)
     reported = models.DateField(auto_now=True, null=True, blank=True)
+    creator = models.ForeignKey(User, null=True, blank=True, related_name='hematology_results_created', on_delete=models.SET_NULL)
+    updater = models.ForeignKey(User, null=True, blank=True, related_name='hematology_results_updated', on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -156,6 +157,7 @@ CHEMPATH_TEST=[
 
 
 class ChemicalPathologyResult(models.Model):
+    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='chemical_pathology_results',null=True, blank=True)
     result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
     test = models.CharField(choices=CHEMPATH_TEST, max_length=100, null=True, blank=True)
@@ -202,6 +204,7 @@ class MicrobiologyTest(models.Model):
 
 
 class MicrobiologyResult(models.Model):
+    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='microbiology_results',null=True, blank=True)
     result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
     category=models.ForeignKey(MicroTestCategory,on_delete=models.CASCADE,null=True,blank=True)
@@ -242,6 +245,7 @@ class SerologyTestName(models.Model):
         return f"{self.name}, {self.reference_range}"
 
 class SerologyTestResult(models.Model):
+    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='serology_results', null=True, blank=True)
     result_code = models.CharField(max_length=20, unique=True, editable=False, default="")
     test = models.ForeignKey(SerologyTestName, on_delete=models.CASCADE, null=True, blank=True, related_name='results')
@@ -290,25 +294,39 @@ class SerologyParameter(models.Model):
         return f"{self.name}: {self.value}"
 
 
-# class GeneralTest(models.Model):
-#     GENERAL_TEST_CHOICES=[
-#     ('',''),('',''),('','')
-#     ]
-#     name = models.CharField(max_length=100, choices=GENERAL_TEST_CHOICES)
-#     reference_range = models.TextField()
 
+class GeneralTestResult(models.Model):
+    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100, null=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='general_results', null=True, blank=True)
+    result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
+    result = models.FloatField(null=True, blank=True)
+    unit = models.CharField(max_length=50, null=True, blank=True)
+    comments = models.TextField(null=True, blank=True)
+    nature_of_specimen = models.CharField(max_length=100, null=True, blank=True)
+    collected = models.DateField(auto_now_add=True, null=True, blank=True)
+    reported = models.DateField(auto_now=True, null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
-# class GeneralResult(models.Model):
-#     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='general_results', null=True, blank=True)
-#     test = models.ForeignKey(HematologyTest, on_delete=models.CASCADE, null=True, blank=True)
-#     result = models.FloatField(null=True, blank=True)
-#     unit = models.CharField(max_length=50, null=True, blank=True)
-#     comments=models.TextField(null=True, blank=True)
-#     natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
-#     date_collected = models.DateField(null=True, blank=True)
-#     approved_by = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='general_results', null=True, blank=True)
-#     date_reported = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        if self.patient:
+            return f"{self.patient} -{self.test} - {self.result}"
 
-#     def __str__(self):
-#         if self.patient:
-#             return f"{self.patient} -{self.test} - {self.result}"
+    def save(self, *args, **kwargs):
+        if not self.result_code:
+            last_instance = self.__class__.objects.order_by('result_code').last()
+
+            if last_instance:
+                last_result_code = int(last_instance.result_code.removeprefix('GEN'))
+                new_result_code = f"GEN{last_result_code + 1:03d}"
+            else:
+                new_result_code = "GEN001"
+
+            self.result_code = new_result_code
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        if self.patient:
+            return f"{self.patient.surname} - {self.test} - {self.result}"

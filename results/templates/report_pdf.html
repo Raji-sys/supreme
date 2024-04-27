@@ -4,101 +4,120 @@
     <meta charset="UTF-8">
     <title>Test Result</title>
     <style>
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 20px;
-    background-color: #FBF8F6;
-    color: #7F1D1D;
-}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #FBF8F6;
+            color: #7F1D1D;
+            text-transform: capitalize;
+          }
+          
+          h1 {
+            text-align: center;
+            color: #BE185D;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+          }
+          
+          #sp h1 {
+            margin-top: 50px;
+          }
+          
+          table {
+            width: auto;
+            border-collapse: collapse;
+            background-color: #FFFFFF;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            padding: 20px;
+            text-transform: uppercase;
+          }
+          
+          table td {
+            text-transform: capitalize;
+          }
+          
+          td {
+            border: 1px solid #FECDD3;
+            word-break: break-word;
+            white-space: normal;
+            padding: 6px;
+            width: 50%;
+            text-align: center;
+          }
+          
+          tr {
+            background-color: #FFF5F7;
+            color: #000000;
+          }
+          
+          th {
+            text-align: center;
+            font-size: 18px;
+            background-color: #BE185D;
+            color: #FFFFFF;
+            padding: 10px;
+          }
+          
+          td:first-child {
+            font-weight: bold;
+            background-color: #FDE4E1;
+            border-radius: 5px;
+            text-transform: uppercase;
+            text-transform: capitalize;
+            
+          }
+          
+          .divider {
+            border-bottom: 1px solid #FECDD3;
+            margin: 30px 0;
+          }
+          
+          #sp {
+            margin-top: 4rem;
+            font-size: 4rem;
+            text-align: center; /* Center the heading */
+          }
+          #sp h1 {
+            margin-top: 80px; /* Adjust the value as needed */
+          }
+          .value {
+            background-color: white;
+          }
+          .uppercase {
+            text-transform: uppercase;
+          }
+        </style>
+        </head>
+        <body>
+            <div id="sp">
+              <h1 >SUPREME DIAGNOSTIC LABORATORIES</h1>
+            </div>
+        <h1>Test Result</h1>
+        {% for i in f %}
+        <table>
+            <tr>
+                <th colspan="4">{{ i.patient}}</th>
+            </tr>
+            <tr>
+                <td><span class="variable">TEST</span></td>
+                <td><span class="variable">RESULT</span></td>
+                <td><span class="variable">REPORT BY</span></td>
+                <td><span class="variable">DATE REPORT</span></td>
+              </tr>
+              <tr>
+                  <td class="value">{{ i.test|upper }} {{ i.name|upper }}</td>
+                  <td class="value">{% for parameter in i.parameters.all %}{{ parameter.name }}: {{ parameter.value }}{% endfor %}{{ i.result }}</td>
+                  <td class="value">{{i.user|upper}}</td>
+                  <td class="value">{{ i.updated }}</td>
+            </tr>
+        </table>
+        {% if not forloop.last %}
+        <div class="divider"></div>
+        {% endif %}
+        {% endfor %}
+        
 
-h1 {
-    text-align: center;
-    color: #BE185D;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 30px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #FFFFFF;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 30px;
-}
-
-th, td {
-    border: 1px solid #FECDD3;
-    word-break: break-word;
-    white-space: normal;
-}
-
-tr {
-    background-color: #FFF5F7;
-    color: #000000;
-}
-
-th {
-    text-align: center;
-    font-size: 18px;
-    background-color: #BE185D;
-    color: #FFFFFF;
-    padding: 10px;
-}
-
-td {
-    padding: 5px 10px; /* Reduced padding */
-}
-
-td:first-child {
-    width: 150px; /* Fixed width for left column */
-    font-weight: bold;
-    background-color: #FDE4E1;
-    padding: 5px 10px;
-    border-radius: 5px;
-}
-
-.divider {
-    border-bottom: 1px solid #FECDD3;
-    margin: 30px 0;
-}
-
-.sp {
-    font-size: 3rem;
-    padding: auto;
-}
-</style>
-</head>
-<body>
-  <h1 class="sp">SUPREME DIAGNOSTIC LABORATORIES</h1>
-    <h1>Test Result</h1>
-    {% for i in f %}
-    <table>
-        <tr>
-            <th colspan="2">{{ i.patient|default_if_none:''|upper }}</th>
-        </tr>
-        <tr>
-            <td><span class="variable">Test:</span></td>
-            <td>{{ i.test|default_if_none:''|upper }}</td>
-        </tr>
-        <tr>
-            <td><span class="variable">Result:</span></td>
-            <td> {% for parameter in i.parameters.all %}
-                <p>{{ parameter.name }}: {{ parameter.value }}</p>
-            {% endfor %}</td>
-        </tr>
-        <tr>
-            <td><span class="variable">Report By:</span></td>
-            <td>{{ i.approved_by }}</td>
-        </tr>
-        <tr>
-            <td><span class="variable">Date Reported:</span></td>
-            <td>{{ i.updated }}</td>
-        </tr>
-    </table>
-    {% if not forloop.last %}
-    <div class="divider"></div>
-    {% endif %}
-    {% endfor %}
 </body>
 </html>
