@@ -39,17 +39,19 @@
           {{ result.test }}
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
+          <a href="{{result.patient.get_absolute_url }}">
           {{ result.patient }}
+          </a>
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
           <span class="text-sm">{{ result.result|default_if_none:'' }}</span>
           <span class="text-xs">{{ result.unit|default_if_none:'' }}</span>
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
-          {{ result.updated }}
+          {{ result.updated|default_if_none:'' }}
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
-          {{ result.updater.get_full_name }}
+          {{ result.updater|default_if_none:'' }}
         </td>
       </tr>
       {% endfor %}

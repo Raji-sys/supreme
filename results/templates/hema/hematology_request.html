@@ -44,7 +44,7 @@
           {{ r.created|default_if_none:'' }}
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
-          {{ result.creator.get_full_name }}
+          {{ r.creator|default_if_none:'' }}
         </td>
         <td>
         </td>
