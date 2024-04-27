@@ -48,9 +48,10 @@
           {{ result.patient }}
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
-          <span class="text-sm">{{ result.result|default_if_none:'' }}</span>
-          <span class="text-xs">{{ result.unit|default_if_none:'' }}</span>
-        </td>
+          {% for parameter in result.parameters.all %}
+          <p>{{ parameter.name }}: {{ parameter.value }}</p>
+      {% endfor %}
+  </td>
         <td class="px-6 py-4 whitespace-nowrap">
           {{ result.updated }}
         </td>

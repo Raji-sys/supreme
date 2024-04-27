@@ -152,6 +152,7 @@
     </div>
 
     <div class="overflow-x-auto px-4 md:px-10 m-4">
+      
       <table class="min-w-full divide-y divide-cyan-200 mb-4">
         <thead class="bg-cyan-50">
 
@@ -171,26 +172,22 @@
           {% for s in serology_results %}
           <tr class="bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
             <td class="px-6 py-4 whitespace-nowrap">{{ forloop.counter }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ s.test|default_if_none:''}}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ s.test.name|default_if_none:''}}</td>
             {% comment %} <td class="px-6 py-4 whitespace-nowrap">{{ s.test.reference_range|default_if_none:''}}</td> {% endcomment %}
-            <td class="px-6 py-4 whitespace-nowrap">{{ s.created|default_if_none:'' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ s.collected|default_if_none:'' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <span class="text-sm">{{ s.result|default_if_none:'' }}
-                <h4>Values</h4>
-                <ul>
-                 {% for v in s.serology_values.all %}
-                    <li>{{ v.name }}: {{ v.value }}</li>
-                  {% empty %}
-                    <li>No values found.</li>
-                  {% endfor %}
-                </ul>
+              <span class="text-sm">
+                {% for parameter in s.parameters.all %}
+                <p>{{ parameter.name }}: {{ parameter.value }}</p>
+            {% endfor %}
               </span>
               <span class="text-xs">{{ s.unit|default_if_none:'' }}</span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ s.comment|default_if_none:'' }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ s.updated|default_if_none:'' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ s.comments|default_if_none:'' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ s.reported|default_if_none:'' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <a href="{% url 'serology_result' s.patient.surname s.id %}" class="text-blue-500 hover:text-blue-700">input result</a>
+              <a href="{% url 'serology_result' s.id %}" class="text-blue-500 hover:text-blue-700">input result</a>
+              {% comment %} <a href="{% url 'serology_result' s.patient.surname s.id %}" class="text-blue-500 hover:text-blue-700">input result</a> {% endcomment %}
             </td>
           </tr>
           {% endfor %}

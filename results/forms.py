@@ -86,18 +86,17 @@ class MicroResultForm(forms.ModelForm):
 
 class SerologyTestForm(forms.ModelForm):
     class Meta:
-        model = SerologyResult
+        model = SerologyTestResult
         fields = ['test',]
 
 
-class SerologyResultForm(forms.ModelForm):
-    class Meta:
-        model = SerologyResult
-        fields = ['test', 'result', 'unit']
+# class SerologyResultForm(forms.ModelForm):
+#     class Meta:
+#         model = SerologyTestResult
+#         fields = ['test', 'result', 'unit']
 
 
-class SerologyParamterForm(forms.ModelForm):
+class SerologyParameterForm(forms.ModelForm):
     class Meta:
         model = SerologyParameter
         fields = ['name', 'value']
-

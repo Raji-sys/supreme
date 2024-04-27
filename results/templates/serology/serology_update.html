@@ -25,6 +25,13 @@
             </div>
             {% endfor %}
 
+    {{ formset.management_form }}
+    {% for form in formset %}
+      <div class="parameter-form">
+        {{ form.as_p }}
+      </div>
+    {% endfor %}
+
             {{ parameter_formset.management_form }}
             {% for form in parameter_formset %}
             <div class="inline-formset">

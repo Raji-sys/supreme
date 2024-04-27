@@ -234,17 +234,17 @@ class MicrobiologyResult(models.Model):
             return f"{self.patient} -{self.test} - {self.result}"
 
 
-class SerologyTest(models.Model):
+class SerologyTestName(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
     reference_range = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         return f"{self.name}, {self.reference_range}"
 
-class SerologyResult(models.Model):
+class SerologyTestResult(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='serology_results', null=True, blank=True)
     result_code = models.CharField(max_length=20, unique=True, editable=False, default="")
-    test = models.ForeignKey(SerologyTest, on_delete=models.CASCADE, null=True, blank=True, related_name='results')
+    test = models.ForeignKey(SerologyTestName, on_delete=models.CASCADE, null=True, blank=True, related_name='results')
     result = models.FloatField(null=True, blank=True)
     unit = models.CharField(max_length=50, null=True, blank=True)
     comments = models.TextField(null=True, blank=True)
@@ -256,14 +256,24 @@ class SerologyResult(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.result_code:
-            last_instance = SerologyResult.objects.order_by('result_code').last()
+            last_instance = SerologyTestResult.objects.order_by('result_code').last()
             if last_instance:
-                last_result_code = int(last_instance.result_code.replace('RES', ''))
-                new_result_code = f"RES{last_result_code + 1:03d}"
+                last_result_code = int(last_instance.result_code.replace('SER', ''))
+                new_result_code = f"SER{last_result_code + 1:03d}"
             else:
-                new_result_code = "RES001"
+                new_result_code = "SER001"
             self.result_code = new_result_code
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        parts = []
+        if self.patient:
+            parts.append(str(self.patient))
+        if self.test:
+            parts.append(str(self.test))
+        if self.result:
+            parts.append(str(self.result))
+        return " - ".join(parts)
 
     def __str__(self):
         if self.patient:
@@ -272,12 +282,12 @@ class SerologyResult(models.Model):
             return f"{self.test} - {self.result}"
 
 class SerologyParameter(models.Model):
-    result = models.ForeignKey(SerologyResult, on_delete=models.CASCADE, related_name='parameters', null=True, blank=True)
+    result = models.ForeignKey(SerologyTestResult, on_delete=models.CASCADE, related_name='parameters', null=True, blank=True)
     name = models.CharField(max_length=200, null=True, blank=True)
     value = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}: {self.value}"
 
 
 # class GeneralTest(models.Model):

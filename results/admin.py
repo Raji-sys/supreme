@@ -87,15 +87,24 @@ class MicroTestCategoryAdmin(admin.ModelAdmin):
     list_display = ('name',)
 
 
-@admin.register(SerologyTest)
-class SerologyTestAdmin(admin.ModelAdmin):
-    list_display = ('name','reference_range',)
-
-# @admin.register(SerologyValue)
-# class SerologyValueAdmin(admin.ModelAdmin):
-#     list_display = ('name','value',)
+class SerologyParameterInline(admin.StackedInline):
+    model = SerologyParameter
+    extra = 0
+    list_filter = ('result__test', 'result__patient')
 
 
-@admin.register(SerologyResult)
-class SerologyResultAdmin(admin.ModelAdmin):
-    list_display = ('patient','test','result','unit','created','updated',)
+@admin.register(SerologyTestResult)
+class SerologyTestResultAdmin(admin.ModelAdmin):
+    inlines = [SerologyParameterInline]
+    list_display = ('result_code', 'test', 'patient', 'result', 'unit', 'comments')
+    list_filter = ('test', 'patient')
+    def display_parameters(self, obj):
+            return ", ".join([f"{p.name}: {p.value}" for p in obj.parameters.all()])
+
+    display_parameters.short_description = "Parameters"
+
+@admin.register(SerologyTestName)
+class SerologyTestNameAdmin(admin.ModelAdmin):
+    list_display = ('name', 'reference_range')
+
+admin.site.register(SerologyParameter)

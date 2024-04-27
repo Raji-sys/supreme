@@ -83,7 +83,9 @@ td:first-child {
         </tr>
         <tr>
             <td><span class="variable">Result:</span></td>
-            <td>{{ i.result|default_if_none:''|upper }} {{ i.unit|default_if_none:''|upper }}</td>
+            <td> {% for parameter in i.parameters.all %}
+                <p>{{ parameter.name }}: {{ parameter.value }}</p>
+            {% endfor %}</td>
         </tr>
         <tr>
             <td><span class="variable">Report By:</span></td>

@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, redirect
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.base import TemplateView
 from django.views.generic import DetailView, ListView
@@ -24,7 +24,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
 from django.forms import modelformset_factory
 User = get_user_model()
-
+from django.db.models import Count, Q
 
 
 def log_anonymous_required(view_function, redirect_to=None):
@@ -185,6 +185,7 @@ class PatientDetailView(DetailView):
         context['hematology_results']=patient.hematology_result.all()
         context['chempath_results']=patient.chemical_pathology_results.all()
         context['micro_results']=patient.microbiology_results.all()
+        # context['serology_results'] = patient.serology_results.prefetch_related('parameters').all()
         context['serology_results']=patient.serology_results.all()
         return context
     
@@ -525,105 +526,80 @@ def micro_report_pdf(request):
 
 
 class SerologyListView(ListView):
-    model=SerologyResult
+    model=SerologyTestResult
     template_name='serology/serology_list.html'
     context_object_name='serology_results'
 
     def get_queryset(self):
-        queryset=super().get_queryset()
-        queryset=queryset.filter(result__isnull=False)
+        queryset = super().get_queryset()
+        queryset = queryset.annotate(
+            num_parameters=Count('parameters')
+        ).filter(
+            Q(num_parameters=0) |
+            Q(parameters__name__isnull=False) |
+            Q(parameters__value__isnull=False)
+        )
         return queryset
 
 class SerologyRequestListView(ListView):
-    model=SerologyResult
-    template_name='serology/serology_request.html'
-    context_object_name='serology_request'
+    model = SerologyTestResult
+    template_name = 'serology/serology_request.html'
+    context_object_name = 'serology_request'
 
     def get_queryset(self):
-        queryset=super().get_queryset()
-        queryset=queryset.filter(result__isnull=True)
+        queryset = super().get_queryset()
+        queryset = queryset.annotate(
+            num_parameters=Count('parameters')
+        ).filter(
+            Q(num_parameters=0) |
+            Q(parameters__name__isnull=True) |
+            Q(parameters__value__isnull=True)
+        )
         return queryset
 
 
 class SerologyTestCreateView(LoginRequiredMixin, CreateView):
-    model=SerologyResult
+    model = SerologyTestResult
     form_class = SerologyTestForm
     template_name = 'serology/serology_result.html'
 
     def form_valid(self, form):
-        # Set the approved_by field to the current user
         form.instance.approved_by = self.request.user
-
-        # Get the patient instance from the request
         patient = Patient.objects.get(surname=self.kwargs['surname'])
         form.instance.patient = patient
-
         messages.success(self.request, 'Serology result created successfully')
         return super().form_valid(form)
-    
-    def get_success_url(self):
-        return self.object.patient.get_absolute_url()
-
-
-
-class SerologyResultCreateView(LoginRequiredMixin, UpdateView):
-    model = SerologyResult
-    template_name = 'serology/serology_update.html'
-    context_object_name = 'result'
-    fields = ['test', 'result', 'unit']
-    
-    def get_object(self, queryset=None):
-        try:
-            patient = Patient.objects.get(surname=self.kwargs['surname'])
-            result = SerologyResult.objects.get(patient=patient, pk=self.kwargs['pk'])
-            return result
-        except (Patient.DoesNotExist, SerologyResult.DoesNotExist):
-            raise Http404("Patient or Serology Result not found.")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        result = self.object
-        if result.pk:
-            ParameterFormSet = modelformset_factory(SerologyParameter, form=SerologyParamterForm, extra=3, can_delete=False)
-            context['parameter_formset'] = ParameterFormSet(queryset=result.parameters.all())
-        else:
-            ParameterFormSet = modelformset_factory(SerologyParameter, form=SerologyParamterForm, extra=3, can_delete=False)
-            context['parameter_formset'] = ParameterFormSet(queryset=SerologyParameter.objects.none())
-        return context
 
     def get_success_url(self):
         return reverse('patient_details', kwargs={'surname': self.kwargs['surname']})
 
-    def form_valid(self, form):
-        print("SerologyResultCreateView.form_valid called")
-        context = self.get_context_data()
-        parameter_formset = context['parameter_formset']
-        if parameter_formset.is_valid():
-            try:
-                form.instance = self.object
-                self.object = form.save()
-                parameter_instances = parameter_formset.save(commit=False)
-                for parameter in parameter_instances:
-                    parameter.result = self.object
-                    parameter.save()
-                messages.success(self.request, 'Serology result updated successfully')
-            except Exception as e:
-                print("Exception occurred:", e)
-            return super().form_valid(form)
-        else:
-            return self.render_to_response(self.get_context_data(form=form, parameter_formset=parameter_formset))
 
-    def form_invalid(self, form):
-        print("SerologyResultCreateView.form_invalid called")
-        context = self.get_context_data()
-        parameter_formset = context['parameter_formset']
-        if not parameter_formset.is_valid():
-            return self.render_to_response(self.get_context_data(form=form, parameter_formset=parameter_formset))
+class SerologyResultCreateView(LoginRequiredMixin, CreateView):
+    model = SerologyParameter
+    form_class = SerologyParameterForm
+    template_name = 'serology/serology_update.html'
+    context_object_name = 'result'
+
+    def form_valid(self, form):
+        form.instance.approved_by = self.request.user
+        try:
+            result = SerologyTestResult.objects.get(pk=self.kwargs['pk'])
+        except SerologyTestResult.DoesNotExist:
+            messages.error(self.request, 'Serology test result not found')
+            return redirect(self.get_success_url())
+        form.instance.result = result
+        messages.success(self.request, 'Serology result updated successfully')
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        result = self.object.result
+        patient = result.patient
+        return reverse('patient_details', kwargs={'surname': patient.surname})
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 class SerologyReportView(ListView):
-    model=SerologyResult
+    model=SerologyTestResult
     template_name = 'serology/serology_report.html'
     paginate_by = 10
     context_object_name = 'patient'
@@ -638,7 +614,7 @@ class SerologyReportView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['Serology_filter'] = SerologyFilter(self.request.GET, queryset=self.get_queryset())
+        context['serology_filter'] = SerologyFilter(self.request.GET, queryset=self.get_queryset())
         return context
 
 
@@ -646,7 +622,7 @@ class SerologyReportView(ListView):
 def serology_report_pdf(request):
     ndate = datetime.datetime.now()
     filename = ndate.strftime('on_%d/%m/%Y_at_%I.%M%p.pdf')
-    f = SerologyFilter(request.GET, queryset=SerologyResult.objects.all()).qs
+    f = SerologyFilter(request.GET, queryset=SerologyTestResult.objects.all()).qs
 
     result = ""
     for key, value in request.GET.items():
@@ -669,3 +645,4 @@ def serology_report_pdf(request):
         response.write(pdf)
         return response
     return HttpResponse('Error generating PDF', status=500)
+

@@ -46,10 +46,14 @@ urlpatterns = [
     path('serology/', SerologyView.as_view(), name='serology'),    
     path('serology-list/',SerologyListView.as_view(),name='serology_list'),
     path('serology-request/',SerologyRequestListView.as_view(),name='serology_request'),
-    path('serology-test/create/<str:surname>/',SerologyTestCreateView.as_view(), name='serology_test'),
-    path('serology-result/create/<str:surname>/<int:pk>/',SerologyResultCreateView.as_view(), name='serology_result'),
+    # path('serology-test/create/<str:surname>/',SerologyTestCreateView.as_view(), name='serology_test'),
+    # path('serology-result/create/<str:surname>/<int:pk>/',SerologyResultCreateView.as_view(), name='serology_result'),
+    path('serology-test/create/<str:surname>/', SerologyTestCreateView.as_view(), name='serology_test'),
+    path('serology-result/create/<int:pk>/', SerologyResultCreateView.as_view(), name='serology_result'),
     path('serology-report/', SerologyReportView.as_view(), name='serology_report'),
+    
     path('serology-pdf/', views.serology_report_pdf, name='serology_report_pdf'),
+    
 
     path('get_tests_for_category/',views.get_tests_for_category,name="get_tests_for_category"),
     path('logout/', CustomLogoutView.as_view(), name='logout'),
