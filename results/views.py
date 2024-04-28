@@ -25,6 +25,8 @@ from django.db.models import Count
 from django.forms import modelformset_factory
 User = get_user_model()
 from django.db.models import Count, Q
+from django.views.generic import FormView
+from django.forms import inlineformset_factory
 
 
 def log_anonymous_required(view_function, redirect_to=None):
@@ -567,7 +569,6 @@ class SerologyTestCreateView(LoginRequiredMixin, CreateView):
     template_name = 'serology/serology_result.html'
 
     def form_valid(self, form):
-        
         patient = Patient.objects.get(surname=self.kwargs['surname'])
         form.instance.patient = patient
         messages.success(self.request, 'Serology result created successfully')
@@ -575,25 +576,53 @@ class SerologyTestCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse('patient_details', kwargs={'surname': self.kwargs['surname']})
-
-
-class SerologyResultCreateView(LoginRequiredMixin, CreateView):
-    model = SerologyParameter
-    form_class = SerologyParameterForm
+    
+    
+class SerologyParameterFormView(LoginRequiredMixin, UpdateView):
+    model = SerologyTestResult
+    form_class = SerologyTestResultForm
     template_name = 'serology/serology_update.html'
-    context_object_name = 'result'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        result_id = self.kwargs.get('pk')
+        result = SerologyTestResult.objects.get(id=result_id)
+        ParameterFormSet = inlineformset_factory(SerologyTestResult, SerologyParameter, form=SerologyParameterForm, extra=1)
+        if self.request.method == 'POST':
+            context['formset'] = ParameterFormSet(self.request.POST, instance=result)
+        else:
+            context['formset'] = ParameterFormSet(instance=result, queryset=SerologyParameter.objects.none())
+        return context
 
     def form_valid(self, form):
-        
-        try:
-            result = SerologyTestResult.objects.get(pk=self.kwargs['pk'])
-        except SerologyTestResult.DoesNotExist:
-            messages.error(self.request, 'Serology test result not found')
-            return redirect(self.get_success_url())
-        form.instance.result = result
-        messages.success(self.request, 'Serology result updated successfully')
-        return super().form_valid(form)
+        result_id = self.kwargs.get('pk')
+        result = SerologyTestResult.objects.get(id=result_id)
+        formset = inlineformset_factory(SerologyTestResult, SerologyParameter, form=SerologyParameterForm)(self.request.POST, instance=result)
+        if form.is_valid() and formset.is_valid():
+            form.save()
+            formset.save()
+            messages.success(self.request, 'Serology result updated successfully')
+            return super().form_valid(form)
+        else:
+            messages.error(self.request, 'Error updating serology result')
+            return self.render_to_response(self.get_context_data(form=form))
 
+    def get_success_url(self):
+        result = self.object
+        patient = result.patient
+        return reverse('patient_details', kwargs={'surname': patient.surname})
+
+class SerologyParameterUpdateView(LoginRequiredMixin, UpdateView):
+    model = SerologyParameter
+    form_class = SerologyParameterForm
+    template_name = 'serology/serology_param.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        result = self.object.result
+        context['result'] = result
+        return context
+    
     def get_success_url(self):
         result = self.object.result
         patient = result.patient
@@ -678,8 +707,6 @@ class GeneralTestCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         
-        
-
         # Get the patient instance from the request
         patient = Patient.objects.get(surname=self.kwargs['surname'])
         form.instance.patient = patient

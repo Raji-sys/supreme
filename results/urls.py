@@ -50,7 +50,8 @@ urlpatterns = [
     # path('serology-test/create/<str:surname>/',SerologyTestCreateView.as_view(), name='serology_test'),
     # path('serology-result/create/<str:surname>/<int:pk>/',SerologyResultCreateView.as_view(), name='serology_result'),
     path('serology-test/create/<str:surname>/', SerologyTestCreateView.as_view(), name='serology_test'),
-    path('serology-result/create/<int:pk>/', SerologyResultCreateView.as_view(), name='serology_result'),
+    path('serology-result/create/<int:pk>/', SerologyParameterFormView.as_view(), name='serology_result'),
+    path('serology-parameter/update/<int:pk>/', SerologyParameterUpdateView.as_view(), name='serology_param'),
     path('serology-report/', SerologyReportView.as_view(), name='serology_report'),
     path('serology-pdf/', views.serology_report_pdf, name='serology_report_pdf'),
     
