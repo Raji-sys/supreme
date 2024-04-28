@@ -33,6 +33,7 @@ urlpatterns = [
     path('chempath-request/',ChempathRequestListView.as_view(),name='chempath_request'),
     path('chempath-test/create/<str:surname>/',ChempathTestCreateView.as_view(), name='chempath_test'),
     path('chempath-result/create/<str:surname>/<int:pk>/',ChempathResultCreateView.as_view(), name='chempath_result'),
+    path('chempath-parameter/update/<int:pk>/', ChempathParameterUpdateView.as_view(), name='chempath_param'),
     path('chempath-report/', ChempathReportView.as_view(), name='chempath_report'),
     path('chempath-pdf/', views.chempath_report_pdf, name='chempath_report_pdf'),
 

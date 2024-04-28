@@ -62,6 +62,11 @@ class ChempathResultForm(forms.ModelForm):
         fields = ['test', 'result', 'unit']
 
 
+class ChempathParameterForm(forms.ModelForm):
+    class Meta:
+        model = ChempathParameter
+        fields = ['name', 'value']
+
 class MicroTestForm(forms.ModelForm):
     class Meta:
         model = MicrobiologyResult

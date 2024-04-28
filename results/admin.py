@@ -49,6 +49,12 @@ class HematologyResultAdmin(admin.ModelAdmin):
     #         obj.approved_by=request.user
     #     obj.save()
 
+
+@admin.register(ChempathTestName)
+class ChempathTestNameAdmin(admin.ModelAdmin):
+    list_display = ('name', 'reference_range')
+
+
 @admin.register(ChemicalPathologyResult)
 class ChempathResultAdmin(admin.ModelAdmin):
     list_display = ('patient', 'test', 'result', 'unit', 'created','updated',)
@@ -61,6 +67,7 @@ class ChempathResultAdmin(admin.ModelAdmin):
     #     if not obj.approved_by:
     #         obj.approved_by=request.user
     #     obj.save()
+
 
 
 @admin.register(MicrobiologyResult)

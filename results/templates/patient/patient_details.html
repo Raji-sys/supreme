@@ -62,13 +62,13 @@
           <tr class="bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
             <td class="px-6 py-4 whitespace-nowrap">{{ forloop.counter }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ r.test|default_if_none:''}}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ r.created|default_if_none:'' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ r.collected|default_if_none:'' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
               <span class="text-sm">{{ r.result|default_if_none:'' }}</span>
               <span class="text-xs">{{ r.unit|default_if_none:'' }}</span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">{{ r.comment|default_if_none:'' }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ r.updated|default_if_none:'' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ r.reported|default_if_none:'' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
               <a href="{% url 'hematology_result' r.patient.surname r.id %}" class="text-blue-500 hover:text-blue-700">input result</a>
             </td>
@@ -87,6 +87,7 @@
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Test</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Date Collected</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Result</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Parameter</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Comment</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Date Reported</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Actions</th>
@@ -98,13 +99,21 @@
           <tr class="bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
             <td class="px-6 py-4 whitespace-nowrap">{{ forloop.counter }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ c.test|default_if_none:''}}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ c.created|default_if_none:'' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ c.collected|default_if_none:'' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
               <span class="text-sm">{{ c.result|default_if_none:'' }}</span>
               <span class="text-xs">{{ c.unit|default_if_none:'' }}</span>
             </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="text-sm">
+                {% for parameter in c.chempath_parameters.all %}
+                <p><a href="{% url 'chempath_param' parameter.id %}" class="text-blue-500 hover:text-blue-700">{{ parameter.name }}: {{ parameter.value }}
+                </a></p>
+            {% endfor %}
+              </span>
+            </td>
             <td class="px-6 py-4 whitespace-nowrap">{{ c.comment|default_if_none:'' }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ c.updated|default_if_none:'' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ c.reported|default_if_none:'' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
               <a href="{% url 'chempath_result' c.patient.surname c.id %}" class="text-blue-500 hover:text-blue-700">input result</a>
             </td>
@@ -136,13 +145,13 @@
             <td class="px-6 py-4 whitespace-nowrap">{{ forloop.counter }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ m.category|default_if_none:''}}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ m.test|default_if_none:''}}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ m.created|default_if_none:'' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ m.collected|default_if_none:'' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
               <span class="text-sm">{{ m.result|default_if_none:'' }}</span>
               <span class="text-xs">{{ m.unit|default_if_none:'' }}</span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">{{ m.comment|default_if_none:'' }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ m.updated|default_if_none:'' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ m.reported|default_if_none:'' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
               <a href="{% url 'micro_result' m.patient.surname m.id %}" class="text-blue-500 hover:text-blue-700">input result</a>
             </td>
@@ -177,15 +186,16 @@
             <td class="px-6 py-4 whitespace-nowrap">{{ s.test.name|default_if_none:''}}</td>
             {% comment %} <td class="px-6 py-4 whitespace-nowrap">{{ s.test.reference_range|default_if_none:''}}</td> {% endcomment %}
             <td class="px-6 py-4 whitespace-nowrap">{{ s.collected|default_if_none:'' }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ s.result|default_if_none:'' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ s.result|default_if_none:'' }}
+              <span class="text-xs">{{ s.unit|default_if_none:'' }}</span>
+            </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <span class="text-sm">
-                {% for parameter in s.parameters.all %}
-                <p>{{ parameter.name }}: {{ parameter.value }}
-                <a href="{% url 'serology_param' parameter.id %}" class="text-blue-500 hover:text-blue-700">update </a>  </p>
+                {% for parameter in s.serology_parameters.all %}
+                <p><a href="{% url 'serology_param' parameter.id %}" class="text-blue-500 hover:text-blue-700">{{ parameter.name }}: {{ parameter.value }}
+                </a></p>
             {% endfor %}
               </span>
-              <span class="text-xs">{{ s.unit|default_if_none:'' }}</span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">{{ s.comments|default_if_none:'' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ s.reported|default_if_none:'' }}</td>
@@ -218,13 +228,13 @@
           <tr class="bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
             <td class="px-6 py-4 whitespace-nowrap">{{ forloop.counter }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ g.name|default_if_none:''}}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ g.created|default_if_none:'' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ g.collected|default_if_none:'' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
               <span class="text-sm">{{ g.result|default_if_none:'' }}</span>
               <span class="text-xs">{{ g.unit|default_if_none:'' }}</span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">{{ g.comment|default_if_none:'' }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ g.updated|default_if_none:'' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ g.reported|default_if_none:'' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
               <a href="{% url 'general_result' g.patient.surname g.id %}" class="text-blue-500 hover:text-blue-700">input result</a>
             </td>

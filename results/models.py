@@ -140,25 +140,32 @@ class HematologyResult(models.Model):
             return f"{self.patient.surname} - {self.test} - {self.result}"
         
 
-CHEMPATH_TEST=[
-    ('UREA 1.7-8.3','UREA 1.7-8.3'),('NA 135-145','NA 135-145'),('K 3.8-5.4','K 3.8-5.4'),
-    ('HCO2 24-32','HCO2 24-32'),('CL 98-108','CL 98-108'),('FASTING','FASTING'),
-    ('RANDOM 3.89-6.11','RANDOM 3.89-6.11'),('2HR PP','2HR PP'),('CSF GLUCOSE 2.78-4.44','CSF CLUCOSE 2.78-4.44'),
-    ('CSF PROTEIN 150-400','CSF PROTEIN 150-400'),('CSF CHLORIDE 120-130','CSF CHLORIDE 120-130'),('CHOLESTEROL 3.89-6.21','CHOLESTEROL 3.89-6.21'),
-    ('TRIGLYCERIDE 0.00-1.92','TRIGLYCERIDE 0.00-1.92'),('HDL-CHOL >1.68(FEMALE) >1.68(MALE)','HDL-CHOL > 1.68(FEMALE) > 1.68(MALE)'),('LDL-CHOL < 3.90','LDL-CHOL < 3.90'),
-    ('ALKALINE PHOSPHATES 9-35(ADULT) 35-100(CHILD)','ALKALINE PHOSPHATES 9-35(ADULT) 35-100(CHILD)'),('SGOT 0-12','SGOT 0-12'),('SGPT 0-12','SGPT 0-12'),
-    ('GAMA G. T 10-40','GAMA G. T 10-40'),('BILLIRUBIN TOTAL= <17','BILLIRUBIN TOTAL= <17'),('BILLIRUBIN DIRECT= <4.3','BILLIRUBIN DIRECT= <4.3'),
-    ('T:PROTEIN 6.5-8.7','T:PROTEIN 6.5-8.7'),('ALBUMIN 3.8-4.4','ALBUMIN 3.8-4.4'),('GLOBULIN 2-3.9','GLOBULIN 2-3.9'),
-    ('ALKALINE PHOSPHATES 9-35(ADULT) 35-100(CHILDREN)','ALKALINE PHOSPHATES 9-35(ADULT) 35-100(CHILDREN)'),('CALCIUM 2.02-2.60','CALCIUM 2.02-2.60'),('INORG. PHOSPHATES 0.81-1.62(ADULT) 1.30-2.26(CHILDREN)','INORG. PHOSPHATES 0.81-1.62(ADULT) 1.30-2.26(CHILDREN)'),
-    ('URIC ACID 202-416(MALE) 142-339(FEMALE)','URIC ACID 202-416(MALE) 142-339(FEMALE)'),('CREATININE 53-97(MALE) 44-80(FEMALE)','CREATININE 53-97(MALE) 44-80(FEMALE)'),('SERUM ANYLASE','SERUM ANYLASE'),
-    ('ACID PHOSPHATES: TOTAL (<11U/L)','ACID PHOSPHATES: PROSTATIC (<11U/L)'),('ACID PHOSPHATES: TOTAL (<11U/L)','ACID PHOSPHATES: PROSTATIC (<11U/L)')
-    ]
+# CHEMPATH_TEST=[
+#     ('UREA 1.7-8.3','UREA 1.7-8.3'),('NA 135-145','NA 135-145'),('K 3.8-5.4','K 3.8-5.4'),
+#     ('HCO2 24-32','HCO2 24-32'),('CL 98-108','CL 98-108'),('FASTING','FASTING'),
+#     ('RANDOM 3.89-6.11','RANDOM 3.89-6.11'),('2HR PP','2HR PP'),('CSF GLUCOSE 2.78-4.44','CSF CLUCOSE 2.78-4.44'),
+#     ('CSF PROTEIN 150-400','CSF PROTEIN 150-400'),('CSF CHLORIDE 120-130','CSF CHLORIDE 120-130'),('CHOLESTEROL 3.89-6.21','CHOLESTEROL 3.89-6.21'),
+#     ('TRIGLYCERIDE 0.00-1.92','TRIGLYCERIDE 0.00-1.92'),('HDL-CHOL >1.68(FEMALE) >1.68(MALE)','HDL-CHOL > 1.68(FEMALE) > 1.68(MALE)'),('LDL-CHOL < 3.90','LDL-CHOL < 3.90'),
+#     ('ALKALINE PHOSPHATES 9-35(ADULT) 35-100(CHILD)','ALKALINE PHOSPHATES 9-35(ADULT) 35-100(CHILD)'),('SGOT 0-12','SGOT 0-12'),('SGPT 0-12','SGPT 0-12'),
+#     ('GAMA G. T 10-40','GAMA G. T 10-40'),('BILLIRUBIN TOTAL= <17','BILLIRUBIN TOTAL= <17'),('BILLIRUBIN DIRECT= <4.3','BILLIRUBIN DIRECT= <4.3'),
+#     ('T:PROTEIN 6.5-8.7','T:PROTEIN 6.5-8.7'),('ALBUMIN 3.8-4.4','ALBUMIN 3.8-4.4'),('GLOBULIN 2-3.9','GLOBULIN 2-3.9'),
+#     ('ALKALINE PHOSPHATES 9-35(ADULT) 35-100(CHILDREN)','ALKALINE PHOSPHATES 9-35(ADULT) 35-100(CHILDREN)'),('CALCIUM 2.02-2.60','CALCIUM 2.02-2.60'),('INORG. PHOSPHATES 0.81-1.62(ADULT) 1.30-2.26(CHILDREN)','INORG. PHOSPHATES 0.81-1.62(ADULT) 1.30-2.26(CHILDREN)'),
+#     ('URIC ACID 202-416(MALE) 142-339(FEMALE)','URIC ACID 202-416(MALE) 142-339(FEMALE)'),('CREATININE 53-97(MALE) 44-80(FEMALE)','CREATININE 53-97(MALE) 44-80(FEMALE)'),('SERUM ANYLASE','SERUM ANYLASE'),
+#     ('ACID PHOSPHATES: TOTAL (<11U/L)','ACID PHOSPHATES: PROSTATIC (<11U/L)'),('ACID PHOSPHATES: TOTAL (<11U/L)','ACID PHOSPHATES: PROSTATIC (<11U/L)')
+#     ]
 
+class ChempathTestName(models.Model):
+    name = models.CharField(max_length=100, null=True, blank=True)
+    reference_range = models.CharField(max_length=200, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.name}, {self.reference_range}"
+    
 
 class ChemicalPathologyResult(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='chemical_pathology_results',null=True, blank=True)
     result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
-    test = models.CharField(choices=CHEMPATH_TEST, max_length=100, null=True, blank=True)
+    test = models.ForeignKey(ChempathTestName, max_length=100, null=True, blank=True, on_delete=models.CASCADE, related_name="results")
     test_ref_range=models.CharField(max_length=50, null=True, blank=True)
     result = models.FloatField(null=True, blank=True)
     unit = models.CharField(max_length=50, null=True, blank=True)
@@ -189,12 +196,18 @@ class ChemicalPathologyResult(models.Model):
         if self.patient:
             return f"{self.patient.surname} - {self.test} - {self.result}"
 
+class ChempathParameter(models.Model):
+    result = models.ForeignKey(ChemicalPathologyResult, on_delete=models.CASCADE, related_name='chempath_parameters', null=True, blank=True)
+    name = models.CharField(max_length=200, null=True, blank=True)
+    value = models.CharField(max_length=200, null=True, blank=True)
+
 
 class MicroTestCategory(models.Model):
     name = models.CharField(max_length=100,null=True,blank=True)
     def __str__(self):
         return self.name
     
+
 class MicrobiologyTest(models.Model):
     name = models.CharField(max_length=100,null=True,blank=True)
     category=models.ForeignKey(MicroTestCategory,on_delete=models.CASCADE,null=True,blank=True)
@@ -237,6 +250,15 @@ class MicrobiologyResult(models.Model):
         if self.patient:
             return f"{self.patient} -{self.test} - {self.result}"
 
+class MicroParameter(models.Model):
+    result = models.ForeignKey(MicrobiologyResult, on_delete=models.CASCADE, related_name='micro_parameters', null=True, blank=True)
+    name = models.CharField(max_length=200, null=True, blank=True)
+    value = models.CharField(max_length=200, null=True, blank=True)
+
+
+    def __str__(self):
+        return f"{self.name}: {self.value}"
+    
 
 class SerologyTestName(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
@@ -288,7 +310,7 @@ class SerologyTestResult(models.Model):
             return f"{self.test} - {self.result}"
 
 class SerologyParameter(models.Model):
-    result = models.ForeignKey(SerologyTestResult, on_delete=models.CASCADE, related_name='parameters', null=True, blank=True)
+    result = models.ForeignKey(SerologyTestResult, on_delete=models.CASCADE, related_name='serology_parameters', null=True, blank=True)
     name = models.CharField(max_length=200, null=True, blank=True)
     value = models.CharField(max_length=200, null=True, blank=True)
 

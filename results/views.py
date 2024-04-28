@@ -192,12 +192,12 @@ class PatientDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
         patient=self.get_object()
-        context['hematology_results']=patient.hematology_result.all()
-        context['chempath_results']=patient.chemical_pathology_results.all()
-        context['micro_results']=patient.microbiology_results.all()
+        context['hematology_results']=patient.hematology_result.all().order_by('-created')
+        context['chempath_results']=patient.chemical_pathology_results.all().order_by('-created')
+        context['micro_results']=patient.microbiology_results.all().order_by('-created')
         # context['serology_results'] = patient.serology_results.prefetch_related('parameters').all()
-        context['serology_results']=patient.serology_results.all()
-        context['general_results']=patient.general_results.all()
+        context['serology_results']=patient.serology_results.all().order_by('-created')
+        context['general_results']=patient.general_results.all().order_by('-created')
         return context
     
 class HematologyListView(ListView):
@@ -347,21 +347,73 @@ class ChempathTestCreateView(LoginRequiredMixin, CreateView):
 
 
 class ChempathResultCreateView(LoginRequiredMixin, UpdateView):
-    model=ChemicalPathologyResult
+    model = ChemicalPathologyResult
     form_class = ChempathResultForm
     template_name = 'chempath/chempath_update.html'
-    context_object_name = 'result'
 
-    def get_object(self, queryset=None):
-        patient = Patient.objects.get(surname=self.kwargs['surname'])
-        return ChemicalPathologyResult.objects.get(patient=patient, pk=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        result_id = self.kwargs.get('pk')
+        result = ChemicalPathologyResult.objects.get(id=result_id)
+        ParameterFormSet = inlineformset_factory(ChemicalPathologyResult, ChempathParameter, form=ChempathParameterForm, extra=1)
+        if self.request.method == 'POST':
+            context['formset'] = ParameterFormSet(self.request.POST, instance=result)
+        else:
+            context['formset'] = ParameterFormSet(instance=result, queryset=ChempathParameter.objects.none())
+        return context
 
     def form_valid(self, form):
-        messages.success(self.request, 'Chemical pathology result updated successfully')
-        return super().form_valid(form)
+        result_id = self.kwargs.get('pk')
+        result = ChemicalPathologyResult.objects.get(id=result_id)
+        formset = inlineformset_factory(ChemicalPathologyResult, ChempathParameter, form=ChempathParameterForm)(self.request.POST, instance=result)
+        if form.is_valid() and formset.is_valid():
+            form.save()
+            formset.save()
+            messages.success(self.request, 'chempath result updated successfully')
+            return super().form_valid(form)
+        else:
+            messages.error(self.request, 'Error updating chempath result')
+            return self.render_to_response(self.get_context_data(form=form))
 
     def get_success_url(self):
-        return reverse('patient_details', kwargs={'surname': self.kwargs['surname']})
+        result = self.object
+        patient = result.patient
+        return reverse('patient_details', kwargs={'surname': patient.surname})
+
+
+class ChempathParameterUpdateView(LoginRequiredMixin, UpdateView):
+    model = ChempathParameter
+    form_class = ChempathParameterForm
+    template_name = 'chempath/chempath_param.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        result = self.object.result
+        context['result'] = result
+        return context
+    
+    def get_success_url(self):
+        result = self.object.result
+        patient = result.patient
+        return reverse('patient_details', kwargs={'surname': patient.surname})
+
+# class ChempathResultCreateView(LoginRequiredMixin, UpdateView):
+#     model=ChemicalPathologyResult
+#     form_class = ChempathResultForm
+#     template_name = 'chempath/chempath_update.html'
+#     context_object_name = 'result'
+
+#     def get_object(self, queryset=None):
+#         patient = Patient.objects.get(surname=self.kwargs['surname'])
+#         return ChemicalPathologyResult.objects.get(patient=patient, pk=self.kwargs['pk'])
+
+#     def form_valid(self, form):
+#         messages.success(self.request, 'Chemical pathology result updated successfully')
+#         return super().form_valid(form)
+
+#     def get_success_url(self):
+#         return reverse('patient_details', kwargs={'surname': self.kwargs['surname']})
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -611,6 +663,7 @@ class SerologyParameterFormView(LoginRequiredMixin, UpdateView):
         result = self.object
         patient = result.patient
         return reverse('patient_details', kwargs={'surname': patient.surname})
+
 
 class SerologyParameterUpdateView(LoginRequiredMixin, UpdateView):
     model = SerologyParameter
