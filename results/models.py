@@ -106,7 +106,6 @@ TEST = (
     )
 
 class HematologyResult(models.Model):
-    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='hematology_result', null=True, blank=True)
     result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
     test = models.CharField(choices=TEST, max_length=100, null=True, blank=True)
@@ -117,8 +116,8 @@ class HematologyResult(models.Model):
     natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
     collected = models.DateField(auto_now=True, null=True,blank=True)
     reported = models.DateField(auto_now=True, null=True, blank=True)
-    creator = models.ForeignKey(User, null=True, blank=True, related_name='hematology_results_created', on_delete=models.SET_NULL)
-    updater = models.ForeignKey(User, null=True, blank=True, related_name='hematology_results_updated', on_delete=models.SET_NULL)
+    collected_by = models.ForeignKey(User, null=True, blank=True, related_name='hematology_results_collected', on_delete=models.SET_NULL)
+    updated_by = models.ForeignKey(User, null=True, blank=True, related_name='hematology_results_reported', on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -157,7 +156,6 @@ CHEMPATH_TEST=[
 
 
 class ChemicalPathologyResult(models.Model):
-    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='chemical_pathology_results',null=True, blank=True)
     result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
     test = models.CharField(choices=CHEMPATH_TEST, max_length=100, null=True, blank=True)
@@ -168,6 +166,8 @@ class ChemicalPathologyResult(models.Model):
     natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
     collected = models.DateField(auto_now=True, null=True,blank=True)
     reported = models.DateField(auto_now=True, null=True, blank=True)
+    collected_by = models.ForeignKey(User, null=True, blank=True, related_name='chempath_results_collected', on_delete=models.SET_NULL)
+    updated_by = models.ForeignKey(User, null=True, blank=True, related_name='chempath_results_reported', on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -204,7 +204,6 @@ class MicrobiologyTest(models.Model):
 
 
 class MicrobiologyResult(models.Model):
-    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='microbiology_results',null=True, blank=True)
     result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
     category=models.ForeignKey(MicroTestCategory,on_delete=models.CASCADE,null=True,blank=True)
@@ -215,6 +214,8 @@ class MicrobiologyResult(models.Model):
     natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
     collected = models.DateField(auto_now=True, null=True,blank=True)
     reported = models.DateField(auto_now=True, null=True, blank=True)
+    collected_by = models.ForeignKey(User, null=True, blank=True, related_name='microbiology_results_collected', on_delete=models.SET_NULL)
+    updated_by = models.ForeignKey(User, null=True, blank=True, related_name='microbiology_results_reported', on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
@@ -245,7 +246,6 @@ class SerologyTestName(models.Model):
         return f"{self.name}, {self.reference_range}"
 
 class SerologyTestResult(models.Model):
-    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='serology_results', null=True, blank=True)
     result_code = models.CharField(max_length=20, unique=True, editable=False, default="")
     test = models.ForeignKey(SerologyTestName, on_delete=models.CASCADE, null=True, blank=True, related_name='results')
@@ -255,6 +255,8 @@ class SerologyTestResult(models.Model):
     nature_of_specimen = models.CharField(max_length=100, null=True, blank=True)
     collected = models.DateField(auto_now_add=True, null=True, blank=True)
     reported = models.DateField(auto_now=True, null=True, blank=True)
+    collected_by = models.ForeignKey(User, null=True, blank=True, related_name='serology_results_collected', on_delete=models.SET_NULL)
+    updated_by = models.ForeignKey(User, null=True, blank=True, related_name='serology_results_reported', on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -296,7 +298,6 @@ class SerologyParameter(models.Model):
 
 
 class GeneralTestResult(models.Model):
-    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, null=True)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='general_results', null=True, blank=True)
     result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
@@ -306,6 +307,8 @@ class GeneralTestResult(models.Model):
     nature_of_specimen = models.CharField(max_length=100, null=True, blank=True)
     collected = models.DateField(auto_now_add=True, null=True, blank=True)
     reported = models.DateField(auto_now=True, null=True, blank=True)
+    collected_by = models.ForeignKey(User, null=True, blank=True, related_name='general_results_collected', on_delete=models.SET_NULL)
+    updated_by = models.ForeignKey(User, null=True, blank=True, related_name='general_results_reported', on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

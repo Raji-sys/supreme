@@ -8,6 +8,7 @@ urlpatterns = [
     
     path('login/', CustomLoginView.as_view(), name='login'),
     path('dashboard/', DashboardView.as_view(), name='dashboard'),
+    path('report/', ReportView.as_view(), name='report'),
 
     path('create-profile/', UserProfileCreateView.as_view(), name='create_profile'),
     path('profile-list/', ProfileListView.as_view(), name='profiles_list'),
@@ -24,7 +25,7 @@ urlpatterns = [
     path('hematology-request/', HematologyRequestListView.as_view(), name='hematology_request'),
     path('hematology-test/create/<str:surname>/', HematologyTestCreateView.as_view(), name='hematology_test'),
     path('hematology-result/create/<str:surname>/<int:pk>/', HematologyResultCreateView.as_view(), name='hematology_result'),
-    path('hematology-report/', ReportView.as_view(), name='report'),
+    path('hematology-report/', HemaReportView.as_view(), name='hema_report'),
     path('hematology-pdf/', views.hema_report_pdf, name='report_pdf'),
    
     path('chempath/', ChempathView.as_view(), name='chempath'),    

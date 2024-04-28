@@ -70,6 +70,10 @@ class SerologyView(TemplateView):
 class GeneralView(TemplateView):
     template_name = "general/general.html"
 
+@method_decorator(login_required(login_url='login'), name='dispatch')
+class ReportView(TemplateView):
+    template_name = "report.html"
+
 @method_decorator(log_anonymous_required, name='dispatch')
 class CustomLoginView(LoginView):
     template_name = 'login.html'
@@ -93,25 +97,25 @@ class CustomLogoutView(LogoutView):
 class UserProfileCreateView(CreateView):
     form_class = CustomUserCreationForm
     template_name = 'profile/profile_create.html'
-    success_url = reverse_lazy('profile_list')
+    success_url = reverse_lazy('profile_details',kwargs={'username':User.username})
 
     def form_valid(self, form):
-        if form.is_valid():
-            response = super().form_valid(form)
-            user = User.objects.get(username=form.cleaned_data['username'])
-            profile_instance = Profile(user=user)
-            profile_instance.save()
-            messages.success(
-                self.request, f"Registration for: {user.get_full_name()} was successful")
-            return response
-        else:
-            print("Form errors:", form.errors)
-            return self.form_invalid(form)
-    
+        response = super().form_valid(form)
+        user = User.objects.get(username=form.cleaned_data['username'])
+        profile_instance = Profile(user=user)
+        profile_instance.save()
+        messages.success(self.request, f"Registration for: {user.get_full_name()} was successful")
+
+        profile_url=reverse('profile_details',kwargs={'username':user.username})
+        return redirect (profile_url)
+
+
 class ProfileDetailView(DetailView):
     template_name = 'profile/profile_details.html'
     model = Profile
     context_object_name='profile'
+    slug_field='user__username'
+    slug_url_kwarg='username'
 
     def get_object(self, queryset=None):
         if self.request.user.is_superuser:
@@ -253,7 +257,7 @@ class HematologyResultCreateView(LoginRequiredMixin, UpdateView):
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
-class ReportView(ListView):
+class HemaReportView(ListView):
     model = HematologyResult
     template_name = 'hema/hema_report.html'
     paginate_by = 10

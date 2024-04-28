@@ -2,9 +2,10 @@
 {% block title %}GENERAL REPORT{% endblock%}
 {% block content %}
 <div class="mt-5 p-4">
+  <h1 class="text-3xl text-center text-gray-700">GENERAL REPORT</h1>
 <div class="grid grid-rows-2 mt-0 relative">
     <div class="center-2 h-full overflow-y-auto ">
-        <div class="flex flex-row justify-center items-center max-w-6xl mx-auto rounded-xl p-4 shadow-2xl bg-rose-50 text-black m-2">
+        <div class="flex flex-row justify-center items-center max-w-6xl mx-auto rounded-xl p-4 shadow-2xl bg-slate-50 text-black m-2">
           <form method="get" class="text-xs text-center">
             {% for field in gen_filter.form %}
                 {{field.errors}}
@@ -19,7 +20,7 @@
                       </div>
                       {% endfor %}
                       <div class="mt-4 flex justify-center align-middle ">
-                        <button type="submit" class="text-md bg-rose-700 text-white w-fit p-2 focus:opacity-10 rounded">
+                        <button type="submit" class="text-md bg-slate-700 text-white w-fit p-2 focus:opacity-10 rounded">
                             <i class="fa-solid fa-search fa-xl"></i>
                           </button>                     
                         </div>
@@ -37,41 +38,41 @@
     <!-- end of first grid -->
 
     {% if request.GET.urlencode %}
-  <div class="max-w-6xl mx-auto rounded-xl p-6 bg-rose-50 m-4">
+  <div class="max-w-6xl mx-auto rounded-xl p-6 bg-slate-50 m-4">
     <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-rose-500">
-          <thead class="bg-rose-100">
+        <table class="min-w-full divide-y divide-slate-500">
+          <thead class="bg-slate-100">
             <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-rose-500 uppercase tracking-wider">S/N</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-rose-500 uppercase tracking-wider">
+              <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">S/N</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Test
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-rose-500 uppercase tracking-wider">
+              <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Code
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-rose-500 uppercase tracking-wider">
+              <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Patient
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-rose-500 uppercase tracking-wider">
+              <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Phone
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-rose-500 uppercase tracking-wider">
+              <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Result
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-rose-500 uppercase tracking-wider">
+              <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Date Reported
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-rose-500 uppercase tracking-wider">
+              <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Collected By
               </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-rose-500 uppercase tracking-wider">
+              <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Report By
               </th>
             </tr>
           </thead>
-          <tbody class="bg-white divide-y divide-rose-200">
+          <tbody class="bg-white divide-y divide-slate-200">
             {% for i in patient %}
-            <tr class="bg-rose-50 hover:bg-rose-200 transition-colors duration-300">
+            <tr class="bg-slate-50 hover:bg-slate-200 transition-colors duration-300">
               <td class="px-6 py-4 whitespace-nowrap">
                 {{forloop.counter}}
               </td>
@@ -117,7 +118,7 @@
                     <a href="?page={{page_obj.previous_page_number}}" class="p-2 px-2 rounded-lg bg-cyan-900 text-white"><i class="fa-solid fa-angle-left fa-lg"></i></a>
                     {% endif %}
                 </span>
-                    <span class="text-sm text-rose-700 m-2 font-semibold">
+                    <span class="text-sm text-slate-700 m-2 font-semibold">
                         {{page_obj.number}} of {{page_obj.paginator.num_pages}}
                     </span>
                     <span class="flex item-center">

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}LAB REPORT DASHBOARD{% endblock %}
+
+{% block content %}
+<section class="max-w-xl mx-auto text-center border-cyan-700 p-4 m-2">
+  {% for message in messages %}
+  <div class="">
+    <div class="bg-green-100 rounded-2xl text-sm p-4" uk-alert>
+      <a href class="uk-alert-close font-bold" uk-close></a>
+      <p class="text-green-700 font-semibold">{{ message }}</p>
+    </div>
+  </div>
+  {% endfor %}
+</section>
+<div class=" py-10">
+  <div class="max-w-6xl mx-auto">
+    <div class="bg-white rounded-xl shadow-black shadow-2xl">
+    <div class="p-8 md:p-4 text-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div>
+        <a href="{% url 'hema_report' %}" class="block">
+          <div class=" hover:bg-white hover:text-gray-600 text-white bg-emerald-500  rounded-lg shadow-lg p-8 border-2 border-white transition duration-300">
+            <div class=" font-semibold uppercase text-sm md:text-base">Hematology Report</div>
+          </div>
+        </a>
+      </div>
+      <div>
+        <a href="{% url 'chempath_report' %}" class="block">
+          <div class="bg-blue-500 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-8 border-2 border-white transition duration-300">
+            <div class="font-semibold uppercase text-sm md:text-base">Chemical Pathology Report</div>
+          </div>
+        </a>
+      </div>
+      <div>
+        <a href="{% url 'micro_report' %}" class="block">
+          <div class="bg-purple-600 border-2 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-8 transition duration-300">
+            <div class="font-semibold uppercase text-sm md:text-base">Microbiology Report</div>
+          </div>
+        </a>
+      </div>
+      <div>
+        <a href="{% url 'serology_report' %}" class="block">
+          <div class="bg-amber-500 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-8 border-2 border-white transition duration-300">
+            <div class="font-semibold uppercase text-sm md:text-base">Serology Report</div>
+          </div>
+        </a>
+      </div>
+      <div>
+        <a href="{% url 'general_report' %}" class="block">
+          <div class="bg-slate-600 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-8 border-2 border-white transition duration-300">
+            <div class="font-semibold uppercase text-sm md:text-base">General Report</div>
+          </div>
+        </a>
+      </div>
+
+      
+
+    </div>
+  </div>
+  </div>
+</div>
+{% endblock %}
