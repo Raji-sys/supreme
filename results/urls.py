@@ -25,6 +25,7 @@ urlpatterns = [
     path('hematology-request/', HematologyRequestListView.as_view(), name='hematology_request'),
     path('hematology-test/create/<str:surname>/', HematologyTestCreateView.as_view(), name='hematology_test'),
     path('hematology-result/create/<str:surname>/<int:pk>/', HematologyResultCreateView.as_view(), name='hematology_result'),
+    path('hematology-parameter/update/<int:pk>/', HemaParameterUpdateView.as_view(), name='hema_param'),
     path('hematology-report/', HemaReportView.as_view(), name='hema_report'),
     path('hematology-pdf/', views.hema_report_pdf, name='report_pdf'),
    

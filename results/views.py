@@ -229,8 +229,7 @@ class HematologyTestCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         patient = Patient.objects.get(surname=self.kwargs['surname'])
         form.instance.patient = patient
-        form.instance.creator = self.request.user
-        return super().form_valid(form)
+        # form.instance.collected_by = self.request.user
         messages.success(self.request, 'Hematology result -created successfully')
         return super().form_valid(form)
     
@@ -241,21 +240,52 @@ class HematologyResultCreateView(LoginRequiredMixin, UpdateView):
     model = HematologyResult
     form_class = HematologyResultForm
     template_name = 'hema/hematology_update.html'
-    context_object_name = 'result'
 
-    def get_object(self, queryset=None):
-        patient = Patient.objects.get(surname=self.kwargs['surname'])
-        return HematologyResult.objects.get(patient=patient, pk=self.kwargs['pk'])
-
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        result_id = self.kwargs.get('pk')
+        result = HematologyResult.objects.get(id=result_id)
+        ParameterFormSet = inlineformset_factory(HematologyResult, HemaParameter, form=HemaParameterForm, extra=1)
+        if self.request.method == 'POST':
+            context['formset'] = ParameterFormSet(self.request.POST, instance=result)
+        else:
+            context['formset'] = ParameterFormSet(instance=result, queryset=HemaParameter.objects.none())
+        return context
+    
     def form_valid(self, form):
-        form.instance.updater = self.request.user
-        return super().form_valid(form)
-
-        messages.success(self.request, 'Hematology result updated successfully')
-        return super().form_valid(form)
+        result_id = self.kwargs.get('pk')
+        result = HematologyResult.objects.get(id=result_id)
+        formset = inlineformset_factory(HematologyResult, HemaParameter, form=HemaParameterForm)(self.request.POST, instance=result)
+        if form.is_valid() and formset.is_valid():
+            form.save()
+            formset.save()
+            messages.success(self.request, 'hematology result updated successfully')
+            return super().form_valid(form)
+        else:
+            messages.error(self.request, 'Error updating hematology result')
+            return self.render_to_response(self.get_context_data(form=form))
 
     def get_success_url(self):
-        return reverse('patient_details', kwargs={'surname': self.kwargs['surname']})
+        result = self.object
+        patient = result.patient
+        return reverse('patient_details', kwargs={'surname': patient.surname})
+
+
+class HemaParameterUpdateView(LoginRequiredMixin, UpdateView):
+    model = HemaParameter
+    form_class = HemaParameterForm
+    template_name = 'hema/hema_param.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        result = self.object.result
+        context['result'] = result
+        return context
+    
+    def get_success_url(self):
+        result = self.object.result
+        patient = result.patient
+        return reverse('patient_details', kwargs={'surname': patient.surname})
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')

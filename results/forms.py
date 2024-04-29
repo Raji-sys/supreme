@@ -50,6 +50,12 @@ class HematologyResultForm(forms.ModelForm):
         fields = ['test', 'result', 'unit']
 
 
+class HemaParameterForm(forms.ModelForm):
+    class Meta:
+        model = HemaParameter
+        fields = ['name', 'value']
+
+
 class ChempathTestForm(forms.ModelForm):
     class Meta:
         model = ChemicalPathologyResult
@@ -66,6 +72,7 @@ class ChempathParameterForm(forms.ModelForm):
     class Meta:
         model = ChempathParameter
         fields = ['name', 'value']
+
 
 class MicroTestForm(forms.ModelForm):
     class Meta:
@@ -88,10 +95,12 @@ class MicroResultForm(forms.ModelForm):
         model = MicrobiologyResult
         fields = ['test', 'result', 'unit']
 
+
 class MicroParameterForm(forms.ModelForm):
     class Meta:
         model = MicroParameter
         fields = ['name', 'value']
+
 
 class SerologyTestForm(forms.ModelForm):
     class Meta:

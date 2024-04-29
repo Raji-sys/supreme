@@ -97,19 +97,25 @@ class Patient(models.Model):
             return f"{self.full_name()}"
 
 
-TEST = (
-        ('Hb- GENOTYPE-','Hb- GENOTYPE-'),('BLOOD GROUP','BLOOD GROUP'),('RHESUS','RHESUS'),('Hb','Hb'),('PCV','PCV'),('MCHC','MCHC'),
-        ('RBC','RBC'),('MCH','MCH'),('MCV','MCV'),('RETIC','RETIC'),('RETIC INDEX','RETIC INDEX'),('PLATELETS','PLATELETS'),
-        ('WBC','WBC'),('ESR','ESR'),('ANISCYTOSIS','ANISCYTOSIS'),('MACROXYTOSIS','MACROXYTOSIS'),('MICROCYTOSIS','MICROCYTOSIS'),('POIKILOCYTOSIS','POIKILOCYTOSIS'),('TARGET CELLS','TARGET CELLS'),
-        ('SICKLE CELL','SICKLE CELL'),('HYPOCHROMIA','HYPOCHROMIA'),('POLYCHROMASIA','POLYCHROMASIA'),('NUCLEATED RBC','NUCLEATED RBC'),('NUET','NUET'),('EOSIN','EOSIN'),
-        ('BASO','BASO'),('TRANS LYMPH','TRANS LYMPH'),('LYMP','LYMP'),('MONO','MONO')
-    )
+# TEST = (
+#         ('Hb- GENOTYPE-','Hb- GENOTYPE-'),('BLOOD GROUP','BLOOD GROUP'),('RHESUS','RHESUS'),('Hb','Hb'),('PCV','PCV'),('MCHC','MCHC'),
+#         ('RBC','RBC'),('MCH','MCH'),('MCV','MCV'),('RETIC','RETIC'),('RETIC INDEX','RETIC INDEX'),('PLATELETS','PLATELETS'),
+#         ('WBC','WBC'),('ESR','ESR'),('ANISCYTOSIS','ANISCYTOSIS'),('MACROXYTOSIS','MACROXYTOSIS'),('MICROCYTOSIS','MICROCYTOSIS'),('POIKILOCYTOSIS','POIKILOCYTOSIS'),('TARGET CELLS','TARGET CELLS'),
+#         ('SICKLE CELL','SICKLE CELL'),('HYPOCHROMIA','HYPOCHROMIA'),('POLYCHROMASIA','POLYCHROMASIA'),('NUCLEATED RBC','NUCLEATED RBC'),('NUET','NUET'),('EOSIN','EOSIN'),
+#         ('BASO','BASO'),('TRANS LYMPH','TRANS LYMPH'),('LYMP','LYMP'),('MONO','MONO')
+#     )
+class HematologyTest(models.Model):
+    name = models.CharField(max_length=100, null=True, blank=True)
+    reference_range = models.CharField(max_length=200, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.name}, {self.reference_range}"
+
 
 class HematologyResult(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='hematology_result', null=True, blank=True)
     result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
-    test = models.CharField(choices=TEST, max_length=100, null=True, blank=True)
-    test_ref_range=models.CharField(max_length=50, null=True, blank=True)
+    test = models.ForeignKey(HematologyTest, max_length=100, null=True, blank=True, on_delete=models.CASCADE, related_name="results")
     result = models.CharField(max_length=50, null=True, blank=True)
     unit = models.CharField(max_length=50, null=True, blank=True)
     comments=models.TextField(null=True, blank=True)
@@ -140,6 +146,11 @@ class HematologyResult(models.Model):
             return f"{self.patient.surname} - {self.test} - {self.result}"
         
 
+class HemaParameter(models.Model):
+    result = models.ForeignKey(HematologyResult, on_delete=models.CASCADE, related_name='hema_parameters', null=True, blank=True)
+    name = models.CharField(max_length=200, null=True, blank=True)
+    value = models.CharField(max_length=200, null=True, blank=True)
+
 # CHEMPATH_TEST=[
 #     ('UREA 1.7-8.3','UREA 1.7-8.3'),('NA 135-145','NA 135-145'),('K 3.8-5.4','K 3.8-5.4'),
 #     ('HCO2 24-32','HCO2 24-32'),('CL 98-108','CL 98-108'),('FASTING','FASTING'),
@@ -166,7 +177,6 @@ class ChemicalPathologyResult(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='chemical_pathology_results',null=True, blank=True)
     result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
     test = models.ForeignKey(ChempathTestName, max_length=100, null=True, blank=True, on_delete=models.CASCADE, related_name="results")
-    test_ref_range=models.CharField(max_length=50, null=True, blank=True)
     result = models.FloatField(null=True, blank=True)
     unit = models.CharField(max_length=50, null=True, blank=True)
     comments=models.TextField(null=True, blank=True)
@@ -202,10 +212,10 @@ class ChempathParameter(models.Model):
     value = models.CharField(max_length=200, null=True, blank=True)
 
 
-class MicroTestCategory(models.Model):
-    name = models.CharField(max_length=100,null=True,blank=True)
-    def __str__(self):
-        return self.name
+# class MicroTestCategory(models.Model):
+#     name = models.CharField(max_length=100,null=True,blank=True)
+#     def __str__(self):
+#         return self.name
     
 
 class MicrobiologyTest(models.Model):
@@ -219,7 +229,7 @@ class MicrobiologyTest(models.Model):
 class MicrobiologyResult(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='microbiology_results',null=True, blank=True)
     result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
-    category=models.ForeignKey(MicroTestCategory,on_delete=models.CASCADE,null=True,blank=True)
+    # category=models.ForeignKey(MicroTestCategory,on_delete=models.CASCADE,null=True,blank=True)
     test = models.ForeignKey(MicrobiologyTest, on_delete=models.CASCADE, null=True, blank=True)
     result = models.FloatField(null=True, blank=True)
     unit = models.CharField(max_length=50, null=True, blank=True)

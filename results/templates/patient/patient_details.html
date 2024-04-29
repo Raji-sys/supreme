@@ -58,19 +58,25 @@
 
         </thead>
         <tbody class="bg-white divide-y divide-cyan-200">
-          {% for r in hematology_results %}
+          {% for h in hematology_results %}
           <tr class="bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
             <td class="px-6 py-4 whitespace-nowrap">{{ forloop.counter }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ r.test|default_if_none:''}}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ r.collected|default_if_none:'' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ h.test|default_if_none:''}}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ h.collected|default_if_none:'' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <span class="text-sm">{{ r.result|default_if_none:'' }}</span>
-              <span class="text-xs">{{ r.unit|default_if_none:'' }}</span>
+              <span class="text-sm">{{ h.result|default_if_none:'' }}</span>
+              <span class="text-xs">{{ h.unit|default_if_none:'' }}</span>
+              <span class="text-sm">
+                {% for parameter in h.hema_parameters.all %}
+                <p><a href="{% url 'hema_param' parameter.id %}" class="text-blue-500 hover:text-blue-700">{{ parameter.name }}: {{ parameter.value }}
+                </a></p>
+            {% endfor %}
+              </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ r.comment|default_if_none:'' }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ r.reported|default_if_none:'' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ h.comment|default_if_none:'' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ h.reported|default_if_none:'' }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <a href="{% url 'hematology_result' r.patient.surname r.id %}" class="text-blue-500 hover:text-blue-700">input result</a>
+              <a href="{% url 'hematology_result' h.patient.surname h.id %}" class="text-blue-500 hover:text-blue-700">input result</a>
             </td>
           </tr>
           {% endfor %}
@@ -87,7 +93,6 @@
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Test</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Date Collected</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Result</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Parameter</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Comment</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Date Reported</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Actions</th>
@@ -103,8 +108,6 @@
             <td class="px-6 py-4 whitespace-nowrap">
               <span class="text-sm">{{ c.result|default_if_none:'' }}</span>
               <span class="text-xs">{{ c.unit|default_if_none:'' }}</span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
               <span class="text-sm">
                 {% for parameter in c.chempath_parameters.all %}
                 <p><a href="{% url 'chempath_param' parameter.id %}" class="text-blue-500 hover:text-blue-700">{{ parameter.name }}: {{ parameter.value }}
@@ -132,7 +135,6 @@
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Test</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Date Collected</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Result</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Parameter</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Comment</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Date Reported</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Actions</th>
@@ -148,8 +150,7 @@
             <td class="px-6 py-4 whitespace-nowrap">
               <span class="text-sm">{{ m.result|default_if_none:'' }}</span>
               <span class="text-xs">{{ m.unit|default_if_none:'' }}</span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap"><span class="text-sm">
+              <span class="text-sm">
               {% for parameter in m.micro_parameters.all %}
               <p><a href="{% url 'micro_param' parameter.id %}" class="text-blue-500 hover:text-blue-700">{{ parameter.name }}: {{ parameter.value }}
               </a></p>
@@ -177,7 +178,6 @@
             {% comment %} <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Reference Range</th> {% endcomment %}
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Date Collected</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Result</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Paramters</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Comment</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Date Reported</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-cyan-500 uppercase tracking-wider">Actions</th>
@@ -191,10 +191,9 @@
             <td class="px-6 py-4 whitespace-nowrap">{{ s.test.name|default_if_none:''}}</td>
             {% comment %} <td class="px-6 py-4 whitespace-nowrap">{{ s.test.reference_range|default_if_none:''}}</td> {% endcomment %}
             <td class="px-6 py-4 whitespace-nowrap">{{ s.collected|default_if_none:'' }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ s.result|default_if_none:'' }}
-              <span class="text-xs">{{ s.unit|default_if_none:'' }}</span>
-            </td>
             <td class="px-6 py-4 whitespace-nowrap">
+              <span>{{ s.result|default_if_none:'' }}</span>
+              <span class="text-xs">{{ s.unit|default_if_none:'' }}</span>
               <span class="text-sm">
                 {% for parameter in s.serology_parameters.all %}
                 <p><a href="{% url 'serology_param' parameter.id %}" class="text-blue-500 hover:text-blue-700">{{ parameter.name }}: {{ parameter.value }}

@@ -36,6 +36,10 @@ class PatientAdmin(admin.ModelAdmin):
 
 
 
+@admin.register(HematologyTest)
+class HematologyTestAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+
 @admin.register(HematologyResult)
 class HematologyResultAdmin(admin.ModelAdmin):
     list_display = ('patient', 'test', 'result', 'unit', 'created','updated',)
@@ -88,10 +92,6 @@ class MicroResultAdmin(admin.ModelAdmin):
 class MicroTestAdmin(admin.ModelAdmin):
     list_display = ('name','reference_range',)
 
-
-@admin.register(MicroTestCategory)
-class MicroTestCategoryAdmin(admin.ModelAdmin):
-    list_display = ('name',)
 
 
 class SerologyParameterInline(admin.StackedInline):
