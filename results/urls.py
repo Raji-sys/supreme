@@ -42,6 +42,7 @@ urlpatterns = [
     path('micro-request/',MicroRequestListView.as_view(),name='micro_request'),
     path('micro-test/create/<str:surname>/',MicroTestCreateView.as_view(), name='micro_test'),
     path('micro-result/create/<str:surname>/<int:pk>/',MicroResultCreateView.as_view(), name='micro_result'),
+    path('micro-parameter/update/<int:pk>/', MicroParameterUpdateView.as_view(), name='micro_param'),
     path('micro-report/', MicroReportView.as_view(), name='micro_report'),
     path('micro-pdf/', views.micro_report_pdf, name='micro_report_pdf'),
     
@@ -64,7 +65,7 @@ urlpatterns = [
     path('general-report/', GeneralReportView.as_view(), name='general_report'),
     path('general-pdf/', views.general_report_pdf, name='general_report_pdf'),
  
-    path('get_tests_for_category/',views.get_tests_for_category,name="get_tests_for_category"),
+    # path('get_tests_for_category/',views.get_tests_for_category,name="get_tests_for_category"),
     path('logout/', CustomLogoutView.as_view(), name='logout'),
     path('', include('django.contrib.auth.urls')),
 ]

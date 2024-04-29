@@ -70,24 +70,28 @@ class ChempathParameterForm(forms.ModelForm):
 class MicroTestForm(forms.ModelForm):
     class Meta:
         model = MicrobiologyResult
-        fields = ['category','test']
+        fields = ['test']
 
-    def __init__(self,*args, **kwargs):
-        super().__init__(*args,**kwargs)
-        self.fields['test'].queryset=MicrobiologyTest.objects.all()
-        for field in self.fields.values():
-            field.required=True
+    # def __init__(self,*args, **kwargs):
+    #     super().__init__(*args,**kwargs)
+    #     self.fields['test'].queryset=MicrobiologyTest.objects.all()
+    #     for field in self.fields.values():
+    #         field.required=True
 
-    def clean(self):
-        cleaned_data=super().clean()
-        category=cleaned_data.get('category')
-        test=cleaned_data.get('test')
+    # def clean(self):
+    #     cleaned_data=super().clean()
+    #     category=cleaned_data.get('category')
+    #     test=cleaned_data.get('test')
 
 class MicroResultForm(forms.ModelForm):
     class Meta:
         model = MicrobiologyResult
-        fields = ['category','test', 'result', 'unit']
+        fields = ['test', 'result', 'unit']
 
+class MicroParameterForm(forms.ModelForm):
+    class Meta:
+        model = MicroParameter
+        fields = ['name', 'value']
 
 class SerologyTestForm(forms.ModelForm):
     class Meta:
@@ -98,7 +102,6 @@ class SerologyTestResultForm(forms.ModelForm):
     class Meta:
         model = SerologyTestResult
         fields = ['test','result']
-
 
 
 class SerologyParameterForm(forms.ModelForm):

@@ -86,7 +86,7 @@ class MicroResultAdmin(admin.ModelAdmin):
 
 @admin.register(MicrobiologyTest)
 class MicroTestAdmin(admin.ModelAdmin):
-    list_display = ('name','category','reference_range',)
+    list_display = ('name','reference_range',)
 
 
 @admin.register(MicroTestCategory)

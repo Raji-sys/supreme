@@ -495,10 +495,10 @@ class MicroTestCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         patient = Patient.objects.get(surname=self.kwargs['surname'])
         form.instance.patient = patient
-        category_id=form.cleaned_data['category'].id
-        test_id=form.cleaned_data['test'].id
-        form.instance.category=MicroTestCategory.objects.get(id=category_id)
-        form.instance.test=MicrobiologyTest.objects.get(id=test_id)
+        # category_id=form.cleaned_data['category'].id
+        # test_id=form.cleaned_data['test'].id
+        # form.instance.category=MicroTestCategory.objects.get(id=category_id)
+        # form.instance.test=MicrobiologyTest.objects.get(id=test_id)
 
         messages.success(self.request, 'Microbiology result created successfully')
         return super().form_valid(form)
@@ -506,30 +506,64 @@ class MicroTestCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return self.object.patient.get_absolute_url()
 
-@login_required
-def get_tests_for_category(request):
-    category_id=request.GET.get('category_id')
-    tests=MicrobiologyTest.objects.filter(category_id=category_id).values('id','name').order_by('name')
-    data=list(tests)
-    return JsonResponse(data,safe=False)
+# @login_required
+# def get_tests_for_category(request):
+#     category_id=request.GET.get('category_id')
+#     tests=MicrobiologyTest.objects.filter(category_id=category_id).values('id','name').order_by('name')
+#     data=list(tests)
+#     return JsonResponse(data,safe=False)
 
 
 class MicroResultCreateView(LoginRequiredMixin, UpdateView):
     model=MicrobiologyResult
     form_class = MicroResultForm
     template_name = 'micro/micro_update.html'
-    context_object_name = 'result'
 
-    def get_object(self, queryset=None):
-        patient = Patient.objects.get(surname=self.kwargs['surname'])
-        return MicrobiologyResult.objects.get(patient=patient, pk=self.kwargs['pk'])
-
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        result_id = self.kwargs.get('pk')
+        result = MicrobiologyResult.objects.get(id=result_id)
+        ParameterFormSet = inlineformset_factory(MicrobiologyResult, MicroParameter, form=MicroParameterForm, extra=1)
+        if self.request.method == 'POST':
+            context['formset'] = ParameterFormSet(self.request.POST, instance=result)
+        else:
+            context['formset'] = ParameterFormSet(instance=result, queryset=MicroParameter.objects.none())
+        return context
+    
     def form_valid(self, form):
-        messages.success(self.request, 'Microbiology result updated successfully')
-        return super().form_valid(form)
+        result_id = self.kwargs.get('pk')
+        result = MicrobiologyResult.objects.get(id=result_id)
+        formset = inlineformset_factory(MicrobiologyResult, MicroParameter, form=MicroParameterForm)(self.request.POST, instance=result)
+        if form.is_valid() and formset.is_valid():
+            form.save()
+            formset.save()
+            messages.success(self.request, 'microbiology result updated successfully')
+            return super().form_valid(form)
+        else:
+            messages.error(self.request, 'Error updating microbiology result')
+            return self.render_to_response(self.get_context_data(form=form))
 
     def get_success_url(self):
-        return reverse('patient_details', kwargs={'surname': self.kwargs['surname']})
+        result = self.object
+        patient = result.patient
+        return reverse('patient_details', kwargs={'surname': patient.surname})
+
+
+class MicroParameterUpdateView(LoginRequiredMixin, UpdateView):
+    model = MicroParameter
+    form_class = MicroParameterForm
+    template_name = 'micro/micro_param.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        result = self.object.result
+        context['result'] = result
+        return context
+    
+    def get_success_url(self):
+        result = self.object.result
+        patient = result.patient
+        return reverse('patient_details', kwargs={'surname': patient.surname})
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
