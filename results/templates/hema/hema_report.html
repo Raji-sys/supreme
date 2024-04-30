@@ -89,17 +89,23 @@
                 {{ i.patient.phone|default_if_none:''|upper }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <span class="text-sm">{{ i.result|default_if_none:''|upper }}</span>
-                <span class="text-xs">{{ i.unit|default_if_none:''|upper }}</span>
+                <span class="text-sm">{{ i.result|default_if_none:'' }}</span>
+                <span class="text-xs">{{ i.unit|default_if_none:'' }}</span>
+                <span class="text-sm">
+                  {% for parameter in i.hema_parameters.all %}
+                  <p><a href="{% url 'hema_param' parameter.id %}" class="text-blue-500 hover:text-blue-700">{{ parameter.name }}: {{ parameter.value }}
+                  </a></p>
+              {% endfor %}
+                </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                {{ i.updated|default_if_none:'' }}
+                {{ i.collected|default_if_none:'' }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                {{ i.creator|default_if_none:'' }}
+                {{ i.collected_by|default_if_none:'' }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                {{ i.updater|default_if_none:'' }}
+                {{ i.updated_by|default_if_none:'' }}
               </td>
             </tr>
             {% empty %}

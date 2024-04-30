@@ -51,7 +51,7 @@
           {{ result.updated|default_if_none:'' }}
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
-          {{ result.updater|default_if_none:'' }}
+          {{ result.collected_by|default_if_none:'' }}
         </td>
       </tr>
       {% endfor %}

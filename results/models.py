@@ -109,7 +109,7 @@ class HematologyTest(models.Model):
     reference_range = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.name}, {self.reference_range}"
+        return f"{self.name}"
 
 
 class HematologyResult(models.Model):

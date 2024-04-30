@@ -229,7 +229,7 @@ class HematologyTestCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         patient = Patient.objects.get(surname=self.kwargs['surname'])
         form.instance.patient = patient
-        # form.instance.collected_by = self.request.user
+        form.instance.collected_by = self.request.user
         messages.success(self.request, 'Hematology result -created successfully')
         return super().form_valid(form)
     
@@ -253,6 +253,7 @@ class HematologyResultCreateView(LoginRequiredMixin, UpdateView):
         return context
     
     def form_valid(self, form):
+        form.instance.updated_by = self.request.user
         result_id = self.kwargs.get('pk')
         result = HematologyResult.objects.get(id=result_id)
         formset = inlineformset_factory(HematologyResult, HemaParameter, form=HemaParameterForm)(self.request.POST, instance=result)

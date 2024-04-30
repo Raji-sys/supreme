@@ -76,7 +76,7 @@
           
           #sp {
             margin-top: 4rem;
-            font-size: 4rem;
+            font-size: 3rem;
             text-align: center; /* Center the heading */
           }
           #sp h1 {
@@ -98,7 +98,7 @@
         {% for i in f %}
         <table>
             <tr>
-                <th colspan="4">{{ i.patient}}</th>
+                <th colspan="4">{{ i.patient|upper}}</th>
             </tr>
             <tr>
                 <td><span class="variable">TEST</span></td>
@@ -109,7 +109,7 @@
               <tr>
                   <td class="value">{{ i.test|upper }} {{ i.name|upper }}</td>
                   <td class="value">{% for parameter in i.parameters.all %}{{ parameter.name }}: {{ parameter.value }}{% endfor %}{{ i.result }}</td>
-                  <td class="value">{{i.user|upper}}</td>
+                  <td class="value">{{i.updated_by|upper}}</td>
                   <td class="value">{{ i.updated }}</td>
             </tr>
         </table>
