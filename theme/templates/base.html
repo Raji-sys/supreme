@@ -4,50 +4,117 @@
 <html>
 <head>
 {% tailwind_css %} 
-
+<title>{% block title %}Supremee Diagnostic Lab{% endblock %}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="{% static 'fonts/fontstyle.css' %}" type='text/css'>
-
 <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
 <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
 <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
-<link href="{% static 'uikit/css/uikit.min.css'%}" rel="stylesheet" type="text/css">
-<!-- <link rel="stylesheet" href="{% static 'images/style.css' %}" type="text/css"> -->
-<script src="{% static 'js/_hyperscript.js' %}"></script>
-<script src="{% static 'js/htmx.min.js' %}"></script>
-<script src="{% static 'uikit/js/uikit.min.js' %}"></script>
-<script src="{% static 'uikit/js/uikit-icons.js' %}"></script>
+<link rel="stylesheet" href="{% static 'images/style.css' %}" type="text/css">
 
 </head>
+<style>
+	a{
+		text-decoration: none;
+	}
+	a:hover{
+		text-decoration: none;
+	}	
+/* For WebKit browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+	width: 10px;
+}
+::-webkit-scrollbar-thumb {
+	background: #4a90e2;
+	border-radius: 5px;
+}
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+/* For Firefox */
+* {
+	scrollbar-width: auto;
+	scrollbar-color: #4a90e2 #f1f1f1;
+}
+</style>
+<body class="bg-gradient-to-r from-rose-200 via-red-100 to-rose-200 min-h-screen">
+    {% if request.user.is_authenticated %}
+    <header class="bg-white mx-4 shadow-md border-b-2 border-gray-900 rounded">
+        <nav class="flex flex-wrap justify-between items-center p-2">
+            <!-- Logo and Home Button -->
+            <div class="flex items-center space-x-2">
+                <span class="text-green m-2 uppercase">
+                    <a href="{% url 'index' %}"> 
+                        <i class="fa fa-solid fa-home fa-xl"></i>
+                    </a>
+                </span>
+                <!-- Hide CREATE NEW USER and USER LIST on smaller screens -->
+                <div class="hidden md:flex gap-2">
+                    <a href="{% url 'create_profile' %}" class="text-white bg-green-700 rounded text-xs p-2">CREATE NEW USER</a>
+                    <a href="{% url 'profiles_list' %}" class="text-white bg-cyan-600 rounded text-xs p-2">USER LIST</a>
+                </div>
+            </div>
 
-<body class="">
-	<header class="bg-red-600 mx-4 p-1 shadow-md border-b-2 border-gray-900 rounded">
-		<nav class="flex flex-row flex-wrap justify-between">
-			{% if request.user.is_authenticated %}
-			  <div class="rounded p-1 text-emerald-700 text-center flex justify-center items-center align-middle gap-2">
-				<span class="text-white m-2"><a href="{%url 'index' %}">{{request.user}}</a></span>
-				<a href="{%url 'create_profile' %}" class=" text-green-700 bg-white rounded focus:opacity-10 text-xs p-2">CREATE NEW USER</a>
-				<!-- <a href="{%url 'profiles_list' %}" class=" text-white bg-cyan-600 rounded focus:opacity-10 text-xs p-2">USER LIST</a> -->
-			</div> 
-			<span class="enom md:text-md text-center text-white font-semibold m-3">
-					{% if request.user.is_authenticated %}
-					<form method="POST" action="{%url 'logout' %}">{%csrf_token%}
-					<button type="submit" class="border-4 border-white rounded-xl focus:opacity-10">
-						<i class="fa-solid fa-x bg-rose-700 p-4 rounded-xl "></i>
-					</button>
-						</form>
-					{%else%}
-					<span class=" bg-blue-700 p-4 rounded focus:opacity-10">
-						<a href="{% url 'login' %}" class=""> <i class="fa-solid fa-home"></i></a>
-					</span>
-					{%endif%}
+            <!-- User info and logout button - shown only on larger screens -->
+            <div class="hidden md:flex items-center space-x-2">
+                <span class="text-gray-800 text-xs">Logged-in as: <span class="text-green-700 uppercase">{{ request.user }}</span></span>
+                <form method="POST" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="border-4 border-white rounded-xl focus:opacity-10">
+                        <i class="fa-solid fa-x bg-rose-700 p-3 rounded-xl text-white"></i>
+                    </button>
+                </form>
+            </div>
 
-			</span>
-			{% endif %}
-		</nav>
-	</header>
-{% block content %}
+            <!-- Mobile menu button -->
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-button" class="text-gray-700 focus:outline-none">
+                    <i class="fa fa-bars fa-2x"></i>
+                </button>
+            </div>
+        </nav>
 
-{% endblock %}
+	<!-- Mobile Menu - Hidden by default -->
+	<div id="mobile-menu" class="flex flex-col justify-center items-center  bg-white p-4 md:hidden border-t-2 border-gray-200 rounded-b-lg shadow-lg space-y-3">
+		<a href="{% url 'create_profile' %}" class="text-gray-700 text-xs w-fit text-left p-2 rounded-md hover:bg-green-600 hover:text-white transition duration-300 ease-in-out">
+			<i class="fa fa-user-plus mr-2"></i> CREATE NEW USER
+		</a>
+		<a href="{% url 'profiles_list' %}" class="text-gray-700 text-xs w-fit text-left p-2 rounded-md hover:bg-cyan-600 hover:text-white transition duration-300 ease-in-out">
+			<i class="fa fa-users mr-2"></i> USER LIST
+		</a>
+		<div class="flex items-center text-gray-800 text-xs w-fit  rounded-md">
+			<span>Logged-in as: {{ request.user }}</span>
+			<form method="POST" action="{% url 'logout' %}" class="w-fit">
+				{% csrf_token %}
+				<button type="submit" class="w-fit mx-2 flex justify-center items-center border-2 border-rose-700 rounded-md p-2 text-white bg-rose-700 hover:bg-rose-800 transition duration-300 ease-in-out">
+					<i class="fa-solid fa-sign-out-alt"></i>
+				</button>
+			</form>
+		</div>
+	</div>
+
+    </header>
+    {% endif %}
+
+    <main class="flex-grow container mx-auto py-6">
+        {% if messages %}
+            <div class="text-sm text-green-600 bg-white p-4 w-fit mx-auto text-center rounded-3xl" role="alert">
+                {% for message in messages %}
+                <p class="text-center uppercase text-green-700">
+                    <i class="fa-solid fa-message fa-2x text-green-500"></i> <br>{{ message }}
+                </p>
+                {% endfor %}
+        </div>
+        {% endif %}
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <script>
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+    </script>
 </body>
+
 </html>

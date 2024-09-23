@@ -21,7 +21,6 @@ class SerialNumberField(models.CharField):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
-    middle_name = models.CharField(max_length=300, blank=True, null=True)
     dep = (
         ('CHEMICAL PATHOLOGY', 'CHEMICAL PATHOLOGY'),
         ('HEMATOLOGY', 'HEMATOLOGY'),
@@ -49,7 +48,7 @@ class Profile(models.Model):
         return reverse('profile_details', args=[self.user])
 
     def full_name(self):
-        return f"{self.user.get_full_name()} {self.middle_name}"
+        return f"{self.user.get_full_name()}"
 
     def __str__(self):
         if self.user:

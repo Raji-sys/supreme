@@ -206,8 +206,15 @@ class HematologyListView(ListView):
     context_object_name='hematology_results'
 
     def get_queryset(self):
-        queryset=super().get_queryset()
-        queryset=queryset.filter(result__isnull=False)
+        queryset = super().get_queryset()
+        queryset = queryset.filter(result__isnull=False)
+        queryset = queryset.annotate(
+            num_parameters=Count('parameters')
+        ).filter(
+            Q(num_parameters=0) |
+            Q(parameters__name__isnull=False) |
+            Q(parameters__value__isnull=False)
+        )
         return queryset
 
 class HematologyRequestListView(ListView):
@@ -216,10 +223,16 @@ class HematologyRequestListView(ListView):
     context_object_name='hematology_request'
 
     def get_queryset(self):
-        queryset=super().get_queryset()
-        queryset=queryset.filter(result__isnull=True)
+        queryset = super().get_queryset()
+        queryset = queryset.filter(result__isnull=True)
+        queryset = queryset.annotate(
+            num_parameters=Count('parameters')
+        ).filter(
+            Q(num_parameters=0) |
+            Q(parameters__name__isnull=True) |
+            Q(parameters__value__isnull=True)
+        )
         return queryset
-
 
 class HematologyTestCreateView(LoginRequiredMixin, CreateView):
     model = HematologyResult

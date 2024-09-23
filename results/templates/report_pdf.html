@@ -108,7 +108,7 @@
               </tr>
               <tr>
                   <td class="value">{{ i.test|upper }} {{ i.name|upper }}</td>
-                  <td class="value">{% for parameter in i.parameters.all %}{{ parameter.name }}: {{ parameter.value }}{% endfor %}{{ i.result }}</td>
+                  <td class="value">{% for parameter in i.hema_parameters.all %}{{ parameter.name }}: {{ parameter.value }}{% endfor %}{{ i.result|default_if_none:'' }}</td>
                   <td class="value">{{i.updated_by|upper}}</td>
                   <td class="value">{{ i.updated }}</td>
             </tr>

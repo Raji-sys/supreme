@@ -4,21 +4,21 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<div class=" mt-6 w-fit mx-auto bg-slate-200 rounded-lg shadow-xl shadow-black">
+<div class=" mt-6 w-fit mx-auto bg-slate-200 rounded-lg shadow-sm shadow-black">
   <div class="max-w-4xl mx-auto bg-white shadow-md rounded-xl p-10 md:p-16">
     <div class="flex justify-center items-center flex-col">
-        <div class="rounded-full border-4 border-red-600 p-6 shadow-xl mb-2">
+        <div class="rounded-full border-2 border-red-600 p-6 shadow-xl mb-2">
         <span>
           <i class="fa-solid fa-syringe text-rose-600 fa-3x"></i>
           <i class="fa-solid fa-flask-vial text-indigo-400 fa-3x"></i>
         </span>
         <p class="text-rose-600 text-3xl text-center">SDL</p>
       </div>
-      <div class="text-center border-b-4 border-red-600 ">
-        <h1 class="text-rose-800 font-semibold text-4xl md:text-6xl mt-6">SUPREME DIAGNOSTIC</h1>
-        <h2 class="text-rose-800 font-semibold text-2xl md:text-4xl">LABORATORIES</h2>
+      <div class="text-center border-red-600 ">
+        <h1 class="text-rose-800 font-medium text-xl md:text-2xl mt-6">SUPREME DIAGNOSTIC</h1>
+        <h2 class="text-rose-800 font-medium text-lg md:text-xl">LABORATORIES</h2>
       </div>
-      <div class="rounded mt-8 space-y-4 md:space-y-0 md:space-x-4 flex flex-col md:flex-row justify-center">
+      <div class="rounded mt-8 space-y-4 md:space-y-0 md:space-x-4 flex flex-col md:flex-row justify-center text-xs">
         <a href="{% url 'dashboard' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline">
           LABS
         </a>
