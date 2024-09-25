@@ -1,54 +1,54 @@
 {% extends 'base.html' %}
 {%load static %}
+{%block page_title%}<div class="flex justify-center"><a href="{%url 'pathology:general' %}"><i class="fa-solid fa-backward fa-2xl mr-4"></i></a>GENERAL RESULT LIST</div>{%endblock%}
 {% block content %}
-<div class="mt-5 p-4">
-  <div class="max-w-6xl mx-auto rounded-xl p-4 shadow-black shadow-2xl bg-gray-50">
+<div class="mt-4">
+  <div class="md:mx-20 mx-2 rounded-xl p-4 shadow-black shadow-2xl bg-gray-50">
   <div class="overflow-x-auto">
   <table class="min-w-full divide-y divide-gray-500">
     <thead class="bg-gray-100">
-      <tr>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S/N</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+      <tr class="text-xs">
+        <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S/N</th>
+        <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
+        <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
           Test
         </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
           Patient
         </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
           Result
         </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
           Date Reported
         </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
           Report By
         </th>
       </tr>
     </thead>
     <tbody class="bg-white divide-y divide-gray-200">
       {% for result in general_results %}
-      <tr class="bg-gray-50 hover:bg-gray-200 transition-colors duration-300">
-        <td class="px-6 py-4 whitespace-nowrap">
+      <tr class="text-xs bg-gray-50 hover:bg-gray-200 transition-colors duration-300">
+        <td class="p-3 whitespace-nowrap">
           {{forloop.counter}}
       </td>
-      <td class="px-6 py-4 whitespace-nowrap">
+      <td class="p-3 whitespace-nowrap">
         {{ result.result_code }}
       </td>
-        <td class="px-6 py-4 whitespace-nowrap">
+        <td class="p-3 whitespace-nowrap">
           {{ result.test }}
         </td>
-        <td class="px-6 py-4 whitespace-nowrap">
+        <td class="p-3 whitespace-nowrap">
           {{ result.patient }}
         </td>
-        <td class="px-6 py-4 whitespace-nowrap">
-          <span class="text-sm">{{ result.result|default_if_none:'' }}</span>
-          <span class="text-xs">{{ result.unit|default_if_none:'' }}</span>
+        <td class="p-3 whitespace-nowrap">
+          {{ result.result|default_if_none:'' }}
         </td>
-        <td class="px-6 py-4 whitespace-nowrap">
+        <td class="p-3 whitespace-nowrap">
           {{ result.updated }}
         </td>
-        <td class="px-6 py-4 whitespace-nowrap">
+        <td class="p-3 whitespace-nowrap">
           {{ request.user }}
         </td>
       </tr>

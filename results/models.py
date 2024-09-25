@@ -5,7 +5,11 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from django_quill.fields import QuillField
 
+
+
+    
 class SerialNumberField(models.CharField):
     description = "A unique serial number field with leading zeros"
 
@@ -96,27 +100,35 @@ class Patient(models.Model):
             return f"{self.full_name()}"
 
 
-# TEST = (
-#         ('Hb- GENOTYPE-','Hb- GENOTYPE-'),('BLOOD GROUP','BLOOD GROUP'),('RHESUS','RHESUS'),('Hb','Hb'),('PCV','PCV'),('MCHC','MCHC'),
-#         ('RBC','RBC'),('MCH','MCH'),('MCV','MCV'),('RETIC','RETIC'),('RETIC INDEX','RETIC INDEX'),('PLATELETS','PLATELETS'),
-#         ('WBC','WBC'),('ESR','ESR'),('ANISCYTOSIS','ANISCYTOSIS'),('MACROXYTOSIS','MACROXYTOSIS'),('MICROCYTOSIS','MICROCYTOSIS'),('POIKILOCYTOSIS','POIKILOCYTOSIS'),('TARGET CELLS','TARGET CELLS'),
-#         ('SICKLE CELL','SICKLE CELL'),('HYPOCHROMIA','HYPOCHROMIA'),('POLYCHROMASIA','POLYCHROMASIA'),('NUCLEATED RBC','NUCLEATED RBC'),('NUET','NUET'),('EOSIN','EOSIN'),
-#         ('BASO','BASO'),('TRANS LYMPH','TRANS LYMPH'),('LYMP','LYMP'),('MONO','MONO')
-#     )
+class Paypoint(models.Model):
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    patient=models.ForeignKey(Patient,null=True, on_delete=models.CASCADE,related_name="patient_payments")
+    service = models.CharField(max_length=100, null=True, blank=True)  
+    price = models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)
+    status=models.BooleanField(default=False)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateField(auto_now=True)
+
+
 class HematologyTest(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)
     reference_range = models.CharField(max_length=200, null=True, blank=True)
+    updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.name}"
-
+        if self.reference_range:
+            return f"{self.name}, {self.reference_range}"
+        else:
+            return f"{self.name}"
 
 class HematologyResult(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='hematology_result', null=True, blank=True)
+    payment=models.ForeignKey(Paypoint,null=True, on_delete=models.CASCADE,related_name='hematology_result_payment')
     result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
     test = models.ForeignKey(HematologyTest, max_length=100, null=True, blank=True, on_delete=models.CASCADE, related_name="results")
-    result = models.CharField(max_length=50, null=True, blank=True)
-    unit = models.CharField(max_length=50, null=True, blank=True)
+    cleared=models.BooleanField(default=False)
+    result = QuillField(null=True, blank=True)
     comments=models.TextField(null=True, blank=True)
     natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
     collected = models.DateField(auto_now=True, null=True,blank=True)
@@ -125,7 +137,8 @@ class HematologyResult(models.Model):
     updated_by = models.ForeignKey(User, null=True, blank=True, related_name='hematology_results_reported', on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-
+ 
+    
     def save(self, *args, **kwargs):
         if not self.result_code:
             last_instance = self.__class__.objects.order_by('result_code').last()
@@ -142,42 +155,28 @@ class HematologyResult(models.Model):
 
     def __str__(self):
         if self.patient:
-            return f"{self.patient.surname} - {self.test} - {self.result}"
+            return f"{self.patient.full_name()} - {self.test} - {self.result}"
         
 
-class HemaParameter(models.Model):
-    result = models.ForeignKey(HematologyResult, on_delete=models.CASCADE, related_name='hema_parameters', null=True, blank=True)
-    name = models.CharField(max_length=200, null=True, blank=True)
-    value = models.CharField(max_length=200, null=True, blank=True)
-
-# CHEMPATH_TEST=[
-#     ('UREA 1.7-8.3','UREA 1.7-8.3'),('NA 135-145','NA 135-145'),('K 3.8-5.4','K 3.8-5.4'),
-#     ('HCO2 24-32','HCO2 24-32'),('CL 98-108','CL 98-108'),('FASTING','FASTING'),
-#     ('RANDOM 3.89-6.11','RANDOM 3.89-6.11'),('2HR PP','2HR PP'),('CSF GLUCOSE 2.78-4.44','CSF CLUCOSE 2.78-4.44'),
-#     ('CSF PROTEIN 150-400','CSF PROTEIN 150-400'),('CSF CHLORIDE 120-130','CSF CHLORIDE 120-130'),('CHOLESTEROL 3.89-6.21','CHOLESTEROL 3.89-6.21'),
-#     ('TRIGLYCERIDE 0.00-1.92','TRIGLYCERIDE 0.00-1.92'),('HDL-CHOL >1.68(FEMALE) >1.68(MALE)','HDL-CHOL > 1.68(FEMALE) > 1.68(MALE)'),('LDL-CHOL < 3.90','LDL-CHOL < 3.90'),
-#     ('ALKALINE PHOSPHATES 9-35(ADULT) 35-100(CHILD)','ALKALINE PHOSPHATES 9-35(ADULT) 35-100(CHILD)'),('SGOT 0-12','SGOT 0-12'),('SGPT 0-12','SGPT 0-12'),
-#     ('GAMA G. T 10-40','GAMA G. T 10-40'),('BILLIRUBIN TOTAL= <17','BILLIRUBIN TOTAL= <17'),('BILLIRUBIN DIRECT= <4.3','BILLIRUBIN DIRECT= <4.3'),
-#     ('T:PROTEIN 6.5-8.7','T:PROTEIN 6.5-8.7'),('ALBUMIN 3.8-4.4','ALBUMIN 3.8-4.4'),('GLOBULIN 2-3.9','GLOBULIN 2-3.9'),
-#     ('ALKALINE PHOSPHATES 9-35(ADULT) 35-100(CHILDREN)','ALKALINE PHOSPHATES 9-35(ADULT) 35-100(CHILDREN)'),('CALCIUM 2.02-2.60','CALCIUM 2.02-2.60'),('INORG. PHOSPHATES 0.81-1.62(ADULT) 1.30-2.26(CHILDREN)','INORG. PHOSPHATES 0.81-1.62(ADULT) 1.30-2.26(CHILDREN)'),
-#     ('URIC ACID 202-416(MALE) 142-339(FEMALE)','URIC ACID 202-416(MALE) 142-339(FEMALE)'),('CREATININE 53-97(MALE) 44-80(FEMALE)','CREATININE 53-97(MALE) 44-80(FEMALE)'),('SERUM ANYLASE','SERUM ANYLASE'),
-#     ('ACID PHOSPHATES: TOTAL (<11U/L)','ACID PHOSPHATES: PROSTATIC (<11U/L)'),('ACID PHOSPHATES: TOTAL (<11U/L)','ACID PHOSPHATES: PROSTATIC (<11U/L)')
-#     ]
-
-class ChempathTestName(models.Model):
+class ChempathTest(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)
     reference_range = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.name}, {self.reference_range}"
+        if self.reference_range:
+            return f"{self.name}, {self.reference_range}"
+        else:
+            return f"{self.name}"
     
 
 class ChemicalPathologyResult(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='chemical_pathology_results',null=True, blank=True)
+    payment=models.ForeignKey(Paypoint,null=True, on_delete=models.CASCADE,related_name='chempath_result_payment')
     result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
-    test = models.ForeignKey(ChempathTestName, max_length=100, null=True, blank=True, on_delete=models.CASCADE, related_name="results")
-    result = models.FloatField(null=True, blank=True)
-    unit = models.CharField(max_length=50, null=True, blank=True)
+    test = models.ForeignKey(ChempathTest, max_length=100, null=True, blank=True, on_delete=models.CASCADE, related_name="results")
+    cleared=models.BooleanField(default=False)
+    result = QuillField(null=True, blank=True)
     comments=models.TextField(null=True, blank=True)
     natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
     collected = models.DateField(auto_now=True, null=True,blank=True)
@@ -187,6 +186,7 @@ class ChemicalPathologyResult(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
+    
     def save(self, *args, **kwargs):
         if not self.result_code:
             last_instance = self.__class__.objects.order_by('result_code').last()
@@ -203,35 +203,27 @@ class ChemicalPathologyResult(models.Model):
 
     def __str__(self):
         if self.patient:
-            return f"{self.patient.surname} - {self.test} - {self.result}"
-
-class ChempathParameter(models.Model):
-    result = models.ForeignKey(ChemicalPathologyResult, on_delete=models.CASCADE, related_name='chempath_parameters', null=True, blank=True)
-    name = models.CharField(max_length=200, null=True, blank=True)
-    value = models.CharField(max_length=200, null=True, blank=True)
-
-
-# class MicroTestCategory(models.Model):
-#     name = models.CharField(max_length=100,null=True,blank=True)
-#     def __str__(self):
-#         return self.name
+            return f"{self.patient} - {self.test} - {self.result}"
     
 
 class MicrobiologyTest(models.Model):
     name = models.CharField(max_length=100,null=True,blank=True)
-    # category=models.ForeignKey(MicroTestCategory,on_delete=models.CASCADE,null=True,blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)
     reference_range = models.CharField(max_length=200,null=True,blank=True)
+    
     def __str__(self):
-        return self.name
-
+        if self.reference_range:
+            return f"{self.name}, {self.reference_range}"
+        else:
+            return f"{self.name}"
 
 class MicrobiologyResult(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='microbiology_results',null=True, blank=True)
+    payment=models.ForeignKey(Paypoint,null=True, on_delete=models.CASCADE,related_name='micro_result_payment')
     result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
-    # category=models.ForeignKey(MicroTestCategory,on_delete=models.CASCADE,null=True,blank=True)
     test = models.ForeignKey(MicrobiologyTest, on_delete=models.CASCADE, null=True, blank=True)
-    result = models.FloatField(null=True, blank=True)
-    unit = models.CharField(max_length=50, null=True, blank=True)
+    cleared=models.BooleanField(default=False)
+    result = QuillField(null=True, blank=True)
     comments=models.TextField(null=True, blank=True)
     natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
     collected = models.DateField(auto_now=True, null=True,blank=True)
@@ -259,29 +251,25 @@ class MicrobiologyResult(models.Model):
         if self.patient:
             return f"{self.patient} -{self.test} - {self.result}"
 
-class MicroParameter(models.Model):
-    result = models.ForeignKey(MicrobiologyResult, on_delete=models.CASCADE, related_name='micro_parameters', null=True, blank=True)
-    name = models.CharField(max_length=200, null=True, blank=True)
-    value = models.CharField(max_length=200, null=True, blank=True)
 
-
-    def __str__(self):
-        return f"{self.name}: {self.value}"
-    
-
-class SerologyTestName(models.Model):
+class SerologyTest(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)
     reference_range = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.name}, {self.reference_range}"
+        if self.reference_range:
+            return f"{self.name}, {self.reference_range}"
+        else:
+            return f"{self.name}"
 
-class SerologyTestResult(models.Model):
+class SerologyResult(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='serology_results', null=True, blank=True)
-    result_code = models.CharField(max_length=20, unique=True, editable=False, default="")
-    test = models.ForeignKey(SerologyTestName, on_delete=models.CASCADE, null=True, blank=True, related_name='results')
-    result = models.FloatField(null=True, blank=True)
-    unit = models.CharField(max_length=50, null=True, blank=True)
+    payment=models.ForeignKey(Paypoint,null=True, on_delete=models.CASCADE,related_name='serology_result_payment')
+    result_code = SerialNumberField(max_length=20, unique=True, editable=False, default="")
+    test = models.ForeignKey(SerologyTest, on_delete=models.CASCADE, null=True, blank=True, related_name='results')
+    cleared=models.BooleanField(default=False)
+    result = QuillField(null=True, blank=True)
     comments = models.TextField(null=True, blank=True)
     nature_of_specimen = models.CharField(max_length=100, null=True, blank=True)
     collected = models.DateField(auto_now_add=True, null=True, blank=True)
@@ -290,10 +278,10 @@ class SerologyTestResult(models.Model):
     updated_by = models.ForeignKey(User, null=True, blank=True, related_name='serology_results_reported', on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-
+ 
     def save(self, *args, **kwargs):
         if not self.result_code:
-            last_instance = SerologyTestResult.objects.order_by('result_code').last()
+            last_instance = SerologyResult.objects.order_by('result_code').last()
             if last_instance:
                 last_result_code = int(last_instance.result_code.replace('SER', ''))
                 new_result_code = f"SER{last_result_code + 1:03d}"
@@ -318,22 +306,15 @@ class SerologyTestResult(models.Model):
         else:
             return f"{self.test} - {self.result}"
 
-class SerologyParameter(models.Model):
-    result = models.ForeignKey(SerologyTestResult, on_delete=models.CASCADE, related_name='serology_parameters', null=True, blank=True)
-    name = models.CharField(max_length=200, null=True, blank=True)
-    value = models.CharField(max_length=200, null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.name}: {self.value}"
-
-
 
 class GeneralTestResult(models.Model):
     name = models.CharField(max_length=100, null=True)
+    payment=models.ForeignKey(Paypoint,null=True, on_delete=models.CASCADE,related_name='general_result_payment')
+    price = models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='general_results', null=True, blank=True)
     result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
-    result = models.FloatField(null=True, blank=True)
-    unit = models.CharField(max_length=50, null=True, blank=True)
+    cleared=models.BooleanField(default=False)
+    result = QuillField(null=True, blank=True)
     comments = models.TextField(null=True, blank=True)
     nature_of_specimen = models.CharField(max_length=100, null=True, blank=True)
     collected = models.DateField(auto_now_add=True, null=True, blank=True)
@@ -342,7 +323,7 @@ class GeneralTestResult(models.Model):
     updated_by = models.ForeignKey(User, null=True, blank=True, related_name='general_results_reported', on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-
+ 
     def __str__(self):
         if self.patient:
             return f"{self.patient} -{self.test} - {self.result}"
@@ -363,4 +344,4 @@ class GeneralTestResult(models.Model):
 
     def __str__(self):
         if self.patient:
-            return f"{self.patient.surname} - {self.test} - {self.result}"
+            return f"{self.patient} - {self.name} - {self.result}"

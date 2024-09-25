@@ -1,52 +1,87 @@
 {% extends 'base.html' %}
 {%load static %}
+{%block page_title%}<div class="flex justify-center"><a href="{%url 'pathology:serology' %}"><i class="fa-solid fa-backward fa-2xl mr-4"></i></a>SEROLOGY REQUEST LIST</div>{%endblock%}
 {% block content %}
-<div class="mt-5 p-4">
-  <div class="max-w-6xl mx-auto rounded-xl p-4 shadow-black shadow-2xl bg-gray-50">
-  <div class="overflow-x-auto">
+<section class="mt-2 md:max-w-xl md:mx-auto text-center border-cyan-700 p-1 mx-1">
+  {% for message in messages %}
+  <div class="">
+    <div class="uk-alert-success rounded-2xl text-sm w-fit mx-auto" uk-alert>
+        <a href class="uk-alert-close font-bold" uk-close></a>
+        <p class="text-green-700 uppercase p-4">{{ message }}</p>
+    </div>
+</div>
+  {% endfor %}
+</section>
+<div class="">
+  <div class="md:mx-20 mx-2 rounded-xl p-4 shadow-black shadow-sm bg-gray-50">
+  <div class="overflow-x-auto uppercase">
   <table class="min-w-full divide-y divide-gray-500">
     <thead class="bg-gray-100">
-      <tr>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S/N</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+      <tr class="text-xs text-center bg-emerald-100">
+        <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S/N</th>
+        <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
+        <th class="p-3  text-xs font-medium text-rose-500 uppercase tracking-wider">
           Test
         </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        <th class="p-3  font-medium text-gray-500 uppercase tracking-wider">
+          Price
+        </th>
+        <th class="p-3 font-medium text-gray-500 uppercase tracking-wider">
+          Payment Status
+        </th>
+        <th class="p-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
           Patient
         </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        <th class="p-3  text-xs font-medium text-gray-500 uppercase tracking-wider">
           Date Collected
         </th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          Collected By
+        <th class="p-3 font-medium text-gray-500 uppercase tracking-wider">
+          Requested By
+        </th>
+        <th class="p-3 font-medium text-gray-500 uppercase tracking-wider">
+          INPUT RESULT
         </th>
       </tr>
     </thead>
     <tbody class="bg-white divide-y divide-gray-200">
       {% for s in serology_request %}
-      <tr class="bg-gray-50 hover:bg-gray-200 transition-colors duration-300">
-        <td class="px-6 py-4 whitespace-nowrap">
+      <tr class="text-xs text-center bg-gray-50 hover:bg-gray-200 transition-colors duration-300">
+        <td class="p-3 whitespace-nowrap">
           {{forloop.counter}}
       </td>
-      <td class="px-6 py-4 whitespace-nowrap">
+      <td class="p-3 whitespace-nowrap">
         {{ s.result_code|default_if_none:'' }}
       </td>
-        <td class="px-6 py-4 whitespace-nowrap">
+        <td class="p-3 whitespace-nowrap text-rose-500">
           {{ s.test|default_if_none:'' }}
         </td>
-        <td class="px-6 py-4 whitespace-nowrap">
-            <a href="{{r.patient.get_absolute_url}}">
-                {{ s.patient|default_if_none:'' }}
-            </a>
+        <td class="p-3 whitespace-nowrap">
+          &#x20A6;{{ s.test.price|default_if_none:'' }}
         </td>
-        <td class="px-6 py-4 whitespace-nowrap">
+        {% if s.payment.status == False %}
+            <td class="p-3 whitespace-nowrap text-red-700">
+          <i class="fa-solid fa-x text-red-700 fa-2xl"></i>
+            </td>
+        {% else %}
+            <td class="p-3 whitespace-nowrap text-green-700">
+             <i class="fa-solid fa-thumbs-up fa-2xl"></i>
+           </td>
+        {% endif %}
+        <td class="p-3 whitespace-nowrap">
+                {{ s.patient|default_if_none:'' }}
+        </td>
+        <td class="p-3 whitespace-nowrap">
           {{ s.created|default_if_none:'' }}
         </td>
-        <td class="px-6 py-4 whitespace-nowrap">
-          {{ request.user }}
+        <td class="p-3 whitespace-nowrap">
+          {{ s.collected_by }}
         </td>
         <td>
+          {% if s.payment.status == True %}
+          <a href="{% url 'pathology:serology_result' s.patient.file_no s.id %}" class="text-green-500 hover:text-blue-700"><i class="fa-solid fa-plus-square fa-2xl"></i></a>
+          {%else%}
+          <i class="fa-solid fa-xmark-square text-red-700 fa-2xl"></i>
+          {%endif%}
         </td>
       </tr>
       {% endfor %}

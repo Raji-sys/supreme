@@ -195,10 +195,20 @@ class PatientDetailView(DetailView):
         context['hematology_results']=patient.hematology_result.all().order_by('-created')
         context['chempath_results']=patient.chemical_pathology_results.all().order_by('-created')
         context['micro_results']=patient.microbiology_results.all().order_by('-created')
-        # context['serology_results'] = patient.serology_results.prefetch_related('parameters').all()
         context['serology_results']=patient.serology_results.all().order_by('-created')
         context['general_results']=patient.general_results.all().order_by('-created')
         return context
+    
+    
+class HematologyRequestListView(ListView):
+    model=HematologyResult
+    template_name='hema/hematology_request.html'
+    context_object_name='hematology_request'
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(cleared=False).order_by('-updated')
+        return queryset
+
     
 class HematologyListView(ListView):
     model=HematologyResult
@@ -207,99 +217,53 @@ class HematologyListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.filter(result__isnull=False)
-        queryset = queryset.annotate(
-            num_parameters=Count('parameters')
-        ).filter(
-            Q(num_parameters=0) |
-            Q(parameters__name__isnull=False) |
-            Q(parameters__value__isnull=False)
-        )
+        queryset = queryset.filter(result__isnull=False,payment__status=True).order_by('-updated')
         return queryset
-
-class HematologyRequestListView(ListView):
-    model=HematologyResult
-    template_name='hema/hematology_request.html'
-    context_object_name='hematology_request'
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        queryset = queryset.filter(result__isnull=True)
-        queryset = queryset.annotate(
-            num_parameters=Count('parameters')
-        ).filter(
-            Q(num_parameters=0) |
-            Q(parameters__name__isnull=True) |
-            Q(parameters__value__isnull=True)
-        )
-        return queryset
+    
 
 class HematologyTestCreateView(LoginRequiredMixin, CreateView):
     model = HematologyResult
     form_class = HematologyTestForm
     template_name = 'hema/hematology_result.html'
-
+        
     def form_valid(self, form):
-        patient = Patient.objects.get(surname=self.kwargs['surname'])
+        patient = Patient.objects.get(file_no=self.kwargs['file_no'])
         form.instance.patient = patient
         form.instance.collected_by = self.request.user
-        messages.success(self.request, 'Hematology result -created successfully')
+
+        hematology_result = form.save(commit=False)
+        payment = Paypoint.objects.create(
+            patient=patient,
+            status=False,
+            service=hematology_result.test, 
+            price=hematology_result.test.price,
+        )
+        hematology_result.payment = payment 
+        hematology_result.save()
+        messages.success(self.request, 'Hematology test created successfully')
         return super().form_valid(form)
     
     def get_success_url(self):
         return self.object.patient.get_absolute_url()
 
+
 class HematologyResultCreateView(LoginRequiredMixin, UpdateView):
     model = HematologyResult
     form_class = HematologyResultForm
-    template_name = 'hema/hematology_update.html'
+    template_name = 'hema/hematology_result.html'
+    success_url=reverse_lazy('pathology:hematology_request')
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        result_id = self.kwargs.get('pk')
-        result = HematologyResult.objects.get(id=result_id)
-        ParameterFormSet = inlineformset_factory(HematologyResult, HemaParameter, form=HemaParameterForm, extra=1)
-        if self.request.method == 'POST':
-            context['formset'] = ParameterFormSet(self.request.POST, instance=result)
-        else:
-            context['formset'] = ParameterFormSet(instance=result, queryset=HemaParameter.objects.none())
-        return context
-    
+    def get_object(self, queryset=None):
+        patient = get_object_or_404(Patient, file_no=self.kwargs['file_no'])
+        return get_object_or_404(HematologyResult, patient=patient, pk=self.kwargs['pk'])
+
     def form_valid(self, form):
         form.instance.updated_by = self.request.user
-        result_id = self.kwargs.get('pk')
-        result = HematologyResult.objects.get(id=result_id)
-        formset = inlineformset_factory(HematologyResult, HemaParameter, form=HemaParameterForm)(self.request.POST, instance=result)
-        if form.is_valid() and formset.is_valid():
-            form.save()
-            formset.save()
-            messages.success(self.request, 'hematology result updated successfully')
-            return super().form_valid(form)
-        else:
-            messages.error(self.request, 'Error updating hematology result')
-            return self.render_to_response(self.get_context_data(form=form))
-
-    def get_success_url(self):
-        result = self.object
-        patient = result.patient
-        return reverse('patient_details', kwargs={'surname': patient.surname})
-
-
-class HemaParameterUpdateView(LoginRequiredMixin, UpdateView):
-    model = HemaParameter
-    form_class = HemaParameterForm
-    template_name = 'hema/hema_param.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        result = self.object.result
-        context['result'] = result
-        return context
-    
-    def get_success_url(self):
-        result = self.object.result
-        patient = result.patient
-        return reverse('patient_details', kwargs={'surname': patient.surname})
+        hematology_result = form.save(commit=False)
+        hematology_result.result = form.cleaned_data['result']
+        hematology_result.save()
+        messages.success(self.request, 'Hematology result updated successfully')
+        return super().form_valid(form)
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -314,7 +278,6 @@ class HemaReportView(ListView):
 
         hema_filter = HemaFilter(self.request.GET, queryset=queryset)
         patient = hema_filter.qs.order_by('-created')
-
         return patient
 
     def get_context_data(self, **kwargs):
@@ -352,16 +315,6 @@ def hema_report_pdf(request):
     return HttpResponse('Error generating PDF', status=500)
 
 
-class ChempathListView(ListView):
-    model=ChemicalPathologyResult
-    template_name='chempath/chempath_list.html'
-    context_object_name='chempath_results'
-
-    def get_queryset(self):
-        queryset=super().get_queryset()
-        queryset=queryset.filter(result__isnull=False)
-        return queryset
-
 class ChempathRequestListView(ListView):
     model=ChemicalPathologyResult
     template_name='chempath/chempath_request.html'
@@ -369,7 +322,18 @@ class ChempathRequestListView(ListView):
 
     def get_queryset(self):
         queryset=super().get_queryset()
-        queryset=queryset.filter(result__isnull=True)
+        queryset=queryset.filter(cleared=False)
+        return queryset
+    
+
+class ChempathListView(ListView):
+    model=ChemicalPathologyResult
+    template_name='chempath/chempath_list.html'
+    context_object_name='chempath_results'
+
+    def get_queryset(self):
+        queryset=super().get_queryset()
+        queryset=queryset.filter(result__isnull=False,payment__status=True).order_by('-updated')
         return queryset
 
 
@@ -379,9 +343,19 @@ class ChempathTestCreateView(LoginRequiredMixin, CreateView):
     template_name = 'chempath/chempath_result.html'
 
     def form_valid(self, form):
-        # Get the patient instance from the request
-        patient = Patient.objects.get(surname=self.kwargs['surname'])
+        patient = Patient.objects.get(file_no=self.kwargs['file_no'])
         form.instance.patient = patient
+        form.instance.collected_by = self.request.user
+        
+        chempath_result = form.save(commit=False)
+        payment = Paypoint.objects.create(
+            patient=patient,
+            status=False,
+            service=chempath_result.test, 
+            price=chempath_result.test.price,
+        )
+        chempath_result.payment = payment 
+        chempath_result.save()
 
         messages.success(self.request, 'Chemical pathology result created successfully')
         return super().form_valid(form)
@@ -393,71 +367,21 @@ class ChempathTestCreateView(LoginRequiredMixin, CreateView):
 class ChempathResultCreateView(LoginRequiredMixin, UpdateView):
     model = ChemicalPathologyResult
     form_class = ChempathResultForm
-    template_name = 'chempath/chempath_update.html'
+    template_name = 'chempath/chempath_result.html'
+    success_url=reverse_lazy('pathology:chempath_request')
 
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        result_id = self.kwargs.get('pk')
-        result = ChemicalPathologyResult.objects.get(id=result_id)
-        ParameterFormSet = inlineformset_factory(ChemicalPathologyResult, ChempathParameter, form=ChempathParameterForm, extra=1)
-        if self.request.method == 'POST':
-            context['formset'] = ParameterFormSet(self.request.POST, instance=result)
-        else:
-            context['formset'] = ParameterFormSet(instance=result, queryset=ChempathParameter.objects.none())
-        return context
+    def get_object(self, queryset=None):
+        patient = get_object_or_404(Patient, file_no=self.kwargs['file_no'])
+        return get_object_or_404(ChemicalPathologyResult, patient=patient, pk=self.kwargs['pk'])
 
     def form_valid(self, form):
-        result_id = self.kwargs.get('pk')
-        result = ChemicalPathologyResult.objects.get(id=result_id)
-        formset = inlineformset_factory(ChemicalPathologyResult, ChempathParameter, form=ChempathParameterForm)(self.request.POST, instance=result)
-        if form.is_valid() and formset.is_valid():
-            form.save()
-            formset.save()
-            messages.success(self.request, 'chempath result updated successfully')
-            return super().form_valid(form)
-        else:
-            messages.error(self.request, 'Error updating chempath result')
-            return self.render_to_response(self.get_context_data(form=form))
-
-    def get_success_url(self):
-        result = self.object
-        patient = result.patient
-        return reverse('patient_details', kwargs={'surname': patient.surname})
-
-
-class ChempathParameterUpdateView(LoginRequiredMixin, UpdateView):
-    model = ChempathParameter
-    form_class = ChempathParameterForm
-    template_name = 'chempath/chempath_param.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        result = self.object.result
-        context['result'] = result
-        return context
-    
-    def get_success_url(self):
-        result = self.object.result
-        patient = result.patient
-        return reverse('patient_details', kwargs={'surname': patient.surname})
-
-# class ChempathResultCreateView(LoginRequiredMixin, UpdateView):
-#     model=ChemicalPathologyResult
-#     form_class = ChempathResultForm
-#     template_name = 'chempath/chempath_update.html'
-#     context_object_name = 'result'
-
-#     def get_object(self, queryset=None):
-#         patient = Patient.objects.get(surname=self.kwargs['surname'])
-#         return ChemicalPathologyResult.objects.get(patient=patient, pk=self.kwargs['pk'])
-
-#     def form_valid(self, form):
-#         messages.success(self.request, 'Chemical pathology result updated successfully')
-#         return super().form_valid(form)
-
-#     def get_success_url(self):
-#         return reverse('patient_details', kwargs={'surname': self.kwargs['surname']})
+        form.instance.updated_by = self.request.user
+        chempath_result = form.save(commit=False)
+        chempath_result.result = form.cleaned_data['result']
+        chempath_result.save()
+        messages.success(self.request, 'Chemical Pathology result updated successfully')
+        return super().form_valid(form)
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -469,10 +393,9 @@ class ChempathReportView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-
+        
         chem_filter = ChemFilter(self.request.GET, queryset=queryset)
         patient = chem_filter.qs.order_by('-created')
-
         return patient
 
     def get_context_data(self, **kwargs):
@@ -510,16 +433,6 @@ def chempath_report_pdf(request):
     return HttpResponse('Error generating PDF', status=500)
 
 
-class MicroListView(ListView):
-    model=MicrobiologyResult
-    template_name='micro/micro_list.html'
-    context_object_name='micro_results'
-
-    def get_queryset(self):
-        queryset=super().get_queryset()
-        queryset=queryset.filter(result__isnull=False)
-        return queryset
-
 class MicroRequestListView(ListView):
     model=MicrobiologyResult
     template_name='micro/micro_request.html'
@@ -527,7 +440,18 @@ class MicroRequestListView(ListView):
 
     def get_queryset(self):
         queryset=super().get_queryset()
-        queryset=queryset.filter(result__isnull=True)
+        queryset=queryset.filter(cleared=False)
+        return queryset
+
+
+class MicroListView(ListView):
+    model=MicrobiologyResult
+    template_name='micro/micro_list.html'
+    context_object_name='micro_results'
+
+    def get_queryset(self):
+        queryset=super().get_queryset()
+        queryset=queryset.filter(result__isnull=False,payment__status=True).order_by('-updated')
         return queryset
 
 
@@ -537,12 +461,19 @@ class MicroTestCreateView(LoginRequiredMixin, CreateView):
     template_name = 'micro/micro_result.html'
 
     def form_valid(self, form):
-        patient = Patient.objects.get(surname=self.kwargs['surname'])
+        patient = Patient.objects.get(file_no=self.kwargs['file_no'])
         form.instance.patient = patient
-        # category_id=form.cleaned_data['category'].id
-        # test_id=form.cleaned_data['test'].id
-        # form.instance.category=MicroTestCategory.objects.get(id=category_id)
-        # form.instance.test=MicrobiologyTest.objects.get(id=test_id)
+        form.instance.collected_by = self.request.user
+
+        micro_result = form.save(commit=False)
+        payment = Paypoint.objects.create(
+            patient=patient,
+            status=False,
+            service=micro_result.test, 
+            price=micro_result.test.price,
+        )
+        micro_result.payment = payment 
+        micro_result.save()
 
         messages.success(self.request, 'Microbiology result created successfully')
         return super().form_valid(form)
@@ -550,64 +481,26 @@ class MicroTestCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return self.object.patient.get_absolute_url()
 
-# @login_required
-# def get_tests_for_category(request):
-#     category_id=request.GET.get('category_id')
-#     tests=MicrobiologyTest.objects.filter(category_id=category_id).values('id','name').order_by('name')
-#     data=list(tests)
-#     return JsonResponse(data,safe=False)
-
 
 class MicroResultCreateView(LoginRequiredMixin, UpdateView):
     model=MicrobiologyResult
     form_class = MicroResultForm
-    template_name = 'micro/micro_update.html'
+    template_name = 'micro/micro_result.html'
+    success_url=reverse_lazy('pathology:micro_request')
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        result_id = self.kwargs.get('pk')
-        result = MicrobiologyResult.objects.get(id=result_id)
-        ParameterFormSet = inlineformset_factory(MicrobiologyResult, MicroParameter, form=MicroParameterForm, extra=1)
-        if self.request.method == 'POST':
-            context['formset'] = ParameterFormSet(self.request.POST, instance=result)
-        else:
-            context['formset'] = ParameterFormSet(instance=result, queryset=MicroParameter.objects.none())
-        return context
-    
+
+    def get_object(self, queryset=None):
+        patient = get_object_or_404(Patient, file_no=self.kwargs['file_no'])
+        return get_object_or_404(MicrobiologyResult, patient=patient, pk=self.kwargs['pk'])
+
     def form_valid(self, form):
-        result_id = self.kwargs.get('pk')
-        result = MicrobiologyResult.objects.get(id=result_id)
-        formset = inlineformset_factory(MicrobiologyResult, MicroParameter, form=MicroParameterForm)(self.request.POST, instance=result)
-        if form.is_valid() and formset.is_valid():
-            form.save()
-            formset.save()
-            messages.success(self.request, 'microbiology result updated successfully')
-            return super().form_valid(form)
-        else:
-            messages.error(self.request, 'Error updating microbiology result')
-            return self.render_to_response(self.get_context_data(form=form))
+        form.instance.updated_by = self.request.user
+        micro_result = form.save(commit=False)
+        micro_result.result = form.cleaned_data['result']
+        micro_result.save()
+        messages.success(self.request, 'Microbiology result updated successfully')
+        return super().form_valid(form)
 
-    def get_success_url(self):
-        result = self.object
-        patient = result.patient
-        return reverse('patient_details', kwargs={'surname': patient.surname})
-
-
-class MicroParameterUpdateView(LoginRequiredMixin, UpdateView):
-    model = MicroParameter
-    form_class = MicroParameterForm
-    template_name = 'micro/micro_param.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        result = self.object.result
-        context['result'] = result
-        return context
-    
-    def get_success_url(self):
-        result = self.object.result
-        patient = result.patient
-        return reverse('patient_details', kwargs={'surname': patient.surname})
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -622,7 +515,6 @@ class MicroReportView(ListView):
 
         micro_filter = MicroFilter(self.request.GET, queryset=queryset)
         patient = micro_filter.qs.order_by('-created')
-
         return patient
 
     def get_context_data(self, **kwargs):
@@ -660,109 +552,78 @@ def micro_report_pdf(request):
     return HttpResponse('Error generating PDF', status=500)
 
 
-class SerologyListView(ListView):
-    model=SerologyTestResult
-    template_name='serology/serology_list.html'
-    context_object_name='serology_results'
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        queryset = queryset.annotate(
-            num_parameters=Count('parameters')
-        ).filter(
-            Q(num_parameters=0) |
-            Q(parameters__name__isnull=False) |
-            Q(parameters__value__isnull=False)
-        )
-        return queryset
-
 class SerologyRequestListView(ListView):
-    model = SerologyTestResult
+    model = SerologyResult
     template_name = 'serology/serology_request.html'
     context_object_name = 'serology_request'
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.annotate(
-            num_parameters=Count('parameters')
-        ).filter(
-            Q(num_parameters=0) |
-            Q(parameters__name__isnull=True) |
-            Q(parameters__value__isnull=True)
-        )
+        queryset = queryset.filter(cleared=False)
         return queryset
 
 
+class SerologyListView(ListView):
+    model=SerologyResult
+    template_name='serology/serology_list.html'
+    context_object_name='serology_results'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(result__isnull=False,payment__status=True).order_by('-updated')
+        return queryset
+    
+
 class SerologyTestCreateView(LoginRequiredMixin, CreateView):
-    model = SerologyTestResult
+    model = SerologyResult
     form_class = SerologyTestForm
     template_name = 'serology/serology_result.html'
 
     def form_valid(self, form):
-        patient = Patient.objects.get(surname=self.kwargs['surname'])
+        patient = Patient.objects.get(file_no=self.kwargs['file_no'])
         form.instance.patient = patient
+        form.instance.collected_by = self.request.user
+
+        serology_result = form.save(commit=False)
+        payment = Paypoint.objects.create(
+            patient=patient,
+            status=False,
+            service=serology_result.test, 
+            price=serology_result.test.price,
+        )
+        serology_result.payment = payment 
+        serology_result.save()
+
         messages.success(self.request, 'Serology result created successfully')
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('patient_details', kwargs={'surname': self.kwargs['surname']})
+        return self.object.patient.get_absolute_url()
     
     
-class SerologyParameterFormView(LoginRequiredMixin, UpdateView):
-    model = SerologyTestResult
-    form_class = SerologyTestResultForm
-    template_name = 'serology/serology_update.html'
+class SerologyResultCreateView(LoginRequiredMixin, UpdateView):
+    model = SerologyResult
+    form_class = SerologyResultForm
+    template_name = 'serology/serology_result.html'
+    success_url=reverse_lazy('pathology:serology_request')
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        result_id = self.kwargs.get('pk')
-        result = SerologyTestResult.objects.get(id=result_id)
-        ParameterFormSet = inlineformset_factory(SerologyTestResult, SerologyParameter, form=SerologyParameterForm, extra=1)
-        if self.request.method == 'POST':
-            context['formset'] = ParameterFormSet(self.request.POST, instance=result)
-        else:
-            context['formset'] = ParameterFormSet(instance=result, queryset=SerologyParameter.objects.none())
-        return context
+
+    def get_object(self, queryset=None):
+        patient = get_object_or_404(Patient, file_no=self.kwargs['file_no'])
+        return get_object_or_404(SerologyResult, patient=patient, pk=self.kwargs['pk'])
 
     def form_valid(self, form):
-        result_id = self.kwargs.get('pk')
-        result = SerologyTestResult.objects.get(id=result_id)
-        formset = inlineformset_factory(SerologyTestResult, SerologyParameter, form=SerologyParameterForm)(self.request.POST, instance=result)
-        if form.is_valid() and formset.is_valid():
-            form.save()
-            formset.save()
-            messages.success(self.request, 'Serology result updated successfully')
-            return super().form_valid(form)
-        else:
-            messages.error(self.request, 'Error updating serology result')
-            return self.render_to_response(self.get_context_data(form=form))
-
-    def get_success_url(self):
-        result = self.object
-        patient = result.patient
-        return reverse('patient_details', kwargs={'surname': patient.surname})
-
-
-class SerologyParameterUpdateView(LoginRequiredMixin, UpdateView):
-    model = SerologyParameter
-    form_class = SerologyParameterForm
-    template_name = 'serology/serology_param.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        result = self.object.result
-        context['result'] = result
-        return context
-    
-    def get_success_url(self):
-        result = self.object.result
-        patient = result.patient
-        return reverse('patient_details', kwargs={'surname': patient.surname})
+        form.instance.updated_by = self.request.user
+        serology_result = form.save(commit=False)
+        serology_result.result = form.cleaned_data['result']
+        serology_result.save()
+        messages.success(self.request, 'Serology result updated successfully')
+        return super().form_valid(form)
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 class SerologyReportView(ListView):
-    model=SerologyTestResult
+    model=SerologyResult
     template_name = 'serology/serology_report.html'
     paginate_by = 10
     context_object_name = 'patient'
@@ -772,7 +633,6 @@ class SerologyReportView(ListView):
 
         serology_filter = SerologyFilter(self.request.GET, queryset=queryset)
         patient = serology_filter.qs.order_by('-created')
-
         return patient
 
     def get_context_data(self, **kwargs):
@@ -785,7 +645,7 @@ class SerologyReportView(ListView):
 def serology_report_pdf(request):
     ndate = datetime.datetime.now()
     filename = ndate.strftime('on_%d/%m/%Y_at_%I.%M%p.pdf')
-    f = SerologyFilter(request.GET, queryset=SerologyTestResult.objects.all()).qs
+    f = SerologyFilter(request.GET, queryset=SerologyResult.objects.all()).qs
 
     result = ""
     for key, value in request.GET.items():
@@ -808,7 +668,6 @@ def serology_report_pdf(request):
         response.write(pdf)
         return response
     return HttpResponse('Error generating PDF', status=500)
-
 
 class GeneralListView(ListView):
     model=GeneralTestResult

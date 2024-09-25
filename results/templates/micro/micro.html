@@ -1,38 +1,30 @@
 {% extends 'base.html' %}
 {% load static %}
-
-{% block title %}CHEMICAL PATHOLOGY{% endblock %}
-
+{% block title %}MICROBIOLOGY{% endblock %}
+{%block page_title%}<div class="flex justify-center"><a href="{%url 'pathology:dashboard' %}"><i class="fa-solid fa-backward fa-2xl mr-4"></i></a>MICROBIOLOGY DASHBOARD</div>{%endblock%}
 {% block content %}
-<div class="py-10">
-  <div class="max-w-4xl mx-auto">
+<div class="py-6">
+  <div class="md:mx-20 mx-2">
     <div class="bg-white rounded-xl shadow-black shadow-2xl">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 uppercase text-center rounded-xl p-8 md:p-14 bg-gray-50">
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-6 uppercase text-center rounded-xl p-8 md:p-14 bg-gray-50">
         <div>
-          <a href="{% url 'micro_request' %}" class="block">
-            <div class="hover:bg-slate-600 hover:text-white bg-white text-slate-800 rounded-2xl shadow-2xl p-2 md:p-6 border-2 border-white-400 transition duration-300">
-              <div class="font-semibold text-xs md:text-sm">Requests</div>
+          <a href="{% url 'pathology:micro_request' %}" class="block">
+            <div class="hover:bg-slate-600 hover:text-white bg-white text-slate-800 rounded-2xl shadow-2xl p-4 md:p-6 border-2 border-white-400 transition duration-300">
+              <div class=" text-xs ">Requests</div>
             </div>
           </a>
         </div>
         <div>
-          <a href="{% url 'micro_list' %}" class="block">
-            <div class="hover:bg-emerald-500 hover:text-white bg-white text-emerald-700 rounded-2xl shadow-2xl p-2 md:p-6 border-2 border-white-400 transition duration-300">
-              <div class="font-semibold text-xs md:text-sm">Results</div>
+          <a href="{% url 'pathology:micro_list' %}" class="block">
+            <div class="hover:bg-emerald-500 hover:text-white bg-white text-emerald-700 rounded-2xl shadow-2xl p-4 md:p-6 border-2 border-white-400 transition duration-300">
+              <div class=" text-xs ">Results</div>
             </div>
           </a>
         </div>
         <div>
-          <a href="{% url 'micro_report' %}" class="block">
-            <div class="hover:bg-blue-500 hover:text-white text-blue-700 rounded-2xl shadow-2xl p-2 md:p-6 border-2 border-white-400 transition duration-300">
-              <div class="font-semibold text-xs md:text-sm">Report</div>
-            </div>
-          </a>
-        </div>
-        <div>
-          <a href="{% url 'index' %}" class="block">
-            <div class="hover:bg-amber-500 hover:text-white bg-white text-amber-500 rounded-2xl shadow-2xl p-2 md:p-6 border-2 border-white-400 transition duration-300">
-              <div class="font-semibold text-xs md:text-sm">Stats</div>
+          <a href="{% url 'pathology:micro_report' %}" class="block">
+            <div class="hover:bg-blue-500 hover:text-white text-blue-700 rounded-2xl shadow-2xl p-4 md:p-6 border-2 border-white-400 transition duration-300">
+              <div class=" text-xs ">Report</div>
             </div>
           </a>
         </div>

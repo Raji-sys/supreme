@@ -11,7 +11,17 @@
 <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
 <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="{% static 'images/style.css' %}" type="text/css">
+<link rel="stylesheet" href="{% static 'css/darcula.min.css' %}">
+<script src="{% static 'js/highlight.min.js' %}"></script>
 
+<link href="{% static 'css/quill.snow.css' %}" rel="stylesheet">
+<script src="{% static 'js/quill.min.js' %}"></script>
+
+<script src="{% static 'js/quill.imageCompressor.min.js' %}"></script>
+<script src="{% static 'js/quill-resize-module.min.js' %}"></script>
+<script src="{%static 'js/jquery-3.6.0.min.js'%}"></script>
+
+{% include 'django_quill/media.html' %}
 </head>
 <style>
 	a{

@@ -2,19 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Test Result</title>
+    <title>TEST RESULT REPORT</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 20px;
             background-color: #FBF8F6;
-            color: #7F1D1D;
+            color: #1d7f25;
             text-transform: capitalize;
           }
           
           h1 {
             text-align: center;
-            color: #BE185D;
+            color: #18be5d;
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-bottom: 30px;
@@ -39,7 +39,7 @@
           }
           
           td {
-            border: 1px solid #FECDD3;
+            border: 1px solid #baf7e0;
             word-break: break-word;
             white-space: normal;
             padding: 6px;
@@ -55,14 +55,14 @@
           th {
             text-align: center;
             font-size: 18px;
-            background-color: #BE185D;
+            background-color: #0bc056;
             color: #FFFFFF;
             padding: 10px;
           }
           
           td:first-child {
             font-weight: bold;
-            background-color: #FDE4E1;
+            background-color: #e1fdf2;
             border-radius: 5px;
             text-transform: uppercase;
             text-transform: capitalize;
@@ -70,17 +70,17 @@
           }
           
           .divider {
-            border-bottom: 1px solid #FECDD3;
+            border-bottom: 1px solid #cdfed1;
             margin: 30px 0;
           }
           
           #sp {
-            margin-top: 4rem;
-            font-size: 3rem;
+            margin-top: 6rem;
+            font-size: 1.5rem;
             text-align: center; /* Center the heading */
           }
           #sp h1 {
-            margin-top: 80px; /* Adjust the value as needed */
+            margin-top: 180px; /* Adjust the value as needed */
           }
           .value {
             background-color: white;
@@ -92,7 +92,7 @@
         </head>
         <body>
             <div id="sp">
-              <h1 >SUPREME DIAGNOSTIC LABORATORIES</h1>
+              <h1 >PATHOLOGY REPORT</h1>
             </div>
         <h1>Test Result</h1>
         {% for i in f %}
@@ -107,8 +107,8 @@
                 <td><span class="variable">DATE REPORT</span></td>
               </tr>
               <tr>
-                  <td class="value">{{ i.test|upper }} {{ i.name|upper }}</td>
-                  <td class="value">{% for parameter in i.hema_parameters.all %}{{ parameter.name }}: {{ parameter.value }}{% endfor %}{{ i.result|default_if_none:'' }}</td>
+                  <td class="value">{{ i.test|upper }}</td>
+                  <td class="value">{{ i.result.html|safe|default_if_none:'' }}</td>
                   <td class="value">{{i.updated_by|upper}}</td>
                   <td class="value">{{ i.updated }}</td>
             </tr>

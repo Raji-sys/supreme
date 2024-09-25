@@ -2,9 +2,9 @@
 {% load static %}
 
 {% block title %}DASHBOARD{% endblock %}
-
+{%block page_title%}<div class="flex justify-center"><a href="{%url 'get_started' %}"><i class="fa-solid fa-backward fa-2xl mr-4"></i></a>PATHOLOGY DASHBOARD</div>{%endblock%}
 {% block content %}
-<section class="max-w-xl mx-auto text-center border-cyan-700 p-4 m-2">
+<section class="max-w-xl mx-auto text-center border-cyan-700 p-2 m-1">
   {% for message in messages %}
   <div class="">
     <div class="bg-green-100 rounded-2xl text-sm p-4" uk-alert>
@@ -14,52 +14,45 @@
   </div>
   {% endfor %}
 </section>
-<div class=" py-10">
-  <div class="max-w-4xl mx-auto">
+<div class="">
+  <div class="md:mx-20 mx-2">
     <div class="bg-white rounded-xl shadow-black shadow-2xl">
-    <div class="p-8 md:p-4 text-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="p-6 md:p-12 text-center grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
-        <a href="{% url 'hematology' %}" class="block">
+        <a href="{% url 'pathology:hematology' %}" class="block">
           <div class=" hover:bg-white hover:text-gray-600 text-white bg-emerald-500  rounded-lg shadow-lg p-8 border-2 border-white transition duration-300">
-            <div class=" font-semibold uppercase text-sm md:text-base">Hematology</div>
+            <div class=" uppercase text-xs">Hematology</div>
           </div>
         </a>
       </div>
       <div>
-        <a href="{% url 'chempath' %}" class="block">
+        <a href="{% url 'pathology:chempath' %}" class="block">
           <div class="bg-blue-500 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-8 border-2 border-white transition duration-300">
-            <div class="font-semibold uppercase text-sm md:text-base">Chemical Pathology</div>
+            <div class="uppercase text-xs">Chemical Pathology</div>
           </div>
         </a>
       </div>
       <div>
-        <a href="{% url 'micro' %}" class="block">
+        <a href="{% url 'pathology:micro' %}" class="block">
           <div class="bg-purple-600 border-2 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-8 transition duration-300">
-            <div class="font-semibold uppercase text-sm md:text-base">Microbiology</div>
+            <div class="uppercase text-xs">Microbiology</div>
           </div>
         </a>
       </div>
       <div>
-        <a href="{% url 'serology' %}" class="block">
+        <a href="{% url 'pathology:serology' %}" class="block">
           <div class="bg-amber-500 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-8 border-2 border-white transition duration-300">
-            <div class="font-semibold uppercase text-sm md:text-base">Serology</div>
+            <div class="uppercase text-xs">Serology</div>
           </div>
         </a>
       </div>
-      <div>
-        <a href="{% url 'general' %}" class="block">
-          <div class="bg-slate-600 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-8 border-2 border-white transition duration-300">
-            <div class="font-semibold uppercase text-sm md:text-base">General</div>
-          </div>
-        </a>
-      </div>
-      <div>
-        <a href="{% url 'index' %}" class="block">
+      <!-- <div>
+        <a href="#" class="block">
           <div class="bg-pink-600 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-8 border-2 border-white transition duration-300">
-            <div class="font-semibold uppercase text-sm md:text-base">Histopathology</div>
+            <div class="uppercase text-xs">Histopathology</div>
           </div>
         </a>
-      </div>
+      </div> -->
     </div>
   </div>
   </div>

@@ -2,14 +2,14 @@
 {% load static %}
 
 {% block content %}
-<div class="py-10">
-  <div class="max-w-2xl text-center mx-auto bg-white rounded-xl shadow-black shadow-2xl p-8">
-    <h1 class="text-2xl font-bold mb-6">Chemical Pathology Test</h1>
+<div class="p-4 mx-2">
+  <div class="max-w-md text-center mx-auto bg-white rounded-xl shadow-black shadow-2xl p-8">
+    <h1 class="text-sm uppercase  mb-6">Chemical Pathology Form</h1>
     <form method="post" class="space-y-6">
       {% csrf_token %}
       {% for field in form %}
       <div class="space-y-2">
-        <label for="{{ field.id_for_label }}" class="block text-gray-700 font-medium">{{ field.label }}</label>
+        <label for="{{ field.id_for_label }}" class="block text-gray-700 text-xs">{{ field.label }}</label>
         {% if field.field.widget.input_type == 'text' %}
         <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" id="{{ field.id_for_label }}" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500" />
         {% elif field.field.widget.input_type == 'number' %}
@@ -20,12 +20,12 @@
         {{ field }}
         {% endif %}
         {% if field.help_text %}
-        <p class="text-gray-500 text-sm">{{ field.help_text }}</p>
+        <p class="text-gray-500 text-xs">{{ field.help_text }}</p>
         {% endif %}
       </div>
       {% endfor %}
-      <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-        Add
+      <button type="submit" class="text-xs uppercase bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        add
       </button>
     </form>
   </div>
