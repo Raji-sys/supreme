@@ -1,5 +1,4 @@
 /include
-/Lib
 /lib
 /bin
 /lib64
@@ -7,3 +6,5 @@ manage.py
 /pyvenv.cfg
 /share
 /supreme
+/static
+/node_modules
