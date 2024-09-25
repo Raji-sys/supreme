@@ -53,7 +53,7 @@ class SerologyFilter(django_filters.FilterSet):
     result_code=django_filters.CharFilter(label='code',field_name="result_code",lookup_expr='iexact')                                                                                                     
 
     class Meta:
-        model=SerologyTestResult
+        model=SerologyResult
         fields=['collected','reported','result_code','patient_no','test']
 
 class GenFilter(django_filters.FilterSet):
@@ -64,5 +64,5 @@ class GenFilter(django_filters.FilterSet):
     result_code=django_filters.CharFilter(label='code',field_name="result_code",lookup_expr='iexact')                                                                                                     
 
     class Meta:
-        model=SerologyTestResult
+        model=SerologyResult
         fields=['collected','reported','result_code','patient_no','name']

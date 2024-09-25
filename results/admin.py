@@ -27,7 +27,7 @@ class HematologyResultAdmin(admin.ModelAdmin):
     # list_per_page=10
     # ordering = ['test']
 
-@admin.register(ChempathTestName)
+@admin.register(ChempathTest)
 class ChempathTestNameAdmin(admin.ModelAdmin):
     list_display = ('name', 'reference_range')
 
@@ -55,12 +55,12 @@ class MicroTestAdmin(admin.ModelAdmin):
     list_display = ('name','reference_range',)
 
 
-@admin.register(SerologyTestResult)
+@admin.register(SerologyResult)
 class SerologyTestResultAdmin(admin.ModelAdmin):
     list_display = ('result_code', 'test', 'patient', 'result',  'comments')
     list_filter = ('test', 'patient')
 
 
-@admin.register(SerologyTestName)
+@admin.register(SerologyTest)
 class SerologyTestNameAdmin(admin.ModelAdmin):
     list_display = ('name', 'reference_range')
