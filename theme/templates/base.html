@@ -4,7 +4,7 @@
 <html>
 <head>
 {% tailwind_css %} 
-<title>{% block title %}Supremee Diagnostic Lab{% endblock %}</title>
+<title>{% block title %}Supreme Diagnostic Lab{% endblock %}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="{% static 'fonts/fontstyle.css' %}" type='text/css'>
 <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
@@ -21,9 +21,14 @@
 <script src="{% static 'js/quill.imageCompressor.min.js' %}"></script>
 <script src="{% static 'js/quill-resize-module.min.js' %}"></script>
 <script src="{%static 'js/jquery-3.6.0.min.js'%}"></script>
+<!-- UIkit CSS -->
+<link rel="stylesheet" href="{% static 'uikit/css/uikit.min.css' %}" type="text/css">
 
-{% include 'django_quill/media.html' %}
+<!-- UIkit JS -->
+<script src="{% static 'uikit/js/uikit.min.js' %}"></script>
+<script src="{% static 'uikit/js/uikit-icons.js' %}"></script>
 </head>
+{% include 'django_quill/media.html' %}
 <style>
 	a{
 		text-decoration: none;
@@ -48,7 +53,7 @@
 	scrollbar-color: #4a90e2 #f1f1f1;
 }
 </style>
-<body class="bg-gradient-to-r from-rose-200 via-red-100 to-rose-200 min-h-screen">
+<body class="bg-gradient-to-r from-rose-100 via-red-100 to-rose-100 min-h-screen">
     {% if request.user.is_authenticated %}
     <header class="bg-white mx-4 shadow-md border-b-2 border-gray-900 rounded">
         <nav class="flex flex-wrap justify-between items-center p-2">
@@ -59,11 +64,6 @@
                         <i class="fa fa-solid fa-home fa-xl"></i>
                     </a>
                 </span>
-                <!-- Hide CREATE NEW USER and USER LIST on smaller screens -->
-                <div class="hidden md:flex gap-2">
-                    <a href="{% url 'create_profile' %}" class="text-white bg-green-700 rounded text-xs p-2">CREATE NEW USER</a>
-                    <a href="{% url 'profiles_list' %}" class="text-white bg-cyan-600 rounded text-xs p-2">USER LIST</a>
-                </div>
             </div>
 
             <!-- User info and logout button - shown only on larger screens -->
@@ -87,12 +87,6 @@
 
 	<!-- Mobile Menu - Hidden by default -->
 	<div id="mobile-menu" class="flex flex-col justify-center items-center  bg-white p-4 md:hidden border-t-2 border-gray-200 rounded-b-lg shadow-lg space-y-3">
-		<a href="{% url 'create_profile' %}" class="text-gray-700 text-xs w-fit text-left p-2 rounded-md hover:bg-green-600 hover:text-white transition duration-300 ease-in-out">
-			<i class="fa fa-user-plus mr-2"></i> CREATE NEW USER
-		</a>
-		<a href="{% url 'profiles_list' %}" class="text-gray-700 text-xs w-fit text-left p-2 rounded-md hover:bg-cyan-600 hover:text-white transition duration-300 ease-in-out">
-			<i class="fa fa-users mr-2"></i> USER LIST
-		</a>
 		<div class="flex items-center text-gray-800 text-xs w-fit  rounded-md">
 			<span>Logged-in as: {{ request.user }}</span>
 			<form method="POST" action="{% url 'logout' %}" class="w-fit">

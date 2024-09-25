@@ -21,12 +21,15 @@ import datetime
 from django.conf import settings
 import os
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count
+from django.db.models import Count,Sum,Q
 from django.forms import modelformset_factory
 User = get_user_model()
-from django.db.models import Count, Q
-from django.views.generic import FormView
-from django.forms import inlineformset_factory
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.colors import black, grey
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+
 
 
 def log_anonymous_required(view_function, redirect_to=None):
@@ -76,6 +79,10 @@ class GeneralView(TemplateView):
 class ReportView(TemplateView):
     template_name = "report.html"
 
+@method_decorator(login_required(login_url='login'), name='dispatch')
+class RevenueView(TemplateView):
+    template_name = "revenue.html"
+
 @method_decorator(log_anonymous_required, name='dispatch')
 class CustomLoginView(LoginView):
     template_name = 'login.html'
@@ -112,27 +119,6 @@ class UserProfileCreateView(CreateView):
         return redirect (profile_url)
 
 
-class ProfileDetailView(DetailView):
-    template_name = 'profile/profile_details.html'
-    model = Profile
-    context_object_name='profile'
-    slug_field='user__username'
-    slug_url_kwarg='username'
-
-    def get_object(self, queryset=None):
-        if self.request.user.is_superuser:
-            username_from_url = self.kwargs.get('username')
-            user = get_object_or_404(User, username=username_from_url)
-        else:
-            user = self.request.user
-        return get_object_or_404(Profile, user=user)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        profile = context['object']
-        return context
-
-
 class ProfileListView(ListView):
     model = Profile
     template_name = "profile/profile_list.html"
@@ -149,10 +135,9 @@ class PatientCreateView(CreateView):
         messages.success(self.request,'Patient created successfully')
         return super().form_valid(form)
 
-
 class PatientUpdateView(UpdateView):
     model = Patient
-    fields = ['surname', 'other_names', 'gender', 'dob', 'phone']
+    form_class= PatientForm
     template_name = 'patient/patient_create.html'
     success_url = reverse_lazy('patients_list')
  
@@ -187,7 +172,7 @@ class PatientDetailView(DetailView):
     context_object_name='patient'
 
     def get_object(self, queryset=None):
-        return Patient.objects.get(surname=self.kwargs['surname'])
+        return Patient.objects.get(file_no=self.kwargs['file_no'])
     
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
@@ -772,3 +757,303 @@ def general_report_pdf(request):
         response.write(pdf)
         return response
     return HttpResponse('Error generating PDF', status=500)
+
+
+class PayCreateView(CreateView):
+    model = Paypoint
+    form_class = PayForm
+    template_name = 'new_pay.html'
+    success_url = reverse_lazy("pay_list")
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        paypoint = form.save(commit=False)
+        messages.success(self.request, 'TRANSACTION SUCCESSFULLY')
+        return super().form_valid(form)
+        
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['next'] = self.request.GET.get('next', reverse_lazy("pay_list"))
+        # Add wallet balance to context
+
+    def get_success_url(self):
+        next_url = self.request.GET.get('next')
+        if next_url:
+            return next_url
+        return super().get_success_url()
+
+class PayUpdateView(UpdateView):
+    model = Paypoint
+    template_name = 'update_pay.html'
+    form_class = PayUpdateForm
+
+    def get_success_url(self):
+        next_url = self.request.GET.get('next')
+        if next_url:
+            return next_url
+        return reverse_lazy("pay_list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        paypoint = self.get_object()
+        context['patient'] = paypoint.patient
+        context['service'] = paypoint.service
+        context['next'] = self.request.GET.get('next', reverse_lazy("pay_list"))
+        return context
+
+    
+class PayListView(ListView):
+    model=Paypoint
+    template_name='transaction.html'
+    context_object_name='pays'
+    paginate_by = 10
+
+    def get_queryset(self):
+        updated = super().get_queryset().filter(status=True).order_by('-updated')
+        pay_filter = PayFilter(self.request.GET, queryset=updated)
+        return pay_filter.qs
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        pay_total = self.get_queryset().count()
+        paid_transactions = self.get_queryset().filter(status=True)
+        total_worth = paid_transactions.aggregate(total_worth=Sum('price'))['total_worth'] or 0
+
+        context['payFilter'] = PayFilter(self.request.GET, queryset=self.get_queryset())
+        context['pay_total'] = pay_total
+        context['total_worth'] = total_worth
+        return context    
+
+
+def format_currency(amount):
+    if amount is None:
+        return "N0.00"
+    return f"N{amount:,.2f}"
+
+@login_required
+def receipt_pdf(request):
+    # Get the queryset
+    f = PayFilter(request.GET, queryset=Paypoint.objects.all()).qs
+    
+    # Get the patient from the first Paypoint object
+    patient = f.first().patient if f.exists() else None
+
+    # Create a file-like buffer to receive PDF data
+    buffer = BytesIO()
+
+    # Create the PDF object, using the buffer as its "file."
+    p = canvas.Canvas(buffer, pagesize=(3*inch, 11*inch))  # 3 inches wide, 11 inches long
+
+    # Try to register custom fonts, fall back to standard fonts if not available
+    try:
+        pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
+        pdfmetrics.registerFont(TTFont('VeraBd', 'VeraBd.ttf'))
+        font_name = 'Vera'
+        font_bold = 'VeraBd'
+    except:
+        font_name = 'Helvetica'
+        font_bold = 'Helvetica-Bold'
+
+    # Start drawing from the top of the page
+    y = 10.5*inch
+
+    # Try to draw logo if available
+    logo_path = os.path.join(settings.STATIC_ROOT, 'images', '5.png')
+    if os.path.exists(logo_path):
+        p.drawInlineImage(logo_path, 0.75*inch, y - 0.5*inch, width=1.5*inch, height=0.5*inch)
+        y -= 0.7*inch
+    else:
+        y -= 0.2*inch  # Adjust spacing if no logo
+
+    # Draw the header
+    p.setFont(font_bold, 12)
+    p.drawCentredString(1.5*inch, y, "PAYMENT RECEIPT")
+    y -= 0.3*inch
+
+    # Draw a line
+    p.setStrokeColor(grey)
+    p.line(0.25*inch, y, 2.75*inch, y)
+    y -= 0.2*inch
+
+    # Draw patient info
+    p.setFont(font_name, 8)
+    if patient:
+        p.drawString(0.25*inch, y, f"Patient: {patient}")
+        y -= 0.15*inch
+        p.drawString(0.25*inch, y, f"File No: {patient.file_no}")
+        y -= 0.2*inch
+
+    # Draw a line
+    p.line(0.25*inch, y, 2.75*inch, y)
+    y -= 0.2*inch
+
+    # Draw column headers
+    p.setFont(font_bold, 8)
+    p.drawString(0.25*inch, y, "Service")
+    p.drawString(1.75*inch, y, "Price")
+    p.drawString(2.25*inch, y, "Date")
+    y -= 0.15*inch
+
+    # Draw a line
+    p.line(0.25*inch, y, 2.75*inch, y)
+    y -= 0.1*inch
+
+    # Draw payment details
+    p.setFont(font_name, 8)
+    total = 0
+    for payment in f:
+        if y < 1*inch:  # If we're near the bottom of the page, start a new page
+            p.showPage()
+            p.setFont(font_name, 8)
+            y = 10.5*inch
+
+        p.drawString(0.25*inch, y, str(payment.service)[:20])  # Truncate long service names
+        p.drawRightString(2.15*inch, y, format_currency(payment.price))
+        p.drawString(2.25*inch, y, payment.updated.strftime("%d/%m"))
+        y -= 0.15*inch
+        total += payment.price or 0  # Use 0 if price is None
+
+    # Draw a line
+    y -= 0.1*inch
+    p.setStrokeColor(black)
+    p.line(0.25*inch, y, 2.75*inch, y)
+    y -= 0.2*inch
+
+    # Draw total
+    p.setFont(font_bold, 10)
+    p.drawString(0.25*inch, y, "Total:")
+    p.drawRightString(2.75*inch, y, format_currency(total))
+
+    # Draw footer
+    y -= 0.4*inch
+    p.setFont(font_name, 7)
+    p.drawCentredString(1.5*inch, y, f"Generated: {datetime.datetime.now().strftime('%d-%m-%Y %H:%M')}")
+    y -= 0.15*inch
+    p.drawCentredString(1.5*inch, y, f"By: {request.user.username.upper()}")
+
+    # Close the PDF object cleanly, and we're done.
+    p.showPage()
+    p.save()
+
+    # FileResponse sets the Content-Disposition header so that browsers
+    # present the option to save the file.
+    buffer.seek(0)
+    return HttpResponse(buffer, content_type='application/pdf')
+
+
+class HemaPayListView(ListView):
+    model = Paypoint
+    template_name = 'hema_pay_list.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Paypoint.objects.none()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        hematology_pays = Paypoint.objects.filter(hematology_result_payment__isnull=False).order_by('-updated')
+
+        hema_pay_total = hematology_pays.count()
+        hema_paid_transactions = hematology_pays.filter(status=True)
+        hema_total_worth = hema_paid_transactions.aggregate(total_worth=Sum('price'))['total_worth'] or 0
+
+
+        context['hematology_pays'] = hematology_pays
+
+        context['hema_pay_total'] = hema_pay_total
+
+        context['hema_total_worth'] = hema_total_worth
+        return context  
+
+
+class MicroPayListView(ListView):
+    model = Paypoint
+    template_name = 'micro_pay_list.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Paypoint.objects.none()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        micro_pays = Paypoint.objects.filter(micro_result_payment__isnull=False).order_by('-updated')
+
+        micro_pay_total = micro_pays.count()
+        micro_paid_transactions = micro_pays.filter(status=True)
+        micro_total_worth = micro_paid_transactions.aggregate(total_worth=Sum('price'))['total_worth'] or 0
+
+        context['micro_pays'] = micro_pays
+        context['micro_pay_total'] = micro_pay_total
+        context['micro_total_worth'] = micro_total_worth
+        return context  
+
+
+class ChempathPayListView(ListView):
+    model = Paypoint
+    template_name = 'chempath_pay_list.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Paypoint.objects.none()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        chempath_pays = Paypoint.objects.filter(chempath_result_payment__isnull=False).order_by('-updated')
+
+        chem_pay_total = chempath_pays.count()
+        chem_paid_transactions = chempath_pays.filter(status=True)
+        chem_total_worth = chem_paid_transactions.aggregate(total_worth=Sum('price'))['total_worth'] or 0
+
+        context['chempath_pays'] = chempath_pays
+        context['chem_pay_total'] = chem_pay_total
+        context['chem_total_worth'] = chem_total_worth
+        return context  
+
+
+class SerologyPayListView(ListView):
+    model = Paypoint
+    template_name = 'serology_pay_list.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Paypoint.objects.none()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        serology_pays = Paypoint.objects.filter(serology_result_payment__isnull=False).order_by('-updated')
+
+        serology_pay_total = serology_pays.count()
+        serology_paid_transactions = serology_pays.filter(status=True)
+        serology_total_worth = serology_paid_transactions.aggregate(total_worth=Sum('price'))['total_worth'] or 0
+
+        context['serology_pays'] = serology_pays
+        context['serology_pay_total'] = serology_pay_total
+        context['serology_total_worth'] = serology_total_worth
+        return context  
+
+
+class GeneralPayListView(ListView):
+    model = Paypoint
+    template_name = 'general_pay_list.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Paypoint.objects.none()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        general_pays = Paypoint.objects.filter(general_result_payment__isnull=False).order_by('-updated')
+ 
+        general_pay_total = general_pays.count()
+        general_paid_transactions = general_pays.filter(status=True)
+        general_total_worth = general_paid_transactions.aggregate(total_worth=Sum('price'))['total_worth'] or 0
+
+        context['general_pays'] = general_pays
+        context['general_pay_total'] = general_pay_total
+        context['general_total_worth'] = general_total_worth
+        return context  

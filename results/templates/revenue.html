@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+{%block title%}REVENUE{%endblock%}
+
+{%block page_title%}<div class="flex justify-center"><a href="{%url 'get_started' %}"><i class="fa-solid fa-backward fa-2xl mr-4"></i></a>REVENUE DASHBOARD</div>{%endblock%}
+{%block content %}
+<section class="text-center border-cyan-700 p-2 m-1">
+  {% for message in messages %}
+  <div class="">
+    <div class="uk-alert-success rounded-2xl text-sm w-fit mx-auto" uk-alert>
+        <a href class="uk-alert-close font-bold" uk-close></a>
+        <a href="{}"></a>
+        <p class="text-green-700  uppercase p-4">{{ message }}</p>
+    </div>
+</div>
+  {% endfor %}
+</section>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+  <div class="bg-gray-100 rounded-lg shadow-xl overflow-hidden mt-1">
+    <div class="bg-gradient-to-r from-emerald-600 to-sky-600 p-2 text-center">
+        <span class="text-sm text-white  uppercase">process payment</span>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-8 bg-gray-100 uppercase">
+      <a href="{%url 'hema_pay_list'  %}"class="group">
+        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 p-6 text-center hover:bg-cyan-50 transform hover:-translate-y-1">
+          <i class="fas fa-microscope text-2xl text-cyan-500 mb-4 group-hover:scale-110 transition-all duration-300"></i>
+          <div class="text-xs font-medium text-gray-800 group-hover:text-cyan-700">Hematology Payment</div>
+        </div>
+      </a>
+      <a href="{%url 'chempath_pay_list'  %}"class="group">
+        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 p-6 text-center hover:bg-cyan-50 transform hover:-translate-y-1">
+          <i class="fas fa-microscope text-2xl text-cyan-500 mb-4 group-hover:scale-110 transition-all duration-300"></i>
+          <div class="text-xs font-medium text-gray-800 group-hover:text-cyan-700"> Chemical Pathology Payment</div>
+        </div>
+      </a>
+      <a href="{%url 'micro_pay_list'  %}"class="group">
+        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 p-6 text-center hover:bg-cyan-50 transform hover:-translate-y-1">
+          <i class="fas fa-microscope text-2xl text-cyan-500 mb-4 group-hover:scale-110 transition-all duration-300"></i>
+          <div class="text-xs font-medium text-gray-800 group-hover:text-cyan-700">Microbiology Payment</div>
+        </div>
+      </a>
+      <a href="{%url 'serology_pay_list'  %}"class="group">
+        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 p-6 text-center hover:bg-cyan-50 transform hover:-translate-y-1">
+          <i class="fas fa-microscope text-2xl text-cyan-500 mb-4 group-hover:scale-110 transition-all duration-300"></i>
+          <div class="text-xs font-medium text-gray-800 group-hover:text-cyan-700">Serology Payment</div>
+        </div>
+      </a>
+      <a href="{%url 'general_pay_list'  %}"class="group">
+        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 p-6 text-center hover:bg-cyan-50 transform hover:-translate-y-1">
+          <i class="fas fa-microscope text-2xl text-cyan-500 mb-4 group-hover:scale-110 transition-all duration-300"></i>
+          <div class="text-xs font-medium text-gray-800 group-hover:text-cyan-700">General Payment</div>
+        </div>
+      </a>
+
+    </div>
+
+    <div class="p-8 border-t border-gray-200 bg-gray-50 uppercase">
+      <a href="{%url 'pay_list'  %}"class="block group">
+        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 p-6 text-center mx-auto max-w-sm hover:bg-emerald-50 transform hover:-translate-y-1">
+          <i class="fas fa-list-alt text-5xl text-emerald-700 mb-4 group-hover:scale-110 transition-all duration-300"></i>
+          <div class="text-xs font-medium text-gray-800 group-hover:text-emerald-700">All Transactions Record</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+{%endblock%}

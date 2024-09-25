@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
 from .models import *
 User = get_user_model()
-
+from django.forms import DateInput
 
 class CustomUserCreationForm(UserCreationForm):
     department = forms.ChoiceField(choices=Profile.dep, required=False)
@@ -24,12 +24,14 @@ class CustomUserCreationForm(UserCreationForm):
 class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient
-        fields = ['surname', 'other_names', 'gender', 'phone']
-    
+        fields = ['surname', 'other_names', 'gender','dob', 'phone']
+        widgets = {
+            'dob': DateInput(attrs={'type': 'date'}),
+        }
     def __init__(self, *args, **kwargs):
-        super(Patient, self).__init__(*args, **kwargs)
+        super(PatientForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
-            field.required=False    
+            field.required=False 
             field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
 
 
@@ -39,7 +41,7 @@ class HematologyTestForm(forms.ModelForm):
         fields = ['test']
     
     def __init__(self, *args, **kwargs):
-        super(HematologyResult, self).__init__(*args, **kwargs)
+        super(HematologyTestForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required=False    
             field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
@@ -51,7 +53,7 @@ class HematologyResultForm(forms.ModelForm):
         fields = ['test', 'result',]
     
     def __init__(self, *args, **kwargs):
-        super(HematologyResult, self).__init__(*args, **kwargs)
+        super(HematologyResultForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required=False    
             field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
@@ -64,7 +66,7 @@ class ChempathTestForm(forms.ModelForm):
         fields = ['test']
     
     def __init__(self, *args, **kwargs):
-        super(ChemicalPathologyResult, self).__init__(*args, **kwargs)
+        super(ChempathTestForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required=False    
             field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
@@ -76,7 +78,7 @@ class ChempathResultForm(forms.ModelForm):
         fields = ['test', 'result',]
 
     def __init__(self, *args, **kwargs):
-        super(ChemicalPathologyResult, self).__init__(*args, **kwargs)
+        super(ChempathResultForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required=False    
             field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
@@ -88,7 +90,7 @@ class MicroTestForm(forms.ModelForm):
         fields = ['test']
 
     def __init__(self, *args, **kwargs):
-        super(MicrobiologyResult, self).__init__(*args, **kwargs)
+        super(MicroTestForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required=False    
             field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
@@ -99,7 +101,7 @@ class MicroResultForm(forms.ModelForm):
         fields = ['test', 'result',]
     
     def __init__(self, *args, **kwargs):
-        super(MicrobiologyResult, self).__init__(*args, **kwargs)
+        super(MicroResultForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required=False    
             field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
@@ -111,7 +113,7 @@ class SerologyTestForm(forms.ModelForm):
         fields = ['test']
 
     def __init__(self, *args, **kwargs):
-        super(SerologyResult, self).__init__(*args, **kwargs)
+        super(SerologyTestForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required=False    
             field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
@@ -122,7 +124,7 @@ class SerologyResultForm(forms.ModelForm):
         fields = ['test','result']
     
     def __init__(self, *args, **kwargs):
-        super(SerologyResult, self).__init__(*args, **kwargs)
+        super(SerologyResultForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required=False    
             field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
@@ -134,7 +136,7 @@ class GeneralTestForm(forms.ModelForm):
         fields=['name']
 
     def __init__(self, *args, **kwargs):
-        super(GeneralTestResult, self).__init__(*args, **kwargs)
+        super(GeneralTestForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required=False    
             field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
@@ -145,7 +147,7 @@ class GeneralTestResultForm(forms.ModelForm):
         fields=['result','comments']
     
     def __init__(self, *args, **kwargs):
-        super(GeneralTestResult, self).__init__(*args, **kwargs)
+        super(GeneralTestResultForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required=False    
             field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})

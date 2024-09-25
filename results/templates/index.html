@@ -4,35 +4,45 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<div class=" mt-6 w-fit mx-auto bg-slate-200 rounded-lg shadow-sm shadow-black">
-  <div class="max-w-4xl mx-auto bg-white shadow-md rounded-xl p-10 md:p-16">
-    <div class="flex justify-center items-center flex-col">
-        <div class="rounded-full border-2 border-red-600 p-6 shadow-xl mb-2">
-        <span>
-          <i class="fa-solid fa-syringe text-rose-600 fa-3x"></i>
-          <i class="fa-solid fa-flask-vial text-indigo-400 fa-3x"></i>
-        </span>
-        <p class="text-rose-600 text-3xl text-center">SDL</p>
-      </div>
-      <div class="text-center border-red-600 ">
-        <h1 class="text-rose-800 font-medium text-xl md:text-2xl mt-6">SUPREME DIAGNOSTIC</h1>
-        <h2 class="text-rose-800 font-medium text-lg md:text-xl">LABORATORIES</h2>
-      </div>
-      <div class="rounded mt-8 space-y-4 md:space-y-0 md:space-x-4 flex flex-col md:flex-row justify-center text-xs">
-        <a href="{% url 'dashboard' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline">
-          LABS
-        </a>
-        <a href="{% url 'report' %}" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline">
-          REPORT
-        </a>
-        <a href="{% url 'create_patient' %}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline">
-          NEW PATIENT
-        </a>
-        <a href="{% url 'patients_list' %}" class="bg-slate-600 hover:bg-slate-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline">
-          PATIENT LIST
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
+ <div class="p-8 md:p-12">
+ <div class="flex flex-col items-center">
+ <div class="rounded-full border-4 border-red-600 p-6 shadow-xl mb-6">
+ <span class="flex space-x-4">
+ <i class="fas fa-syringe text-rose-600 text-4xl"></i>
+ <i class="fas fa-flask-vial text-indigo-500 text-4xl"></i>
+ </span>
+ </div>
+ <h1 class="text-rose-800 font-bold text-2xl md:text-3xl text-center mb-8">
+  SUPREME DIAGNOSTIC LABORATORIES
+ </h1>
+ <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-3xl">
+ <a href="{% url 'create_profile' %}" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-150 ease-in-out text-center text-sm">
+  NEW USER
+ </a>
+ <a href="{% url 'profiles_list' %}" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-6 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-150 ease-in-out text-center text-sm">
+  USER LIST
+ </a>
+ <a href="{% url 'dashboard' %}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-150 ease-in-out text-center text-sm">
+  LABS
+ </a>
+ <a href="{% url 'report' %}" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-150 ease-in-out text-center text-sm">
+  REPORT
+ </a>
+ <a href="{% url 'create_patient' %}" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-6 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-150 ease-in-out text-center text-sm">
+  NEW PATIENT
+ </a>
+ <a href="{% url 'patients_list' %}" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-6 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-150 ease-in-out text-center text-sm">
+  PATIENT LIST
+ </a>
+ <a href="{% url 'revenue' %}" class="bg-zinc-500 hover:bg-zinc-600 text-white font-bold py-3 px-6 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-150 ease-in-out text-center text-sm">
+  REVENUE
+ </a>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+
 {% endblock %}

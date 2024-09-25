@@ -2,30 +2,27 @@
 {% load static %}
 
 {% block content %}
-<div class="py-10">
-  <div class="max-w-md text-center mx-auto bg-white rounded-xl shadow-black shadow-2xl p-8">
-    <h1 class="text-2xl font-bold mb-6">CREATE NEW PATIENT</h1>
-    <form method="post" class="space-y-6">
+<div class="py-2">
+  <div class="max-w-md text-center mx-auto bg-white rounded-xl shadow-black shadow-sm p-8">
+    <h1 class="text-sm font-medium mb-3">CREATE NEW PATIENT</h1>
+    <form method="post" class="space-y-2 text-xs">
       {% csrf_token %}
-      {% for field in form %}
-      <div class="space-y-2">
-        <label for="{{ field.id_for_label }}" class="block text-gray-700 font-medium">{{ field.label }}</label>
-        {% if field.field.widget.input_type == 'text' %}
-        <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" id="{{ field.id_for_label }}" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500" />
-        {% elif field.field.widget.input_type == 'number' %}
-        <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" id="{{ field.id_for_label }}" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500" />
-        {% elif field.field.widget.input_type == 'date' %}
-        <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" id="{{ field.id_for_label }}" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500" />
-        {% else %}
-        {{ field }}
-        {% endif %}
-        {% if field.help_text %}
-        <p class="text-gray-500 text-sm">{{ field.help_text }}</p>
-        {% endif %}
+      <div class="mb-2 uppercase text-cyan-900 px-10">
+        <div class="grid grid-cols-1 gap-2">
+        {% for field in form %}
+        <div>
+        <div class="flex justify-center">
+          <label for="{{field.id_for_label}}" class="block">{{ field.label_tag }}</label>
+        </div>
+        <div class="flex justify-center mb-2">
+          {{ field }}
+        </div>
       </div>
-      {% endfor %}
+      {%endfor%}
+    </div>
+      </div>
       <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-        CREATE
+        SAVE
       </button>
     </form>
   </div>

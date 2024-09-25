@@ -28,7 +28,6 @@ class Profile(models.Model):
     dep = (
         ('CHEMICAL PATHOLOGY', 'CHEMICAL PATHOLOGY'),
         ('HEMATOLOGY', 'HEMATOLOGY'),
-        ('HISTOPATOLOGY', 'HISTOPATOLOGY'),
         ('MICROBIOLOGY', 'MICROBIOLOGY'),
         ('SEROLOGY', 'SEROLOGY'),
         ('OTHER', 'OTHER'),
@@ -48,9 +47,6 @@ class Profile(models.Model):
             self.created = timezone.now()
         super().save(*args, **kwargs)
 
-    def get_absolute_url(self):
-        return reverse('profile_details', args=[self.user])
-
     def full_name(self):
         return f"{self.user.get_full_name()}"
 
@@ -61,7 +57,7 @@ class Profile(models.Model):
         
 class Patient(models.Model):
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
-    patient_no = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
+    file_no = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
     surname = models.CharField(max_length=300, blank=True, null=True)
     other_names = models.CharField(max_length=300, blank=True, null=True)
     sex = (('MALE', 'MALE'), ('FEMALE', 'FEMALE'))
@@ -75,22 +71,22 @@ class Patient(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
-        if not self.patient_no:
-            last_instance = self.__class__.objects.order_by('patient_no').last()
+        if not self.file_no:
+            last_instance = self.__class__.objects.order_by('file_no').last()
 
             if last_instance:
-                last_patient_no = int(last_instance.patient_no)
-                new_patient_no = f"{last_patient_no + 1:07d}"  # 07 for 7 leading zeros
+                last_file_no = int(last_instance.file_no)
+                new_file_no = f"{last_file_no + 1:07d}"  # 07 for 7 leading zeros
             else:
-                new_patient_no = "0000001"
+                new_file_no = "0000001"
 
-            self.patient_no = new_patient_no
+            self.file_no = new_file_no
 
         super().save(*args, **kwargs)
 
 
     def get_absolute_url(self):
-        return reverse('patient_details', args=[self.surname])
+        return reverse('patient_details', args=[self.file_no])
 
     def full_name(self):
         return f"{self.surname} {self.other_names}"
@@ -154,8 +150,20 @@ class HematologyResult(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
+        parts = []
         if self.patient:
-            return f"{self.patient.full_name()} - {self.test} - {self.result}"
+            parts.append(str(self.patient))
+        if self.test:
+            parts.append(str(self.test))
+        if self.result:
+            parts.append(str(self.result))
+        return " - ".join(parts)
+
+    def __str__(self):
+        if self.patient:
+            return f"{self.patient} - {self.test} - {self.result}"
+        else:
+            return f"{self.test} - {self.result}"
         
 
 class ChempathTest(models.Model):
@@ -202,8 +210,20 @@ class ChemicalPathologyResult(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
+        parts = []
+        if self.patient:
+            parts.append(str(self.patient))
+        if self.test:
+            parts.append(str(self.test))
+        if self.result:
+            parts.append(str(self.result))
+        return " - ".join(parts)
+
+    def __str__(self):
         if self.patient:
             return f"{self.patient} - {self.test} - {self.result}"
+        else:
+            return f"{self.test} - {self.result}"
     
 
 class MicrobiologyTest(models.Model):
@@ -247,9 +267,22 @@ class MicrobiologyResult(models.Model):
 
         super().save(*args, **kwargs)
 
-    def __str__(self):
-        if self.patient:
-            return f"{self.patient} -{self.test} - {self.result}"
+        def __str__(self):
+            parts = []
+            if self.patient:
+                parts.append(str(self.patient))
+            if self.test:
+                parts.append(str(self.test))
+            if self.result:
+                parts.append(str(self.result))
+            return " - ".join(parts)
+
+        def __str__(self):
+            if self.patient:
+                return f"{self.patient} - {self.test} - {self.result}"
+            else:
+                return f"{self.test} - {self.result}"
+
 
 
 class SerologyTest(models.Model):
@@ -324,10 +357,6 @@ class GeneralTestResult(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
  
-    def __str__(self):
-        if self.patient:
-            return f"{self.patient} -{self.test} - {self.result}"
-
     def save(self, *args, **kwargs):
         if not self.result_code:
             last_instance = self.__class__.objects.order_by('result_code').last()
@@ -343,5 +372,17 @@ class GeneralTestResult(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
+        parts = []
         if self.patient:
-            return f"{self.patient} - {self.name} - {self.result}"
+            parts.append(str(self.patient))
+        if self.test:
+            parts.append(str(self.test))
+        if self.result:
+            parts.append(str(self.result))
+        return " - ".join(parts)
+
+    def __str__(self):
+        if self.patient:
+            return f"{self.patient} - {self.test} - {self.result}"
+        else:
+            return f"{self.test} - {self.result}"

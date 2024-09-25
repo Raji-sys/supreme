@@ -1,19 +1,24 @@
 {% extends 'base.html' %}
 {% load static %}
-{%block title%}profile list{%endblock%}
+{% block title %}Profile List{% endblock %}
 
-{%block content %}
-<div class="mt-7 md:mt-8 p-4">
- 
-    <div class="text-center rounded-xl p-4 md:p-10 shadow-black shadow-2xl bg-gray-50">
-        <div>
-            {%for p in profiles %}
-            <p>{{p.user}}</p>
-            <p><a href="{{p.get_absolute_url}}">open file</a>
+{% block content %}
+<div class="mt-6 px-4 md:px-8">
+    <div class="bg-white shadow-md rounded-lg p-4 md:p-6">
+        <h2 class="text-lg font-medium mb-4 text-gray-800 uppercase">Employee Profiles</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {% for p in profiles %}
+                <div class="p-4 bg-gray-100 rounded-lg hover:bg-gray-100 transition shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-800">{{ p.full_name }}</h3>
+                        <p class="text-xs text-gray-600 mt-1">department: {{ p.get_department_display }}</p>
+                        <p class="text-xs text-gray-600">cadre: {{ p.get_cadre_display }}</p>
+                    </div>
+                </div>
             {% empty %}
-            <p>no users found</p>
-            {%endfor%}
+                <p class="col-span-full text-center text-gray-500">No profiles found</p>
+            {% endfor %}
         </div>
     </div>
 </div>
-{%endblock%}
+{% endblock %}

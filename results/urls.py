@@ -12,14 +12,24 @@ urlpatterns = [
 
     path('create-profile/', UserProfileCreateView.as_view(), name='create_profile'),
     path('profile-list/', ProfileListView.as_view(), name='profiles_list'),
-    path('profile/<str:username>/', ProfileDetailView.as_view(), name='profile_details'),
 
     path('create-patient/', PatientCreateView.as_view(), name='create_patient'),
     path('patients-list/', PatientListView.as_view(), name='patients_list'),
     path('update-patient/<int:pk>', PatientUpdateView.as_view(), name='update_patient'),
-    path('patient/<str:surname>/', PatientDetailView.as_view(), name='patient_details'),
+    path('patient/<str:file_no>/', PatientDetailView.as_view(), name='patient_details'),
 
+    path('get-started/revenue', RevenueView.as_view(), name='revenue'),
     
+    path('revenue/update-payment/<int:pk>/', PayUpdateView.as_view(), name='update_pay'),
+    path('revenue/add-payment/', PayCreateView.as_view(), name='add_pay'),
+    path('revenue/hema-list/', HemaPayListView.as_view(), name='hema_pay_list'),
+    path('revenue/micro-list/', MicroPayListView.as_view(), name='micro_pay_list'),
+    path('revenue/chempath-list/', ChempathPayListView.as_view(), name='chempath_pay_list'),
+    path('revenue/serology-list/', SerologyPayListView.as_view(), name='serology_pay_list'),
+    path('revenue/general-list/', GeneralPayListView.as_view(), name='general_pay_list'),
+    path('revenue/receipt/', views.receipt_pdf, name='receipt_pdf'),
+    path('revenue/payment-list/', PayListView.as_view(), name='pay_list'),
+
     path('hematology/', HematologyView.as_view(), name='hematology'),
     path('hematology-list/', HematologyListView.as_view(), name='hematology_list'),
     path('hematology-request/', HematologyRequestListView.as_view(), name='hematology_request'),

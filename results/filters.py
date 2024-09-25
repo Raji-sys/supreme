@@ -66,3 +66,16 @@ class GenFilter(django_filters.FilterSet):
     class Meta:
         model=SerologyResult
         fields=['collected','reported','result_code','patient_no','name']
+
+
+class PayFilter(django_filters.FilterSet):
+    user=django_filters.CharFilter(label='STAFF', field_name="user__username",lookup_expr='iexact')
+    patient=django_filters.CharFilter(label='FILE NO',field_name="patient__file_no",lookup_expr='iexact')                                                                                                     
+    service=django_filters.CharFilter(label='SERVICE',field_name="service",lookup_expr='iexact')                                                                                                     
+    # status=django_filters.BooleanFilter(label='STATUS',field_name="status")                                                                                                     
+    created1 = django_filters.DateFilter(label="DATE1", field_name="created", lookup_expr='lte', widget=forms.DateInput(attrs={'type': 'date'}), input_formats=['%d-%m-%Y', '%Y-%m-%d', '%m/%d/%Y'])
+    created2 = django_filters.DateFilter(label="DATE2", field_name="created", lookup_expr='gte', widget=forms.DateInput(attrs={'type': 'date'}), input_formats=['%d-%m-%Y', '%Y-%m-%d', '%m/%d/%Y'])
+
+    class Meta:
+        model = Paypoint
+        fields = ['user','patient','service']

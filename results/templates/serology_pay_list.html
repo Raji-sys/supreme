@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+{%block title%}SEROLOGY TRANSACTION HISTORY{%endblock%}
+{%block page_title%}
+<div class="flex justify-center text-xs">
+  <div class=""><a href="{%url 'revenue' %}"><i class="fa-solid fa-backward fa-2xl m-4"></i></a>SEROLOGY TRANSACTION HISTORY</div>
+    <div class="ml-4 text-emerald-700 font-semibold mt-2">
+      <span class="bg-emerald-100 text-emerald-800 px-2 py-1 rounded">
+        Net Total: ₦{{ combined_total_worth|floatformat:2 }}
+      </span>
+    </div>
+  </div>
+  {% endblock %}
+  
+  {% block content %}
+  <div class="container mx-auto px-4">
+  
+    <div class="grid md:grid-cols-1">
+      
+      <!-- Serology Payments -->
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="bg-fuchsia-100 p-4">
+          <span class="bg-fuchsia-500 text-white text-xs font-medium px-2 py-1 rounded">
+            {{serology_pay_total}} Serology Transactions
+          </span>
+          <span class="ml-2 text-fuchsia-800 font-semibold">
+            Total: ₦{{ serology_total_worth|floatformat:2 }}
+          </span>
+        </div>
+        <div class="max-h-[40vh] overflow-y-auto overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="p-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                <th class="p-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Revenue Officer</th>
+                <th class="p-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
+                <th class="p-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Status</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              {% for p in serology_pays %}
+              <tr class="hover:bg-gray-50 text-center">
+                <td class="p-3 whitespace-nowrap text-sm text-gray-500">{{forloop.counter}}</td>
+                <td class="p-3 whitespace-nowrap text-sm text-gray-500">{{request.user}}</td>
+                <td class="p-3 whitespace-nowrap text-sm text-gray-500">
+                  <a href="{{p.patient.get_absolute_url}}" class="text-fuchsia-600 hover:text-fuchsia-900">{{ p.patient }}</a><br>
+                  {{ p.service }} - ₦{{p.price}}<br>
+                  {{ p.updated }}
+                </td>
+                <td class="p-3 whitespace-nowrap text-sm">
+                  {% if p.status == False %}
+                  <span class="text-red-600"><i class="fa-solid fa-x"></i> </span>
+                  <a href="{% url 'update_pay' p.id %}?next={% url 'pathology_pay_list' %}" class="ml-2 text-fuchsia-600 hover:text-fuchsia-900">
+                    <i class="fa-solid fa-cash-register"></i>
+                  </a>
+                  {% else %}
+                  <span class="text-green-600"><i class="fa-solid fa-check"></i> </span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="4" class="p-3 text-center text-sm text-gray-500">No serology transactions found</td>
+              </tr>
+              {% endfor %}
+              <tr class="">
+                <td></td>
+                <td class="p-1 text-center">        
+            <div class="pagination flex justify-center">
+                <span class="flex items-center">
+                    {% if page_obj.has_previous %}
+                    <a href="?page=1" class="p-1 rounded-lg bg-fucshia-600 text-white mr-2"><i class="fa-solid fa-angle-double-left fa-md"></i></a>
+                    <a href="?page={{page_obj.previous_page_number}}" class="p-1 rounded-lg bg-fucshia-600 text-white"><i class="fa-solid fa-angle-left fa-md"></i></a>
+                    {% endif %}
+                </span>
+                    <span class="flex item-center"> 
+                        {% if page_obj.has_next %}
+                        <a href="?page={{page_obj.next_page_number}}" class="p-1 rounded-lg bg-fucshia-600 text-white mr-2"><i class="fa-solid fa-angle-right fa-md"></i></a>
+                        <a href="?page={{page_obj.paginator.num_pages}}" class="p-1 rounded-lg bg-fucshia-600 text-white"><i class="fa-solid fa-angle-double-right fa-md"></i></a>
+                        {% endif %}
+                    </span>
+                </div>
+            </td>
+          </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endblock %}
