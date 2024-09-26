@@ -4,39 +4,39 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<div class="py-8 mt-12">
-  <div class="max-w-md mx-auto bg-white rounded-xl shadow-black shadow-sm p-2 border border-red-600">
+<div class="py-8 mt-6">
+  <div class="max-w-md mx-auto bg-white rounded-xl shadow-black shadow-sm p-3">
    
     <div class="block text-sm text-red-500">
       {% if form.errors %}
       {{ form.errors }}
       {% endif %}
     </div>
-    <form action="" method="POST" class="space-y-6">
+    <form action="" method="POST" class="space-y-6 text-xs">
       {% csrf_token %}
-      <div class="flex justify-center items-center flex-col border-b-2 border-red-600">
-        <div class="rounded-full border-2 border-red-600 p-6 shadow-xl mb-6">
+      <div class="flex justify-center items-center flex-col">
+        <div class="rounded-full border border-red-600 p-6 shadow-xl mb-2">
           <span>
             <i class="fa-solid fa-syringe text-rose-600 fa-3x"></i>
             <i class="fa-solid fa-flask-vial text-indigo-400 fa-3x"></i>
           </span>
-          <p class="text-rose-600 text-2xl text-center">SDL</p>
         </div>
-        <p class="text-xs normal-case p-1">Login to get started</p>
       </div>
       <div class="uppercase text-gray-600">
-
+        <div class="border-b border-zinc-200 border-t text-center p-2 m-2">
+          <span class="text-sm uppercase text-rose-600 text-center">supreme diagnostic lab</span><br>
+        </div>
         <div class="flex justify-center">
           <label for="uname" class="font-medium text-xs">Username</label>
         </div>
         <div class="flex justify-center mb-4">
-          <input class="text-center mt-2 text-xs focus:outline-none border-b-2 border-blue-600 text-blue-800 py-2 rounded-md shadow-lg hover:border-blue-500 focus:border-blue-500" type="text" name="username" id="uname" />
+          <input class="text-center mt-2 text-xs focus:outline-none  py-3 rounded-md shadow-lg hover:border-blue-500 focus:border-blue-500" type="text" name="username" id="uname" />
         </div>
         <div class="flex justify-center">
           <label for="password" class="font-medium text-xs">Password</label>
         </div>
         <div class="flex justify-center mb-6">
-          <input class="text-center mt-2 text-xs focus:outline-none border-b-2 border-blue-600 text-blue-800 py-2 rounded-md shadow-lg hover:border-blue-500 focus:border-blue-500" type="password" name="password" id="password" />
+          <input class="text-center mt-2 text-xs focus:outline-none  py-3 rounded-md shadow-lg hover:border-blue-500 focus:border-blue-500" type="password" name="password" id="password" />
         </div>
         <div class="flex justify-center mb-6">
           <div class="flex justify-center w-full mb-4">

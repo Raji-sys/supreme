@@ -95,7 +95,7 @@ USE_I18N = False
 
 USE_L10N=True
 
-# USE_THOUSAND_SEPARATOR=True
+USE_THOUSAND_SEPARATOR=True
 
 USE_TZ = True
 
@@ -109,3 +109,26 @@ STATIC_URL = 'static/'
 STATIC_ROOT=os.path.join(BASE_DIR,'static/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+QUILL_CONFIGS = {
+    'default': {
+        'theme': 'snow',
+        'modules': {
+            'syntax': True,
+            'toolbar': [
+                [
+                    {'font': []},
+                    {'header': []},
+                    {'align': []},
+                    'bold', 'italic', 'underline', 'strike', 'blockquote',
+                    {'color': []},
+                    {'background': []},
+                    {'script': 'sub'},
+                    {'script': 'super'}, 
+                ],
+                ['code-block', 'link'],
+                ['clean'],
+            ]
+        }
+    }
+}

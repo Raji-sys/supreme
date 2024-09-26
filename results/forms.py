@@ -50,7 +50,7 @@ class HematologyTestForm(forms.ModelForm):
 class HematologyResultForm(forms.ModelForm):
     class Meta:
         model = HematologyResult
-        fields = ['test', 'result',]
+        fields = ['test', 'result','comments','cleared']
     
     def __init__(self, *args, **kwargs):
         super(HematologyResultForm, self).__init__(*args, **kwargs)
@@ -75,7 +75,7 @@ class ChempathTestForm(forms.ModelForm):
 class ChempathResultForm(forms.ModelForm):
     class Meta:
         model = ChemicalPathologyResult
-        fields = ['test', 'result',]
+        fields = ['test', 'result','comments','cleared']
 
     def __init__(self, *args, **kwargs):
         super(ChempathResultForm, self).__init__(*args, **kwargs)
@@ -98,7 +98,7 @@ class MicroTestForm(forms.ModelForm):
 class MicroResultForm(forms.ModelForm):
     class Meta:
         model = MicrobiologyResult
-        fields = ['test', 'result',]
+        fields = ['test', 'result','comments','cleared']
     
     def __init__(self, *args, **kwargs):
         super(MicroResultForm, self).__init__(*args, **kwargs)
@@ -121,7 +121,7 @@ class SerologyTestForm(forms.ModelForm):
 class SerologyResultForm(forms.ModelForm):
     class Meta:
         model = SerologyResult
-        fields = ['test','result']
+        fields = ['test','result','comments','cleared']
     
     def __init__(self, *args, **kwargs):
         super(SerologyResultForm, self).__init__(*args, **kwargs)
@@ -144,7 +144,7 @@ class GeneralTestForm(forms.ModelForm):
 class GeneralTestResultForm(forms.ModelForm):
     class Meta:
         model=GeneralTestResult
-        fields=['result','comments']
+        fields=['result','comments','cleared']
     
     def __init__(self, *args, **kwargs):
         super(GeneralTestResultForm, self).__init__(*args, **kwargs)

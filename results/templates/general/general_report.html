@@ -1,6 +1,6 @@
 {%extends "base.html" %}
 {% block title %}GENERAL REPORT{% endblock%}
-{%block page_title%}<div class="flex justify-center"><a href="{%url 'pathology:general' %}"><i class="fa-solid fa-backward fa-2xl mr-4"></i></a>GENERAL REPORT</div>{%endblock%}
+{%block page_title%}<div class="flex justify-center"><a href="{%url 'general' %}"><i class="fa-solid fa-backward fa-2xl mr-4"></i></a>GENERAL REPORT</div>{%endblock%}
 {% block content %}
 <div class="mt-2">
 <div class="grid grid-rows-2 mt-0 relative">
@@ -28,7 +28,7 @@
                 {% if request.GET.urlencode %}
                 <div class="m-3">
                   <a href="?" class="text-md p-2 focus:opacity-10 bg-orange-500 text-white rounded w-fit"><i class="fa-solid fa-rotate fa-xl"></i></a>
-                  <a class="text-md text-white focus:opacity-10  bg-green-600 m-1 p-2 rounded w-fit" href="{% url 'pathology:general_report_pdf' %}?{{request.GET.urlencode}}">
+                  <a class="text-md text-white focus:opacity-10  bg-green-600 m-1 p-2 rounded w-fit" href="{% url 'general_report_pdf' %}?{{request.GET.urlencode}}">
                     <i class="fa-solid fa-print fa-xl"></i></a>
                         </div>
             {%endif%}

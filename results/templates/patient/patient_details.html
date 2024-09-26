@@ -1,23 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 {%block title%}{{patient.surname}}{%endblock%}
-
-
 {% block content %}
-
-
 <div class="mt-2 p-4">
-    <section class="max-w-xl mx-auto text-center border-cyan-700 p-4 m-2">
-        {% for message in messages %}
-        <div class="">
-          <div class="bg-green-100 rounded-2xl text-sm p-4" uk-alert>
-            <a href class="uk-alert-close font-bold" uk-close></a>
-            <p class="text-green-700 font-semibold">{{ message }}</p>
-          </div>
-        </div>
-        {% endfor %}
-      </section>
-  
       <div class="max-w-7xl mx-auto bg-white rounded-xl shadow-black shadow-2xl">
         
     <div class="text-center rounded-xl p-4 md:p-10 bg-gray-50">
@@ -102,7 +87,7 @@
                   <td class=" p-3 whitespace-nowrap">{{ m.test|default_if_none:''}}</td>
                   <td class=" p-3 whitespace-nowrap">{{ m.collected|default_if_none:'' }}</td>
                   <td class=" p-3 whitespace-nowrap">{{ m.result.html|safe }}</td>
-                  <td class=" p-3 whitespace-nowrap">{{ m.comment|default_if_none:'' }}</td>
+                  <td class=" p-3 whitespace-nowrap">{{ m.comments|default_if_none:'' }}</td>
                   <td class=" p-3 whitespace-nowrap">{{ m.reported|default_if_none:'' }}</td>
                   <!-- <td class=" p-3 whitespace-nowrap">
                     <a href="{% url 'micro_result' m.patient.file_no m.id %}" class="text-green-600 hover:text-green-700"><i class="fa-solid fa-plus-square fa-2xl"></i></a>
@@ -146,7 +131,7 @@
                   <td class=" p-3 whitespace-nowrap">{{ c.test|default_if_none:''}}</td>
                   <td class=" p-3 whitespace-nowrap">{{ c.collected|default_if_none:'' }}</td>
                   <td class=" p-3 whitespace-nowrap">{{ c.result.html|safe }}</td>
-                  <td class=" p-3 whitespace-nowrap">{{ c.comment|default_if_none:'' }}</td>
+                  <td class=" p-3 whitespace-nowrap">{{ c.comments|default_if_none:'' }}</td>
                   <td class=" p-3 whitespace-nowrap">{{ c.reported|default_if_none:'' }}</td>
                   <!-- <td class=" p-3 whitespace-nowrap">
                     <a href="{% url 'chempath_result' c.patient.file_no c.id %}" class="text-green-600 hover:text-green-700"><i class="fa-solid fa-plus-square fa-2xl"></i></a>

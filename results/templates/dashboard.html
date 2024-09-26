@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}DASHBOARD{% endblock %}
-{%block page_title%}<div class="flex justify-center"><a href="{%url 'get_started' %}"><i class="fa-solid fa-backward fa-2xl mr-4"></i></a>PATHOLOGY DASHBOARD</div>{%endblock%}
+{%block page_title%}<div class="flex justify-center"><a href="{%url 'index' %}"><i class="fa-solid fa-arrow-left fa-xl mr-4"></i></a>PATHOLOGY DASHBOARD</div>{%endblock%}
 {% block content %}
 <section class="max-w-xl mx-auto text-center border-cyan-700 p-2 m-1">
   {% for message in messages %}

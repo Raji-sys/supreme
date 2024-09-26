@@ -1,10 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{%block page_title%}<div class="flex justify-center uppercase"><a href="{%url 'index' %}"><i class="fa-solid fa-arrow-left fa-xl mr-4"></i></a>CREATE NEW PATIENT</div>{%endblock%}
 {% block content %}
 <div class="py-2">
   <div class="max-w-md text-center mx-auto bg-white rounded-xl shadow-black shadow-sm p-8">
-    <h1 class="text-sm font-medium mb-3">CREATE NEW PATIENT</h1>
     <form method="post" class="space-y-2 text-xs">
       {% csrf_token %}
       <div class="mb-2 uppercase text-cyan-900 px-10">

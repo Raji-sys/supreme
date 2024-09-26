@@ -3,13 +3,6 @@ from django import forms
 from .models import *
 
 
-class PatientFilter(django_filters.FilterSet):
-    patient_no = django_filters.CharFilter(label='patient no', field_name='patient_no')
-
-    class Meta:
-        model = Patient
-        fields = ['patient_no']
-
 
 class HemaFilter(django_filters.FilterSet):
     collected = django_filters.DateFilter(label="date collected", field_name="collected",lookup_expr='exact', widget=forms.DateInput(attrs={'type': 'date'}), input_formats=['%d-%m-%Y', '%Y-%m-%d', '%m/%d/%Y'])

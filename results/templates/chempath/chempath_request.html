@@ -1,17 +1,7 @@
 {% extends 'base.html' %}
 {%load static %}
-{%block page_title%}<div class="flex justify-center"><a href="{%url 'pathology:chempath' %}"><i class="fa-solid fa-backward fa-2xl mr-4"></i></a>CHEMPATH REQUEST LIST</div>{%endblock%}
+{%block page_title%}<div class="flex justify-center"><a href="{%url 'chempath' %}"><i class="fa-solid fa-arrow-left fa-xl mr-4"></i></a>CHEMPATH REQUEST LIST</div>{%endblock%}
 {% block content %}
-<section class="mt-2 md:max-w-xl md:mx-auto text-center border-cyan-700 p-1 mx-1">
-  {% for message in messages %}
-  <div class="">
-    <div class="uk-alert-success rounded-2xl text-sm w-fit mx-auto" uk-alert>
-        <a href class="uk-alert-close font-bold" uk-close></a>
-        <p class="text-green-700 uppercase p-4">{{ message }}</p>
-    </div>
-</div>
-  {% endfor %}
-</section>
 <div class="">
   <div class="mt-2 md:mx-20 mx-2 rounded-xl p-4 shadow-black shadow-sm bg-gray-50">
   <div class="overflow-x-auto uppercase">
@@ -78,7 +68,7 @@
         </td>
         <td>
           {% if c.payment.status == True %}
-          <a href="{% url 'pathology:chempath_result' c.patient.file_no c.id %}" class="text-green-500 hover:text-blue-700"><i class="fa-solid fa-plus-square fa-2xl"></i></a>
+          <a href="{% url 'chempath_result' c.patient.file_no c.id %}" class="text-green-500 hover:text-blue-700"><i class="fa-solid fa-plus-square fa-2xl"></i></a>
           {%else%}
           <i class="fa-solid fa-xmark-square text-red-700 fa-2xl"></i>
           {%endif%}

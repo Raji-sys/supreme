@@ -3,7 +3,7 @@
 {%block title%}CHEMPATH TRANSACTION HISTORY{%endblock%}
 {%block page_title%}
 <div class="flex justify-center text-xs">
-  <div class=""><a href="{%url 'revenue' %}"><i class="fa-solid fa-backward fa-2xl m-4"></i></a>CHEMPATH TRANSACTION HISTORY</div>
+  <div class=""><a href="{%url 'revenue' %}"><i class="fa-solid fa-arrow-left fa-xl m-4"></i></a>CHEMPATH TRANSACTION HISTORY</div>
   </div>
   {% endblock %}
   
@@ -21,7 +21,7 @@
             Total: ₦{{ chem_total_worth|floatformat:2 }}
           </span>
         </div>
-        <div class="max-h-[40vh] overflow-y-auto overflow-x-auto">
+        <div class="max-h-[75vh] overflow-y-auto overflow-x-auto">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
@@ -44,7 +44,7 @@
                 <td class="p-3 whitespace-nowrap text-sm">
                   {% if p.status == False %}
                   <span class="text-red-600"><i class="fa-solid fa-x"></i> </span>
-                  <a href="{% url 'update_pay' p.id %}?next={% url 'pathology_pay_list' %}" class="ml-2 text-amber-600 hover:text-amber-900">
+                  <a href="{% url 'update_pay' p.id %}?next={% url 'revenue' %}" class="ml-2 text-amber-600 hover:text-amber-900">
                     <i class="fa-solid fa-cash-register"></i>
                   </a>
                   {% else %}

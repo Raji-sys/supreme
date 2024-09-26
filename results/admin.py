@@ -16,7 +16,7 @@ class PatientAdmin(admin.ModelAdmin):
 
 @admin.register(HematologyTest)
 class HematologyTestAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name','price','reference_range')
 
 
 @admin.register(HematologyResult)
@@ -29,7 +29,7 @@ class HematologyResultAdmin(admin.ModelAdmin):
 
 @admin.register(ChempathTest)
 class ChempathTestNameAdmin(admin.ModelAdmin):
-    list_display = ('name', 'reference_range')
+    list_display = ('name', 'price','reference_range')
 
 
 @admin.register(ChemicalPathologyResult)
@@ -52,15 +52,16 @@ class MicroResultAdmin(admin.ModelAdmin):
 
 @admin.register(MicrobiologyTest)
 class MicroTestAdmin(admin.ModelAdmin):
-    list_display = ('name','reference_range',)
+    list_display = ('name','price','reference_range')
 
 
+@admin.register(SerologyTest)
+class SerologyTestNameAdmin(admin.ModelAdmin):
+    list_display = ('name', 'price','reference_range')
+
+    
 @admin.register(SerologyResult)
 class SerologyTestResultAdmin(admin.ModelAdmin):
     list_display = ('result_code', 'test', 'patient', 'result',  'comments')
     list_filter = ('test', 'patient')
 
-
-@admin.register(SerologyTest)
-class SerologyTestNameAdmin(admin.ModelAdmin):
-    list_display = ('name', 'reference_range')

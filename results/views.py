@@ -153,16 +153,26 @@ class PatientListView(ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        patients = super().get_queryset().order_by('-created')
-        patient_filter = PatientFilter(self.request.GET, queryset=patients)
-        return patient_filter.qs
+        queryset = super().get_queryset().order_by('-file_no')
+        # Add search functionality
+        query = self.request.GET.get('q')
+        if query:
+            queryset = queryset.filter(
+                Q(surname__icontains=query) |
+                Q(other_names__icontains=query) |
+                Q(file_no__icontains=query)|
+                Q(phone__icontains=query)
+            )
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        total_patient = self.get_queryset().count()
-        context['patientFilter'] = PatientFilter(
-            self.request.GET, queryset=self.get_queryset())
+        search_count = self.get_queryset().count()
+        total_patient=Patient.objects.count()
+        context['search_count'] = search_count
         context['total_patient'] = total_patient
+        context['query'] = self.request.GET.get('q', '')
+
         return context
 
 
@@ -236,7 +246,7 @@ class HematologyResultCreateView(LoginRequiredMixin, UpdateView):
     model = HematologyResult
     form_class = HematologyResultForm
     template_name = 'hema/hematology_result.html'
-    success_url=reverse_lazy('pathology:hematology_request')
+    success_url=reverse_lazy('hematology_request')
 
     def get_object(self, queryset=None):
         patient = get_object_or_404(Patient, file_no=self.kwargs['file_no'])
@@ -353,7 +363,7 @@ class ChempathResultCreateView(LoginRequiredMixin, UpdateView):
     model = ChemicalPathologyResult
     form_class = ChempathResultForm
     template_name = 'chempath/chempath_result.html'
-    success_url=reverse_lazy('pathology:chempath_request')
+    success_url=reverse_lazy('chempath_request')
 
 
     def get_object(self, queryset=None):
@@ -471,7 +481,7 @@ class MicroResultCreateView(LoginRequiredMixin, UpdateView):
     model=MicrobiologyResult
     form_class = MicroResultForm
     template_name = 'micro/micro_result.html'
-    success_url=reverse_lazy('pathology:micro_request')
+    success_url=reverse_lazy('micro_request')
 
 
     def get_object(self, queryset=None):
@@ -590,7 +600,7 @@ class SerologyResultCreateView(LoginRequiredMixin, UpdateView):
     model = SerologyResult
     form_class = SerologyResultForm
     template_name = 'serology/serology_result.html'
-    success_url=reverse_lazy('pathology:serology_request')
+    success_url=reverse_lazy('serology_request')
 
 
     def get_object(self, queryset=None):
@@ -784,7 +794,7 @@ class PayCreateView(CreateView):
 
 class PayUpdateView(UpdateView):
     model = Paypoint
-    template_name = 'update_pay.html'
+    template_name = 'revenue/update_pay.html'
     form_class = PayUpdateForm
 
     def get_success_url(self):
@@ -804,7 +814,7 @@ class PayUpdateView(UpdateView):
     
 class PayListView(ListView):
     model=Paypoint
-    template_name='transaction.html'
+    template_name='revenue/transaction.html'
     context_object_name='pays'
     paginate_by = 10
 
@@ -943,7 +953,7 @@ def receipt_pdf(request):
 
 class HemaPayListView(ListView):
     model = Paypoint
-    template_name = 'hema_pay_list.html'
+    template_name = 'revenue/hema_pay_list.html'
     paginate_by = 10
 
     def get_queryset(self):
@@ -969,7 +979,7 @@ class HemaPayListView(ListView):
 
 class MicroPayListView(ListView):
     model = Paypoint
-    template_name = 'micro_pay_list.html'
+    template_name = 'revenue/micro_pay_list.html'
     paginate_by = 10
 
     def get_queryset(self):
@@ -992,7 +1002,7 @@ class MicroPayListView(ListView):
 
 class ChempathPayListView(ListView):
     model = Paypoint
-    template_name = 'chempath_pay_list.html'
+    template_name = 'revenue/chempath_pay_list.html'
     paginate_by = 10
 
     def get_queryset(self):
@@ -1015,7 +1025,7 @@ class ChempathPayListView(ListView):
 
 class SerologyPayListView(ListView):
     model = Paypoint
-    template_name = 'serology_pay_list.html'
+    template_name = 'revenue/serology_pay_list.html'
     paginate_by = 10
 
     def get_queryset(self):
@@ -1038,7 +1048,7 @@ class SerologyPayListView(ListView):
 
 class GeneralPayListView(ListView):
     model = Paypoint
-    template_name = 'general_pay_list.html'
+    template_name = 'revenue/general_pay_list.html'
     paginate_by = 10
 
     def get_queryset(self):

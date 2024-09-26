@@ -76,9 +76,9 @@ class Patient(models.Model):
 
             if last_instance:
                 last_file_no = int(last_instance.file_no)
-                new_file_no = f"{last_file_no + 1:07d}"  # 07 for 7 leading zeros
+                new_file_no = f"{last_file_no + 1:06d}"
             else:
-                new_file_no = "0000001"
+                new_file_no = "000001"
 
             self.file_no = new_file_no
 
@@ -125,7 +125,7 @@ class HematologyResult(models.Model):
     test = models.ForeignKey(HematologyTest, max_length=100, null=True, blank=True, on_delete=models.CASCADE, related_name="results")
     cleared=models.BooleanField(default=False)
     result = QuillField(null=True, blank=True)
-    comments=models.TextField(null=True, blank=True)
+    comments=models.CharField(max_length=500,null=True, blank=True)
     natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
     collected = models.DateField(auto_now=True, null=True,blank=True)
     reported = models.DateField(auto_now=True, null=True, blank=True)
@@ -185,7 +185,7 @@ class ChemicalPathologyResult(models.Model):
     test = models.ForeignKey(ChempathTest, max_length=100, null=True, blank=True, on_delete=models.CASCADE, related_name="results")
     cleared=models.BooleanField(default=False)
     result = QuillField(null=True, blank=True)
-    comments=models.TextField(null=True, blank=True)
+    comments=models.CharField(max_length=500,null=True, blank=True)
     natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
     collected = models.DateField(auto_now=True, null=True,blank=True)
     reported = models.DateField(auto_now=True, null=True, blank=True)
@@ -244,7 +244,7 @@ class MicrobiologyResult(models.Model):
     test = models.ForeignKey(MicrobiologyTest, on_delete=models.CASCADE, null=True, blank=True)
     cleared=models.BooleanField(default=False)
     result = QuillField(null=True, blank=True)
-    comments=models.TextField(null=True, blank=True)
+    comments=models.CharField(max_length=500, null=True, blank=True)
     natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
     collected = models.DateField(auto_now=True, null=True,blank=True)
     reported = models.DateField(auto_now=True, null=True, blank=True)
@@ -303,7 +303,7 @@ class SerologyResult(models.Model):
     test = models.ForeignKey(SerologyTest, on_delete=models.CASCADE, null=True, blank=True, related_name='results')
     cleared=models.BooleanField(default=False)
     result = QuillField(null=True, blank=True)
-    comments = models.TextField(null=True, blank=True)
+    comments = models.CharField(max_length=500,null=True, blank=True)
     nature_of_specimen = models.CharField(max_length=100, null=True, blank=True)
     collected = models.DateField(auto_now_add=True, null=True, blank=True)
     reported = models.DateField(auto_now=True, null=True, blank=True)
@@ -348,7 +348,7 @@ class GeneralTestResult(models.Model):
     result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
     cleared=models.BooleanField(default=False)
     result = QuillField(null=True, blank=True)
-    comments = models.TextField(null=True, blank=True)
+    comments = models.CharField(max_length=500,null=True, blank=True)
     nature_of_specimen = models.CharField(max_length=100, null=True, blank=True)
     collected = models.DateField(auto_now_add=True, null=True, blank=True)
     reported = models.DateField(auto_now=True, null=True, blank=True)
