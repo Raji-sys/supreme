@@ -128,7 +128,7 @@ class HematologyResult(models.Model):
     comments=models.CharField(max_length=500,null=True, blank=True)
     natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
     collected = models.DateField(auto_now=True, null=True,blank=True)
-    reported = models.DateField(auto_now=True, null=True, blank=True)
+
     collected_by = models.ForeignKey(User, null=True, blank=True, related_name='hematology_results_collected', on_delete=models.SET_NULL)
     updated_by = models.ForeignKey(User, null=True, blank=True, related_name='hematology_results_reported', on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
@@ -188,7 +188,7 @@ class ChemicalPathologyResult(models.Model):
     comments=models.CharField(max_length=500,null=True, blank=True)
     natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
     collected = models.DateField(auto_now=True, null=True,blank=True)
-    reported = models.DateField(auto_now=True, null=True, blank=True)
+
     collected_by = models.ForeignKey(User, null=True, blank=True, related_name='chempath_results_collected', on_delete=models.SET_NULL)
     updated_by = models.ForeignKey(User, null=True, blank=True, related_name='chempath_results_reported', on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
@@ -247,7 +247,7 @@ class MicrobiologyResult(models.Model):
     comments=models.CharField(max_length=500, null=True, blank=True)
     natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
     collected = models.DateField(auto_now=True, null=True,blank=True)
-    reported = models.DateField(auto_now=True, null=True, blank=True)
+
     collected_by = models.ForeignKey(User, null=True, blank=True, related_name='microbiology_results_collected', on_delete=models.SET_NULL)
     updated_by = models.ForeignKey(User, null=True, blank=True, related_name='microbiology_results_reported', on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
@@ -306,7 +306,7 @@ class SerologyResult(models.Model):
     comments = models.CharField(max_length=500,null=True, blank=True)
     nature_of_specimen = models.CharField(max_length=100, null=True, blank=True)
     collected = models.DateField(auto_now_add=True, null=True, blank=True)
-    reported = models.DateField(auto_now=True, null=True, blank=True)
+
     collected_by = models.ForeignKey(User, null=True, blank=True, related_name='serology_results_collected', on_delete=models.SET_NULL)
     updated_by = models.ForeignKey(User, null=True, blank=True, related_name='serology_results_reported', on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
@@ -351,7 +351,7 @@ class GeneralTestResult(models.Model):
     comments = models.CharField(max_length=500,null=True, blank=True)
     nature_of_specimen = models.CharField(max_length=100, null=True, blank=True)
     collected = models.DateField(auto_now_add=True, null=True, blank=True)
-    reported = models.DateField(auto_now=True, null=True, blank=True)
+
     collected_by = models.ForeignKey(User, null=True, blank=True, related_name='general_results_collected', on_delete=models.SET_NULL)
     updated_by = models.ForeignKey(User, null=True, blank=True, related_name='general_results_reported', on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
