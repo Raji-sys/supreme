@@ -71,7 +71,7 @@ class HematologyTestForm(forms.ModelForm):
 class HematologyResultForm(forms.ModelForm):
     class Meta:
         model = HematologyResult
-        fields = ['test', 'result','comments','cleared']
+        fields = ['test', 'result','cleared','nature_of_specimen']
     
     def __init__(self, *args, **kwargs):
         super(HematologyResultForm, self).__init__(*args, **kwargs)
@@ -96,7 +96,7 @@ class ChempathTestForm(forms.ModelForm):
 class ChempathResultForm(forms.ModelForm):
     class Meta:
         model = ChemicalPathologyResult
-        fields = ['test', 'result','comments','cleared']
+        fields = ['test', 'result','cleared','nature_of_specimen']
 
     def __init__(self, *args, **kwargs):
         super(ChempathResultForm, self).__init__(*args, **kwargs)
@@ -119,7 +119,7 @@ class MicroTestForm(forms.ModelForm):
 class MicroResultForm(forms.ModelForm):
     class Meta:
         model = MicrobiologyResult
-        fields = ['test', 'result','comments','cleared']
+        fields = ['test', 'result','cleared','nature_of_specimen']
     
     def __init__(self, *args, **kwargs):
         super(MicroResultForm, self).__init__(*args, **kwargs)
@@ -142,7 +142,7 @@ class SerologyTestForm(forms.ModelForm):
 class SerologyResultForm(forms.ModelForm):
     class Meta:
         model = SerologyResult
-        fields = ['test','result','comments','cleared']
+        fields = ['test','result','cleared','nature_of_specimen']
     
     def __init__(self, *args, **kwargs):
         super(SerologyResultForm, self).__init__(*args, **kwargs)
@@ -154,7 +154,7 @@ class SerologyResultForm(forms.ModelForm):
 class GeneralTestForm(forms.ModelForm):
     class Meta:
         model=GeneralTestResult
-        fields=['name']
+        fields=['name','price']
 
     def __init__(self, *args, **kwargs):
         super(GeneralTestForm, self).__init__(*args, **kwargs)
@@ -165,7 +165,7 @@ class GeneralTestForm(forms.ModelForm):
 class GeneralTestResultForm(forms.ModelForm):
     class Meta:
         model=GeneralTestResult
-        fields=['result','comments','cleared']
+        fields=['result','cleared','nature_of_specimen']
     
     def __init__(self, *args, **kwargs):
         super(GeneralTestResultForm, self).__init__(*args, **kwargs)

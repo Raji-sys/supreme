@@ -1,30 +1,61 @@
 {% extends 'base.html' %}
 {% load static %}
 {%block title%}TRANSACTION HISTORY{%endblock%}
-{%block page_title%}<div class="flex justify-center p-2"><div> <a href="{%url 'revenue' %}"><i class="fa-solid fa-arrow-left fa-xl mr-4"></i></a>ALL TRANSACTION HISTORY</div>
-<div class="">
-  <span class="shadow-sm shadow-sky-900 gap-2 bg-sky-600 text-white uppercase text-xs border-b-2 border-sky-900 py-2 px-4 rounded-xl mx-2 w-fit">
-    <span class=" shadow-white text-xs p-1 rounded-full bg-white text-sky-900">{{pay_total}}</span>&nbsp;transactions 
-        {% if request.GET.urlencode %}
-        <span>
-            <a href="?" class=" p-2 focus:opacity-10  focus:border-sky-600 bg-orange-500 text-white rounded shadow-lg hover:shadow-xl text-center w-fit">
-                <i class="fa-solid fa-rotate fa-lg text-white"></i></a>
-                <a class="text-md text-white focus:opacity-10  bg-cyan-700 m-1 p-2 rounded w-fit" href="{% url 'receipt_pdf' %}?{{request.GET.urlencode}}">
-                  <i class="fa-solid fa-print fa-xl"></i></a>
-            </span>
-            {%endif%}
-        </span>
-      </div>
-      <div class="">
-        <span class="uppercase text-xs font-semibold bg-green-200 p-1 rounded">
-      Total: <span class="text-green-700 uppercase text-xs font-bold">
-        &#x20A6;{{ total_worth|floatformat:2 }}
-      </span>
+{%block page_title%}
+
+<div class="flex items-center justify-between px-4 py-2 bg-white">
+  <!-- Left section: Back button and title -->
+  <div class="flex items-center">
+    <a href="{% url 'revenue' %}" class="mr-2">
+      <i class="fa-solid fa-arrow-left fa-lg"></i>
+    </a>
+    <span class="text-sm font-semibold">ALL TRANSACTIONS</span>
+  </div>
+
+  <!-- Middle section: Filter buttons -->
+  <div class="flex space-x-2">
+    <a href="?status=all" 
+       class="px-3 py-1 text-xs rounded {% if current_filter == 'all' %}bg-sky-600 text-white{% else %}bg-sky-100 text-sky-600{% endif %}">
+      All ({{ total_count }})
+    </a>
+    <a href="?status=approved" 
+       class="px-3 py-1 text-xs rounded {% if current_filter == 'approved' %}bg-sky-600 text-white{% else %}bg-sky-100 text-sky-600{% endif %}">
+      Approved ({{ approved_count }})
+    </a>
+    <a href="?status=pending" 
+       class="px-3 py-1 text-xs rounded {% if current_filter == 'pending' %}bg-sky-600 text-white{% else %}bg-sky-100 text-sky-600{% endif %}">
+      Pending ({{ pending_count }})
+    </a>
+  </div>
+
+  <!-- Right section: Transaction stats -->
+  <div class="flex items-center space-x-2">
+    <span class="bg-sky-600 text-white text-xs px-3 py-1 rounded flex items-center">
+      Today: {{ today_transactions }} (&#x20A6;{{ today_worth|floatformat:2 }})
     </span>
+    <span class="bg-green-100 text-xs px-3 py-1 rounded">
+      Total: <span class="text-green-700 font-bold">&#x20A6;{{ total_worth|floatformat:2 }}</span>
+    </span>
+    {% if total_pending > 0 %}
+    <span class="bg-yellow-100 text-xs px-3 py-1 rounded">
+      Pending: <span class="text-yellow-700 font-bold">&#x20A6;{{ total_pending|floatformat:2 }}</span>
+    </span>
+    {% endif %}
+    {% if request.GET.urlencode %}
+    <div class="flex space-x-2">
+      <a href="?" class="text-sky-600 hover:text-sky-700">
+        <i class="fa-solid fa-rotate"></i>
+      </a>
+      <a href="{% url 'receipt_pdf' %}?{{request.GET.urlencode}}" class="text-sky-600 hover:text-sky-700">
+        <i class="fa-solid fa-print"></i>
+      </a>
     </div>
-    </div>
+    {% endif %}
+  </div>
+</div>
 {%endblock%}
 {%block content %}
+
 <div class="">
     <div class="mx-2 md:mx-20 rounded-b-xl p-2 shadow-black shadow-sm bg-sky-50">
       <div class="text-sky-900">

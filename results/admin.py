@@ -72,6 +72,11 @@ class SerologyTestNameAdmin(admin.ModelAdmin):
 #     list_display = ('result_code', 'test', 'patient', 'result',  'comments')
 #     list_filter = ('test', 'patient')
 
+
+@admin.register(GeneralTestResult)
+class GeneralAdmin(admin.ModelAdmin):
+    list_display = ('name', 'price')
+
 @admin.register(Paypoint)
 class PaypointAdmin(admin.ModelAdmin):
     list_display = ('patient','service','price','status')

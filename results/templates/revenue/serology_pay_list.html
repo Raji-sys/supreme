@@ -30,8 +30,12 @@
               <tr>
                 <th class="p-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
                 <th class="p-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Revenue Officer</th>
-                <th class="p-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
+                <th class="p-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">patient</th>
+                <th class="p-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">service</th>
+                <th class="p-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">price</th>
+                <th class="p-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">date</th>
                 <th class="p-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Status</th>
+
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
@@ -40,10 +44,17 @@
                 <td class="p-3 whitespace-nowrap text-sm text-gray-500">{{forloop.counter}}</td>
                 <td class="p-3 whitespace-nowrap text-sm text-gray-500">{{request.user}}</td>
                 <td class="p-3 whitespace-nowrap text-sm text-gray-500">
-                  <a href="{{p.patient.get_absolute_url}}" class="text-fuchsia-600 hover:text-fuchsia-900">{{ p.patient }}</a><br>
-                  {{ p.service }} - ₦{{p.price}}<br>
+                  <a href="{{p.patient.get_absolute_url}}" class="text-indigo-600 hover:text-indigo-900">{{ p.patient }}</a>
+                </td>
+                <td class="p-3 whitespace-nowrap text-sm text-gray-500">
+                  {{ p.service }}
+                </td>
+                <td class="p-3 whitespace-nowrap text-sm text-gray-500"> ₦{{p.price}}
+                </td>
+                <td class="p-3 whitespace-nowrap text-sm text-gray-500">
                   {{ p.updated }}
                 </td>
+ 
                 <td class="p-3 whitespace-nowrap text-sm">
                   {% if p.status == False %}
                   <span class="text-red-600"><i class="fa-solid fa-x"></i> </span>

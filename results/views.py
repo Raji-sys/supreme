@@ -168,7 +168,6 @@ class UserDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
         messages.success(self.request, self.success_message)
         return super().delete(request, *args, **kwargs)
 
-
 class PatientCreateView(CreateView):
     model = Patient
     form_class= PatientForm
@@ -735,12 +734,20 @@ class GeneralTestCreateView(LoginRequiredMixin, CreateView):
     template_name = 'general/general_result.html'
 
     def form_valid(self, form):
-        
-        # Get the patient instance from the request
-        patient = Patient.objects.get(surname=self.kwargs['surname'])
+        patient = Patient.objects.get(file_no=self.kwargs['file_no'])
         form.instance.patient = patient
+        form.instance.collected_by = self.request.user
 
-        messages.success(self.request, 'general result created successfully')
+        general_result = form.save(commit=False)
+        payment = Paypoint.objects.create(
+            patient=patient,
+            status=False,
+            service=general_result.name, 
+            price=general_result.price,
+        )
+        general_result.payment = payment 
+        general_result.save()
+        messages.success(self.request, 'general added successfully')
         return super().form_valid(form)
     
     def get_success_url(self):
@@ -750,19 +757,22 @@ class GeneralTestCreateView(LoginRequiredMixin, CreateView):
 class GeneralResultCreateView(LoginRequiredMixin, UpdateView):
     model=GeneralTestResult
     form_class = GeneralTestResultForm
-    template_name = 'general/general_update.html'
+    template_name = 'general/general_result.html'
     context_object_name = 'result'
+    success_url=reverse_lazy('general_request')
+
 
     def get_object(self, queryset=None):
-        patient = Patient.objects.get(surname=self.kwargs['surname'])
+        patient = get_object_or_404(Patient, file_no=self.kwargs['file_no'])
         return GeneralTestResult.objects.get(patient=patient, pk=self.kwargs['pk'])
 
     def form_valid(self, form):
+        form.instance.updated_by = self.request.user
+        general_result = form.save(commit=False)
+        general_result.result = form.cleaned_data['result']
+        general_result.save()
         messages.success(self.request, 'general result updated successfully')
         return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse('patient_details', kwargs={'surname': self.kwargs['surname']})
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -856,28 +866,81 @@ class PayUpdateView(UpdateView):
         return context
 
     
+# class PayListView(ListView):
+#     model=Paypoint
+#     template_name='revenue/transaction.html'
+#     context_object_name='pays'
+#     paginate_by = 10
+
+#     def get_queryset(self):
+#         updated = super().get_queryset().filter(status=True).order_by('-updated')
+#         pay_filter = PayFilter(self.request.GET, queryset=updated)
+#         return pay_filter.qs
+    
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         pay_total = self.get_queryset().count()
+#         paid_transactions = self.get_queryset().filter(status=True)
+#         total_worth = paid_transactions.aggregate(total_worth=Sum('price'))['total_worth'] or 0
+
+#         context['payFilter'] = PayFilter(self.request.GET, queryset=self.get_queryset())
+#         context['pay_total'] = pay_total
+#         context['total_worth'] = total_worth
+#         return context    
+
 class PayListView(ListView):
-    model=Paypoint
-    template_name='revenue/transaction.html'
-    context_object_name='pays'
+    model = Paypoint
+    template_name = 'revenue/transaction.html'
+    context_object_name = 'pays'
     paginate_by = 10
 
     def get_queryset(self):
-        updated = super().get_queryset().filter(status=True).order_by('-updated')
-        pay_filter = PayFilter(self.request.GET, queryset=updated)
+        # Start with an optimized queryset
+        queryset = Paypoint.objects.select_related('patient', 'user').order_by('-updated')
+        
+        # Get filter parameter from URL, default to 'all'
+        status_filter = self.request.GET.get('status', 'all')
+        
+        # Apply status filter if not 'all'
+        if status_filter == 'approved':
+            queryset = queryset.filter(status=True)
+        elif status_filter == 'pending':
+            queryset = queryset.filter(status=False)
+        
+        # Apply other filters from PayFilter
+        pay_filter = PayFilter(self.request.GET, queryset=queryset)
         return pay_filter.qs
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        pay_total = self.get_queryset().count()
-        paid_transactions = self.get_queryset().filter(status=True)
-        total_worth = paid_transactions.aggregate(total_worth=Sum('price'))['total_worth'] or 0
-
-        context['payFilter'] = PayFilter(self.request.GET, queryset=self.get_queryset())
-        context['pay_total'] = pay_total
-        context['total_worth'] = total_worth
-        return context    
-
+        
+        # Add annotations for quick access to key metrics
+        summary = Paypoint.objects.aggregate(
+            total_count=Count('id'),
+            approved_count=Count('id', filter=Q(status=True)),
+            pending_count=Count('id', filter=Q(status=False)),
+            total_worth=Sum('price', filter=Q(status=True)),
+            total_pending=Sum('price', filter=Q(status=False))
+        )
+        
+        context.update({
+            'total_count': summary['total_count'],
+            'approved_count': summary['approved_count'],
+            'pending_count': summary['pending_count'],
+            'total_worth': summary['total_worth'] or 0,
+            'total_pending': summary['total_pending'] or 0,
+            'current_filter': self.request.GET.get('status', 'all'),
+            'payFilter': PayFilter(self.request.GET, queryset=self.get_queryset())
+        })
+        
+        # Add date-based metrics
+        today = timezone.now().date()
+        context['today_transactions'] = self.get_queryset().filter(created=today).count()
+        context['today_worth'] = self.get_queryset().filter(
+            created=today, status=True
+        ).aggregate(total=Sum('price'))['total'] or 0
+        
+        return context
 
 def format_currency(amount):
     if amount is None:

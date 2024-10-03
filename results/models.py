@@ -66,7 +66,7 @@ class Patient(models.Model):
     clinical_diagnosis = models.CharField(max_length=100, null=True, blank=True)
     hospital_clinic= models.CharField(max_length=100, null=True, blank=True)
     dob = models.DateField('date of birth', null=True, blank=True)
-    phone = models.PositiveIntegerField(null=True, blank=True, unique=True)
+    phone = models.CharField(max_length=11, null=True, blank=True, unique=True)
     created = models.DateTimeField('date added', auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -126,7 +126,7 @@ class HematologyResult(models.Model):
     cleared=models.BooleanField(default=False)
     result = QuillField(null=True, blank=True)
     comments=models.CharField(max_length=500,null=True, blank=True)
-    natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
+    nature_of_specimen = models.CharField(max_length=100, null=True, blank=True)
     collected = models.DateField(auto_now=True, null=True,blank=True)
 
     collected_by = models.ForeignKey(User, null=True, blank=True, related_name='hematology_results_collected', on_delete=models.SET_NULL)
@@ -186,7 +186,7 @@ class ChemicalPathologyResult(models.Model):
     cleared=models.BooleanField(default=False)
     result = QuillField(null=True, blank=True)
     comments=models.CharField(max_length=500,null=True, blank=True)
-    natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
+    nature_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
     collected = models.DateField(auto_now=True, null=True,blank=True)
 
     collected_by = models.ForeignKey(User, null=True, blank=True, related_name='chempath_results_collected', on_delete=models.SET_NULL)
@@ -245,7 +245,7 @@ class MicrobiologyResult(models.Model):
     cleared=models.BooleanField(default=False)
     result = QuillField(null=True, blank=True)
     comments=models.CharField(max_length=500, null=True, blank=True)
-    natured_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
+    nature_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
     collected = models.DateField(auto_now=True, null=True,blank=True)
 
     collected_by = models.ForeignKey(User, null=True, blank=True, related_name='microbiology_results_collected', on_delete=models.SET_NULL)
@@ -351,7 +351,6 @@ class GeneralTestResult(models.Model):
     comments = models.CharField(max_length=500,null=True, blank=True)
     nature_of_specimen = models.CharField(max_length=100, null=True, blank=True)
     collected = models.DateField(auto_now_add=True, null=True, blank=True)
-
     collected_by = models.ForeignKey(User, null=True, blank=True, related_name='general_results_collected', on_delete=models.SET_NULL)
     updated_by = models.ForeignKey(User, null=True, blank=True, related_name='general_results_reported', on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
@@ -375,14 +374,14 @@ class GeneralTestResult(models.Model):
         parts = []
         if self.patient:
             parts.append(str(self.patient))
-        if self.test:
-            parts.append(str(self.test))
+        if self.name:
+            parts.append(str(self.name))
         if self.result:
             parts.append(str(self.result))
         return " - ".join(parts)
 
     def __str__(self):
         if self.patient:
-            return f"{self.patient} - {self.test} - {self.result}"
+            return f"{self.patient} - {self.name} - {self.result}"
         else:
-            return f"{self.test} - {self.result}"
+            return f"{self.name} - {self.result}"
