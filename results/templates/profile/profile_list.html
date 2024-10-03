@@ -1,18 +1,25 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}Profile List{% endblock %}
-{%block page_title%}<div class="flex justify-center uppercase"><a href="{%url 'index' %}"><i class="fa-solid fa-arrow-left fa-xl mr-4"></i></a>Employee Profiles</div>{%endblock%}
+{% block page_title %}
+    <div class="flex justify-center uppercase">
+        <a href="{% url 'index' %}"><i class="fa-solid fa-arrow-left fa-xl mr-4"></i></a>Employee Profiles
+    </div>
+{% endblock %}
 {% block content %}
 <div class="mt-6 px-4 md:px-8">
     <div class="bg-white shadow-md rounded-lg p-4 md:p-6">
-        <h2 class="text-lg font-medium mb-4 text-gray-800 uppercase"></h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {% for p in profiles %}
                 <div class="p-4 bg-gray-100 rounded-lg hover:bg-gray-100 transition shadow-sm flex flex-col justify-between">
                     <div>
                         <h3 class="text-sm font-medium text-gray-800">{{ p.full_name }}</h3>
-                        <p class="text-xs text-gray-600 mt-1">department: {{ p.get_department_display }}</p>
-                        <p class="text-xs text-gray-600">cadre: {{ p.get_cadre_display }}</p>
+                        <p class="text-xs text-gray-600 mt-1">Department: {{ p.department }}</p>
+                        <p class="text-xs text-gray-600">Cadre: {{ p.cadre }}</p>
+                    </div>
+                    <div class="mt-3 flex justify-between">
+                        <a href="{% url 'profile-update' p.id %}" class="text-blue-500 hover:underline text-xs">Update</a>
+                        <a href="{% url 'profile-delete' p.id %}" class="text-red-500 hover:underline text-xs">Delete</a>
                     </div>
                 </div>
             {% empty %}

@@ -11,6 +11,8 @@ urlpatterns = [
     path('report/', ReportView.as_view(), name='report'),
 
     path('create-profile/', UserProfileCreateView.as_view(), name='create_profile'),
+    path('profiles/<int:pk>/update/', ProfileUpdateView.as_view(), name='profile-update'),
+    path('profile/<int:pk>/delete/', UserDeleteView.as_view(), name='profile-delete'), 
     path('profile-list/', ProfileListView.as_view(), name='profiles_list'),
 
     path('create-patient/', PatientCreateView.as_view(), name='create_patient'),

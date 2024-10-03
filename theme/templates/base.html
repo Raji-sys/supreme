@@ -54,7 +54,7 @@
 }
 
 </style>
-<body class="bg-gradient-to-r from-rose-100 via-red-100 to-rose-100 min-h-screen">
+<body class="bg-rose-50 min-h-screen">
     {% if request.user.is_authenticated %}
     <header class="bg-white mx-4 shadow-md border-b-2 border-gray-900 rounded">
         <nav class="flex flex-wrap justify-between items-center p-2">
@@ -64,6 +64,9 @@
                     <a href="{% url 'index' %}"> 
                         <i class="fa fa-solid fa-home fa-xl"></i>
                     </a>
+                </span>
+                <span>
+                    <a href="{%url 'admin:index' %}">control</a>
                 </span>
             </div>
 

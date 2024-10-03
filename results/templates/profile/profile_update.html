@@ -1,10 +1,55 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block page_title %}
+<div class="flex justify-center">
+    <a href="{% url 'index' %}">
+        <i class="fa-solid fa-arrow-left fa-xl mr-4"></i>
+    </a>
+    UPDATE USER PROFILE
+</div>
+{% endblock %}
 {% block content %}
-  <h1>profile update</h1>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">update</button>
-  </form>
+<div class="py-2">
+  <div class="max-w-md text-center mx-auto bg-white rounded-xl shadow-black shadow-sm p-8">
+    <form method="post" class="space-y-2 text-xs">
+      {% csrf_token %}
+      <div class="mb-2 uppercase text-cyan-900 px-10">
+        <div class="grid grid-cols-1 gap-2">
+          {% for field in user_form %}
+          <div>
+            <div class="flex justify-center">
+              <label for="{{ field.id_for_label }}" class="block">{{ field.label_tag }}</label>
+            </div>
+            <div class="flex justify-center mb-2">
+              {{ field }}
+              {% if field.errors %}
+              <p class="text-red-500 text-xs mt-1">{{ field.errors }}</p>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+          {% for field in profile_form %}
+          <div>
+            <div class="flex justify-center">
+              <label for="{{ field.id_for_label }}" class="block">{{ field.label_tag }}</label>
+            </div>
+            <div class="flex justify-center mb-2">
+              {{ field }}
+              {% if field.help_text %}
+              <p class="text-gray-500 text-xs mt-1">{{ field.help_text }}</p>
+              {% endif %}
+              {% if field.errors %}
+              <p class="text-red-500 text-xs mt-1">{{ field.errors }}</p>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-xs">
+        SAVE
+      </button>
+    </form>
+  </div>
+</div>
 {% endblock %}

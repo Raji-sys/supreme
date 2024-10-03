@@ -9,7 +9,7 @@ from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.views import LoginView, LogoutView
-from django.http import HttpResponse, JsonResponse, Http404
+from django.http import HttpResponse
 from .models import *
 from .forms import *
 from .filters import *
@@ -22,14 +22,13 @@ from django.conf import settings
 import os
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count,Sum,Q
-from django.forms import modelformset_factory
 User = get_user_model()
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.colors import black, grey
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-
+from django.contrib.messages.views import SuccessMessageMixin
 
 
 def log_anonymous_required(view_function, redirect_to=None):
@@ -106,25 +105,70 @@ class CustomLogoutView(LogoutView):
 class UserProfileCreateView(CreateView):
     form_class = CustomUserCreationForm
     template_name = 'profile/profile_create.html'
-    success_url = reverse_lazy('profile_details',kwargs={'username':User.username})
+    success_url = reverse_lazy('index')
 
     def form_valid(self, form):
         response = super().form_valid(form)
         user = User.objects.get(username=form.cleaned_data['username'])
-        profile_instance = Profile(user=user)
+        profile_instance = Profile(
+            user=user, 
+            department=form.cleaned_data.get('department'), 
+            cadre=form.cleaned_data.get('cadre')
+        )
         profile_instance.save()
         messages.success(self.request, f"Registration for: {user.get_full_name()} was successful")
+        return response 
 
-        profile_url=reverse('profile_details',kwargs={'username':user.username})
-        return redirect (profile_url)
+
+class ProfileUpdateView(LoginRequiredMixin, View):
+    template_name = 'profile/profile_update.html'
+    success_url = reverse_lazy('profiles_list') 
+
+    def get(self, request, *args, **kwargs):
+        user_form = UserUpdateForm(instance=request.user)
+        profile_form = ProfileUpdateForm(instance=request.user.profile)
+        return render(request, self.template_name, {
+            'user_form': user_form,
+            'profile_form': profile_form
+        })
+
+    def post(self, request, *args, **kwargs):
+        user_form = UserUpdateForm(request.POST, instance=request.user)
+        profile_form = ProfileUpdateForm(request.POST, instance=request.user.profile)
+        
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect(self.success_url)
+        else:
+            return render(request, self.template_name, {
+                'user_form': user_form,
+                'profile_form': profile_form
+            })
 
 
 class ProfileListView(ListView):
     model = Profile
     template_name = "profile/profile_list.html"
-    context_object_name = 'profiles'
+    context_object_name = 'profiles'    
 
-    
+class UserDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    model = User
+    template_name = 'profile/confirm_delete.html'
+    success_url = reverse_lazy('profiles_list')
+    success_message = "User and associated profile deleted successfully!"
+
+    def get_object(self, queryset=None):
+        profile_id = self.kwargs.get('pk')
+        profile = get_object_or_404(Profile, pk=profile_id)
+        return get_object_or_404(User, profile=profile)
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, self.success_message)
+        return super().delete(request, *args, **kwargs)
+
+
 class PatientCreateView(CreateView):
     model = Patient
     form_class= PatientForm

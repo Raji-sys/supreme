@@ -11,14 +11,35 @@ class CustomUserCreationForm(UserCreationForm):
 
     class Meta:
         model = get_user_model()
-        fields = ['username', 'first_name',
-                  'last_name', 'password1', 'password2']
+        fields = ['username', 'first_name', 'last_name', 'password1', 'password2', 'department', 'cadre']
     
     def __init__(self, *args, **kwargs):
         super(CustomUserCreationForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
-            field.required=False    
-            field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
+            field.required = False
+            field.widget.attrs.update({'class': 'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
+
+
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = get_user_model()
+        fields = ['username', 'first_name', 'last_name']
+    
+    def __init__(self, *args, **kwargs):
+        super(UserUpdateForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
+
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['department', 'cadre']
+    
+    def __init__(self, *args, **kwargs):
+        super(ProfileUpdateForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
 
 
 class PatientForm(forms.ModelForm):
