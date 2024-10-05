@@ -324,34 +324,72 @@ class HemaReportView(ListView):
         return context
 
 
+# @login_required
+# def hema_report_pdf(request):
+#     ndate = datetime.datetime.now()
+#     filename = ndate.strftime('on_%d/%m/%Y_at_%I.%M%p.pdf')
+#     f = HemaFilter(request.GET, queryset=HematologyResult.objects.all()).qs
+
+#     result = ""
+#     for key, value in request.GET.items():
+#         if value:
+#             result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {request.user.username.upper()}"
+
+#     context = {'f': f, 'pagesize': 'A4',
+#                'orientation': 'landscape', 'result': result}
+#     response = HttpResponse(content_type='application/pdf',
+#                             headers={'Content-Disposition': f'filename="Report__{filename}"'})
+
+#     buffer = BytesIO()
+
+#     pisa_status = pisa.CreatePDF(get_template('report_pdf.html').render(
+#         context), dest=buffer, encoding='utf-8', link_callback=fetch_resources)
+
+#     if not pisa_status.err:
+#         pdf = buffer.getvalue()
+#         buffer.close()
+#         response.write(pdf)
+#         return response
+#     return HttpResponse('Error generating PDF', status=500)
+
 @login_required
 def hema_report_pdf(request):
     ndate = datetime.datetime.now()
-    filename = ndate.strftime('on_%d/%m/%Y_at_%I.%M%p.pdf')
+    filename = ndate.strftime('on_%d_%m_%Y_at_%I_%M%p.pdf')  # Changed slashes to underscores
     f = HemaFilter(request.GET, queryset=HematologyResult.objects.all()).qs
-
+    
+    # Get username safely
+    username = request.user.username.upper() if hasattr(request.user, 'username') else "UNKNOWN USER"
+    
     result = ""
     for key, value in request.GET.items():
         if value:
-            result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {request.user.username.upper()}"
-
-    context = {'f': f, 'pagesize': 'A4',
-               'orientation': 'landscape', 'result': result}
+            result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {username}"
+    
+    context = {
+        'f': f, 
+        'pagesize': 'A4',
+        'orientation': 'landscape', 
+        'result': result,
+        'username': username,
+        'generated_date': ndate.strftime('%d-%B-%Y at %I:%M %p')
+    }
+    
     response = HttpResponse(content_type='application/pdf',
-                            headers={'Content-Disposition': f'filename="Report__{filename}"'})
-
+                           headers={'Content-Disposition': f'attachment; filename="{filename}"'})
+    
+    html = get_template('report_pdf.html').render(context)
+    
     buffer = BytesIO()
-
-    pisa_status = pisa.CreatePDF(get_template('report_pdf.html').render(
-        context), dest=buffer, encoding='utf-8', link_callback=fetch_resources)
-
+    pisa_status = pisa.CreatePDF(html, dest=buffer, encoding='utf-8', link_callback=fetch_resources)
+    
     if not pisa_status.err:
         pdf = buffer.getvalue()
         buffer.close()
         response.write(pdf)
         return response
+    
     return HttpResponse('Error generating PDF', status=500)
-
 
 class ChempathRequestListView(ListView):
     model=ChemicalPathologyResult
@@ -445,29 +483,40 @@ class ChempathReportView(ListView):
 @login_required
 def chempath_report_pdf(request):
     ndate = datetime.datetime.now()
-    filename = ndate.strftime('on_%d/%m/%Y_at_%I.%M%p.pdf')
+    filename = ndate.strftime('on_%d_%m_%Y_at_%I_%M%p.pdf')  # Changed slashes to underscores
     f = ChemFilter(request.GET, queryset=ChemicalPathologyResult.objects.all()).qs
 
+    # Get username safely
+    username = request.user.username.upper() if hasattr(request.user, 'username') else "UNKNOWN USER"
+    
     result = ""
     for key, value in request.GET.items():
         if value:
-            result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {request.user.username.upper()}"
-
-    context = {'f': f, 'pagesize': 'A4',
-               'orientation': 'landscape', 'result': result}
+            result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {username}"
+    
+    context = {
+        'f': f, 
+        'pagesize': 'A4',
+        'orientation': 'landscape', 
+        'result': result,
+        'username': username,
+        'generated_date': ndate.strftime('%d-%B-%Y at %I:%M %p')
+    }
+    
     response = HttpResponse(content_type='application/pdf',
-                            headers={'Content-Disposition': f'filename="Report__{filename}"'})
-
+                           headers={'Content-Disposition': f'attachment; filename="{filename}"'})
+    
+    html = get_template('report_pdf.html').render(context)
+    
     buffer = BytesIO()
-
-    pisa_status = pisa.CreatePDF(get_template('report_pdf.html').render(
-        context), dest=buffer, encoding='utf-8', link_callback=fetch_resources)
-
+    pisa_status = pisa.CreatePDF(html, dest=buffer, encoding='utf-8', link_callback=fetch_resources)
+    
     if not pisa_status.err:
         pdf = buffer.getvalue()
         buffer.close()
         response.write(pdf)
         return response
+    
     return HttpResponse('Error generating PDF', status=500)
 
 
@@ -564,31 +613,41 @@ class MicroReportView(ListView):
 @login_required
 def micro_report_pdf(request):
     ndate = datetime.datetime.now()
-    filename = ndate.strftime('on_%d/%m/%Y_at_%I.%M%p.pdf')
+    filename = ndate.strftime('on_%d_%m_%Y_at_%I_%M%p.pdf')  # Changed slashes to underscores
     f = MicroFilter(request.GET, queryset=MicrobiologyResult.objects.all()).qs
 
+    # Get username safely
+    username = request.user.username.upper() if hasattr(request.user, 'username') else "UNKNOWN USER"
+    
     result = ""
     for key, value in request.GET.items():
         if value:
-            result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {request.user.username.upper()}"
-
-    context = {'f': f, 'pagesize': 'A4',
-               'orientation': 'landscape', 'result': result}
+            result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {username}"
+    
+    context = {
+        'f': f, 
+        'pagesize': 'A4',
+        'orientation': 'landscape', 
+        'result': result,
+        'username': username,
+        'generated_date': ndate.strftime('%d-%B-%Y at %I:%M %p')
+    }
+    
     response = HttpResponse(content_type='application/pdf',
-                            headers={'Content-Disposition': f'filename="Report__{filename}"'})
-
+                           headers={'Content-Disposition': f'attachment; filename="{filename}"'})
+    
+    html = get_template('report_pdf.html').render(context)
+    
     buffer = BytesIO()
-
-    pisa_status = pisa.CreatePDF(get_template('report_pdf.html').render(
-        context), dest=buffer, encoding='utf-8', link_callback=fetch_resources)
-
+    pisa_status = pisa.CreatePDF(html, dest=buffer, encoding='utf-8', link_callback=fetch_resources)
+    
     if not pisa_status.err:
         pdf = buffer.getvalue()
         buffer.close()
         response.write(pdf)
         return response
+    
     return HttpResponse('Error generating PDF', status=500)
-
 
 class SerologyRequestListView(ListView):
     model = SerologyResult
@@ -682,29 +741,40 @@ class SerologyReportView(ListView):
 @login_required
 def serology_report_pdf(request):
     ndate = datetime.datetime.now()
-    filename = ndate.strftime('on_%d/%m/%Y_at_%I.%M%p.pdf')
+    filename = ndate.strftime('on_%d_%m_%Y_at_%I_%M%p.pdf')  # Changed slashes to underscores
     f = SerologyFilter(request.GET, queryset=SerologyResult.objects.all()).qs
 
+    # Get username safely
+    username = request.user.username.upper() if hasattr(request.user, 'username') else "UNKNOWN USER"
+    
     result = ""
     for key, value in request.GET.items():
         if value:
-            result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {request.user.username.upper()}"
-
-    context = {'f': f, 'pagesize': 'A4',
-               'orientation': 'landscape', 'result': result}
+            result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {username}"
+    
+    context = {
+        'f': f, 
+        'pagesize': 'A4',
+        'orientation': 'landscape', 
+        'result': result,
+        'username': username,
+        'generated_date': ndate.strftime('%d-%B-%Y at %I:%M %p')
+    }
+    
     response = HttpResponse(content_type='application/pdf',
-                            headers={'Content-Disposition': f'filename="Report__{filename}"'})
-
+                           headers={'Content-Disposition': f'attachment; filename="{filename}"'})
+    
+    html = get_template('report_pdf.html').render(context)
+    
     buffer = BytesIO()
-
-    pisa_status = pisa.CreatePDF(get_template('report_pdf.html').render(
-        context), dest=buffer, encoding='utf-8', link_callback=fetch_resources)
-
+    pisa_status = pisa.CreatePDF(html, dest=buffer, encoding='utf-8', link_callback=fetch_resources)
+    
     if not pisa_status.err:
         pdf = buffer.getvalue()
         buffer.close()
         response.write(pdf)
         return response
+    
     return HttpResponse('Error generating PDF', status=500)
 
 class GeneralListView(ListView):
@@ -798,28 +868,40 @@ class GeneralReportView(ListView):
 @login_required
 def general_report_pdf(request):
     ndate = datetime.datetime.now()
-    filename = ndate.strftime('on_%d/%m/%Y_at_%I.%M%p.pdf')
+    filename = ndate.strftime('on_%d_%m_%Y_at_%I_%M%p.pdf')  # Changed slashes to underscores
+
     f = GenFilter(request.GET, queryset=GeneralTestResult.objects.all()).qs
+    # Get username safely
+    username = request.user.username.upper() if hasattr(request.user, 'username') else "UNKNOWN USER"
+    
     result = ""
     for key, value in request.GET.items():
         if value:
-            result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {request.user.username.upper()}"
-
-    context = {'f': f, 'pagesize': 'A4',
-               'orientation': 'landscape', 'result': result}
+            result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {username}"
+    
+    context = {
+        'f': f, 
+        'pagesize': 'A4',
+        'orientation': 'landscape', 
+        'result': result,
+        'username': username,
+        'generated_date': ndate.strftime('%d-%B-%Y at %I:%M %p')
+    }
+    
     response = HttpResponse(content_type='application/pdf',
-                            headers={'Content-Disposition': f'filename="Report__{filename}"'})
-
+                           headers={'Content-Disposition': f'attachment; filename="{filename}"'})
+    
+    html = get_template('report_pdf.html').render(context)
+    
     buffer = BytesIO()
-
-    pisa_status = pisa.CreatePDF(get_template('report_pdf.html').render(
-        context), dest=buffer, encoding='utf-8', link_callback=fetch_resources)
-
+    pisa_status = pisa.CreatePDF(html, dest=buffer, encoding='utf-8', link_callback=fetch_resources)
+    
     if not pisa_status.err:
         pdf = buffer.getvalue()
         buffer.close()
         response.write(pdf)
         return response
+    
     return HttpResponse('Error generating PDF', status=500)
 
 
