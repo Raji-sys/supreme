@@ -1,29 +1,50 @@
+<!-- Create New User Profile Form -->
 {% extends 'base.html' %}
 {% load static %}
-{%block page_title%}<div class="flex justify-center"><a href="{%url 'index' %}"><i class="fa-solid fa-arrow-left fa-xl mr-4"></i></a>CREATE NEW USER PROFILE</div>{%endblock%}
-{% block content %}
-<div class="py-2">
-  <div class="max-w-md text-center mx-auto bg-white rounded-xl shadow-black shadow-sm p-8">
-    <form method="post" class="space-y-2 text-xs">
-      {% csrf_token %}
-      <div class="mb-2 uppercase text-cyan-900 px-10">
-        <div class="grid grid-cols-1 gap-2">
-        {% for field in form %}
-        <div>
-        <div class="flex justify-center">
-          <label for="{{field.id_for_label}}" class="block">{{ field.label_tag }}</label>
-        </div>
-        <div class="flex justify-center mb-2">
-          {{ field }}
-        </div>
-      </div>
-      {%endfor%}
-    </div>
-      </div>
-      <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-xs">
-        SAVE
-      </button>
-    </form>
+{% block page_title %}
+  <div class="flex justify-center">
+    <a href="{% url 'index' %}"><i class="fa-solid fa-arrow-left fa-xl mr-4"></i></a>
+    CREATE NEW USER PROFILE
   </div>
-</div>
+{% endblock %}
+
+{% block content %}
+  <div class="py-2">
+    <div class="max-w-md text-center mx-auto bg-white rounded-xl shadow-black shadow-sm p-8">
+      <form method="post" class="space-y-2 text-xs">
+        {% csrf_token %}
+        <div class="mb-2 uppercase text-cyan-900 px-10">
+          <div class="grid grid-cols-1 gap-2">
+            {% for field in form %}
+              <div>
+                <div class="flex justify-center">
+                  <label for="{{ field.id_for_label }}" class="block">{{ field.label_tag }}</label>
+                </div>
+                <div class="flex justify-center mb-2">
+                  {{ field }}
+                  {% if field.errors %}
+                    <div class="text-red-500 text-xs">
+                      {% for error in field.errors %}
+                        {{ error }}
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          {% if form.non_field_errors %}
+            <div class="text-red-500 text-xs">
+              {% for error in form.non_field_errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-xs">
+          SAVE
+        </button>
+      </form>
+    </div>
+  </div>
 {% endblock %}

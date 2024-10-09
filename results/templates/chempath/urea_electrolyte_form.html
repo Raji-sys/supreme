@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center mb-4">
+            <i class="fas fa-flask text-blue-500 mr-2"></i>
+            <h2 class="text-lg font-semibold text-gray-700">Urea & Electrolyte Test</h2>
+        </div>
+        
+        <form method="post" class="space-y-6 text-xs">
+            {% csrf_token %}
+            <div class="mb-2 uppercase text-cyan-900 px-10">
+              <div class="grid grid-cols-1 gap-2">
+              {% for field in form %}
+              <div>
+              <div class="flex justify-center">
+                <label for="{{field.id_for_label}}" class="block">{{ field.label_tag }}</label>
+              </div>
+              <div class="block mb-2 normal-case">
+                {{ field }}
+              </div>
+            </div>
+            {%endfor%}
+          </div>
+            </div>
+      
+            <button type="submit" class="text-xs uppercase bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+              save
+            </button>
+          </form>
+    </div>
+</div>
+{% endblock %}

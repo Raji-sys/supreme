@@ -80,3 +80,8 @@ class GeneralAdmin(admin.ModelAdmin):
 @admin.register(Paypoint)
 class PaypointAdmin(admin.ModelAdmin):
     list_display = ('patient','service','price','status')
+
+
+@admin.register(GenericTest)
+class GenericTestAdmin(admin.ModelAdmin):
+    list_display = ('lab','name','price')

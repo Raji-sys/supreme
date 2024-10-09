@@ -198,3 +198,27 @@ class PayUpdateForm(forms.ModelForm):
             field.required=True
             field.widget.attrs.update(
                 {'class': 'text-center text-xs focus:outline-none border border-green-400 p-3 rounded shadow-lg focus:shadow-xl focus:border-green-200'})
+            
+
+class UreaAndElectrolyteTestForm(forms.ModelForm):
+    class Meta:
+        model = UreaAndElectrolyte
+        fields = ['test']
+ 
+    def __init__(self, *args, **kwargs):
+        super(UreaAndElectrolyteTestForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.required=False    
+            field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
+
+
+class UreaAndElectrolyteResultForm(forms.ModelForm):
+    class Meta:
+        model = UreaAndElectrolyte
+        fields = ['test','urea', 'sodium', 'potassium', 'bicarbonate', 'chloride','cleared','nature_of_specimen']
+ 
+    def __init__(self, *args, **kwargs):
+        super(UreaAndElectrolyteResultForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.required=False    
+            field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})

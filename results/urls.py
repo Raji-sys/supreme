@@ -71,6 +71,13 @@ urlpatterns = [
     path('general-result/create/<str:file_no>/<int:pk>/',GeneralResultCreateView.as_view(), name='general_result'),
     path('general-report/', GeneralReportView.as_view(), name='general_report'),
     path('general-pdf/', views.general_report_pdf, name='general_report_pdf'),
+    
+
+    # Urea & Electrolyte tests
+    path('test/urea-electrolyte-test/create/<str:file_no>/', views.UreaAndElectrolyteCreateView.as_view(), name='create_ue_test'),
+    path('test/urea-electrolyte-result/<str:file_no>/<int:pk>/', views.UreaAndElectrolyteUpdateView.as_view(), name='edit_ue_test'),
+
     path('logout/', CustomLogoutView.as_view(), name='logout'),
+
     path('', include('django.contrib.auth.urls')),
 ]

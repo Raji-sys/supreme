@@ -18,6 +18,7 @@
         <li><a href="#" class="rounded-lg ">CHEMICAL PATHOLOGY</a></li>
         <li><a href="#" class="rounded-lg ">SEROLOGY</a></li>
         <li><a href="#" class="rounded-lg ">GENERAL</a></li>
+        <li><a href="#" class="rounded-lg ">NEW SHIT</a></li>
       </ul>
       
       <div class="uk-switcher uk-margin">
@@ -248,6 +249,219 @@
             </div>
         </div>
         
+        <div> 
+          <div class="text-center rounded-xl p-2 m-4  md:p-10 bg-gray-50">
+            <ul class="uk-subnav uk-subnav-pill uppercase flex justify-center gap-2 " uk-switcher="animation: uk-animation-slide-left-medium, uk-animation-slide-right-medium">
+              <li ><a href="#" class="rounded-lg ">Urea & Electrolyte</a></li>
+              <li><a href="#" class="rounded-lg ">OPERATION NOTES</a></li>
+              <li><a href="#" class="rounded-lg ">THEATRE OPERATION RECORD</a></li>
+              <li><a href="#" class="rounded-lg ">ANAESTHSIA CHECKLIST</a></li>
+            </ul>
+            
+            <div class="uk-switcher uk-margin">
+       
+              <div>
+                <div>
+                  <a href="{% url 'create_ue_test' patient.id %}" class="text-xs text-rose-600 hover:text-green-700"><i class="fa-solid fa-syringe fa-2xl"></i></a>
+                </div>
+                <div class="overflow-x-auto max-h-[50vh] p-2">
+                  <table class="min-w-full divide-y divide-cyan-200 mb-4">
+                    <thead class="bg-cyan-50">
+                      <tr class="text-xs">
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">Urea</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">Sodium</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">potassium</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">Bicarbonate</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">Chloride</th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-cyan-200">
+                      {% for u in urea_electrolyte %}
+                      <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
+                        <td class=" p-3 whitespace-nowrap">{{ forloop.counter }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ u.urea|default_if_none:''}}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ u.sodium|default_if_none:'' }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ u.potassium|default_if_none:'' }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ u.bicarbonate|default_if_none:'' }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ u.chloride|default_if_none:'' }}</td>
+                   
+                      </tr>
+                      {%empty%}
+                      <div class="p-2">
+                          <p>No Urea & Electrolyte yet</p>
+                      </div>
+                     {%endfor%}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            
+            
+              <div>
+                <div>
+                  <a href="#" class="text-xs text-amber-600 hover:text-green-700"><i class="fa-solid fa-clipboard-list fa-2xl"></i></a>
+                </div>
+                <div class="overflow-x-auto max-h-[50vh] p-2">
+                  <table class="min-w-full divide-y divide-cyan-200 mb-4">
+                    <thead class="bg-cyan-50">
+            
+                      <tr class="text-xs">
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">anaesthesia used</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">findings</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">post op-order</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">prescription</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">Note</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">By</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">Date</th>
+                      </tr>
+            
+                    </thead>
+                    <tbody class="bg-white divide-y divide-cyan-200">
+                      {% for o in operation_notes %}
+                      <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
+                        <td class=" p-3 whitespace-nowrap">{{ forloop.counter }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ o.type_of_anaesthesia }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ o.findings }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ o.post_op_order }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ o.prescription }}</td>
+                        <td class=" p-3 whitespace-nowrap">
+                          <details>
+                            <summary class="bg-blue-600 p-2 text-white rounded-lg text-center">OPEN NOTE</summary>
+                            <div class="bg-white text-blue-600 h-fit text-xs well-sm overflow-x-auto max-h-[50vh] rounded-md m-4">
+                              <p class="text-xs text-center">{{ o.notes }}</p>
+                            </div>
+                          </details>    
+                        </td>
+                        <td class=" p-3 whitespace-nowrap">{{ o.user|default_if_none:'' }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ o.updated|default_if_none:'' }}</td>
+                      </tr>
+                      {%empty%}
+                      <div class="p-2">
+                          <p>No theatre notes yet</p>
+                      </div>
+                     {%endfor%}
+                    </tbody>
+                  </table>
+                </div>
+              </div>  
+            
+            
+              <div>
+                <div>
+                  <a href="#" class="text-xs text-amber-600 hover:text-green-700"><i class="fa-solid fa-clipboard-list fa-2xl"></i></a>
+                </div>
+                <div class="overflow-x-auto max-h-[50vh] p-2">
+                  <table class="min-w-full divide-y divide-cyan-200 mb-4">
+                    <thead class="bg-cyan-50">
+            
+                      <tr class="text-xs">
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">theatre</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">ward</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">diagnosis</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">operation</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">surgeon</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">assistant</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">instrument nurse</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">circulating nurse</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">anaesthetist</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">comments</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">Date of operation</th>
+                      </tr>
+            
+                    </thead>
+                    <tbody class="bg-white divide-y divide-cyan-200">
+                      {% for t in theatre_operation_record %}
+                      <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
+                        <td class=" p-3 whitespace-nowrap">{{ forloop.counter }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ t.theatre }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ t.ward }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ t.diagnosis }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ t.operation }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ t.surgeon }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ t.assistant_1 }} <br> {{t.assistant_2}}<br> {{t.assistant_3}}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ t.instrument_nurse|default_if_none:'' }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ t.circulating_nurse|default_if_none:'' }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ t.anaesthetist|default_if_none:'' }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ t.comments|default_if_none:'' }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ t.date_of_operation|default_if_none:'' }}</td>
+                      </tr>
+                      {%empty%}
+                      <div class="p-2">
+                          <p>No theatre operation records yet</p>
+                      </div>
+                     {%endfor%}
+                    </tbody>
+                  </table>
+                </div>
+              </div>  
+            
+            
+            
+            
+              <div>
+                <div>
+                  <a href="#" class="text-xs text-amber-600 hover:text-green-700"><i class="fa-solid fa-clipboard-list fa-2xl"></i></a>
+                </div>
+                <div class="overflow-x-auto max-h-[50vh] p-2">
+                  <table class="min-w-full divide-y divide-cyan-200 mb-4">
+                    <thead class="bg-cyan-50">
+            
+                      <tr class="text-xs">
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">concurrent medical illness</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">past medical history</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">past surgical history</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">trasnfussion</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">drug history</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">social history</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">denctures</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">permanent</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">temporary</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">loose teeth</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">last meal</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">comment</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">Date</th>
+                      </tr>
+            
+                    </thead>
+                    <tbody class="bg-white divide-y divide-cyan-200">
+                      {% for a in anaesthesia_checklist %}
+                      <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
+                        <td class=" p-3 whitespace-nowrap">{{ forloop.counter }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ a.current_medical_illness }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ a.past_medical_history }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ a.past_surgical_history }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ a.transfussion }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ a.drug_history }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ a.social_history }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ a.denctures }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ a.permanent }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ a.temporary }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ a.lose_teeth }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ a.last_meal }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ a.comment }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ a.updated|default_if_none:'' }}</td>
+                      </tr>
+                      {%empty%}
+                      <div class="p-2">
+                          <p>No anaesthesia checklist record yet</p>
+                      </div>
+                     {%endfor%}
+                    </tbody>
+                  </table>
+                </div>
+              </div>  
+            
+            
+      </div>
+    
+      </div>
+       </div>
+
+
       </div>
 
   </div>

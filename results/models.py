@@ -6,7 +6,9 @@ from django.utils.translation import gettext as _
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django_quill.fields import QuillField
-
+from django.contrib.auth import get_user_model
+User = get_user_model()
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
     
@@ -99,7 +101,8 @@ class Patient(models.Model):
 class Paypoint(models.Model):
     user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     patient=models.ForeignKey(Patient,null=True, on_delete=models.CASCADE,related_name="patient_payments")
-    service = models.CharField(max_length=100, null=True, blank=True)  
+    unit = models.CharField(max_length=100, null=True, blank=True)
+    service = models.CharField(max_length=100, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)
     status=models.BooleanField(default=False)
     updated = models.DateTimeField(auto_now=True)
@@ -170,6 +173,7 @@ class ChempathTest(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)
     reference_range = models.CharField(max_length=200, null=True, blank=True)
+    unit = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         if self.reference_range:
@@ -188,7 +192,6 @@ class ChemicalPathologyResult(models.Model):
     comments=models.CharField(max_length=500,null=True, blank=True)
     nature_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
     collected = models.DateField(auto_now=True, null=True,blank=True)
-
     collected_by = models.ForeignKey(User, null=True, blank=True, related_name='chempath_results_collected', on_delete=models.SET_NULL)
     updated_by = models.ForeignKey(User, null=True, blank=True, related_name='chempath_results_reported', on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
@@ -344,7 +347,7 @@ class GeneralTestResult(models.Model):
     name = models.CharField(max_length=100, null=True)
     payment=models.ForeignKey(Paypoint,null=True, on_delete=models.CASCADE,related_name='general_result_payment')
     price = models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='general_results', null=True, blank=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='general_results', null=True, blank=True) 
     result_code = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
     cleared=models.BooleanField(default=False)
     result = QuillField(null=True, blank=True)
@@ -385,3 +388,50 @@ class GeneralTestResult(models.Model):
             return f"{self.patient} - {self.name} - {self.result}"
         else:
             return f"{self.name} - {self.result}"
+
+
+
+class GenericTest(models.Model):
+    labs=(('Chemical Pathology','Chemical Pathology'),('Hematology','Hematology'),('Microbiology','Microbiology'),('Serology','Serology'))
+    lab=models.CharField(choices=labs, max_length=300,null=True, blank=True)
+    name = models.CharField(max_length=100, null=True, blank=True,unique=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)
+
+    def __str__(self):
+        return f"{self.name}-{self.price}"
+
+class UreaAndElectrolyte(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='urea_electrolyte', null=True, blank=True)    
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True, related_name='results')
+    urea = models.FloatField(null=True, blank=True, validators=[MinValueValidator(1.7), MaxValueValidator(8.3)])
+    sodium = models.FloatField(null=True, blank=True,validators=[MinValueValidator(135), MaxValueValidator(145)])
+    potassium = models.FloatField(null=True, blank=True,validators=[MinValueValidator(3.8), MaxValueValidator(5.4)])
+    bicarbonate = models.FloatField(null=True, blank=True,validators=[MinValueValidator(24), MaxValueValidator(32)])
+    chloride = models.FloatField(null=True, blank=True,validators=[MinValueValidator(98), MaxValueValidator(108)])
+    payment=models.ForeignKey(Paypoint,null=True, on_delete=models.CASCADE,related_name='chempath_payment')
+    code = SerialNumberField(default="", editable=False, max_length=20, null=False,blank=True)
+    cleared=models.BooleanField(default=False,null=True)
+    comments=models.CharField(max_length=500,null=True, blank=True)
+    nature_of_specimen = models.CharField(max_length=1-0, null=True, blank=True)
+    collected = models.DateField(auto_now=True, null=True,blank=True)
+    collected_by = models.ForeignKey(User, null=True, blank=True, related_name='chempath_collected_by', on_delete=models.SET_NULL)
+    approved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True,blank=True, related_name='chempath_approved_by')
+    created = models.DateTimeField(auto_now_add=True,null=True)
+    updated = models.DateTimeField(auto_now=True,null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.code:
+            last_instance = self.__class__.objects.order_by('code').last()
+
+            if last_instance:
+                last_code = int(last_instance.code.removeprefix('CHP'))
+                new_code = f"CHP{last_code + 1:03d}"
+            else:
+                new_code = "CHP001"
+
+            self.code = new_code
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"U&E Test for {self.patient} - {self.updated}"

@@ -235,6 +235,7 @@ class PatientDetailView(DetailView):
         context['micro_results']=patient.microbiology_results.all().order_by('-created')
         context['serology_results']=patient.serology_results.all().order_by('-created')
         context['general_results']=patient.general_results.all().order_by('-created')
+        context['urea_electrolyte']=patient.urea_electrolyte.all().order_by('-created')
         return context
     
     
@@ -1256,3 +1257,50 @@ class GeneralPayListView(ListView):
         context['general_pay_total'] = general_pay_total
         context['general_total_worth'] = general_total_worth
         return context  
+
+
+
+class UreaAndElectrolyteCreateView(LoginRequiredMixin, CreateView):
+    model = UreaAndElectrolyte
+    form_class = UreaAndElectrolyteTestForm
+    template_name = 'chempath/urea_electrolyte_form.html'
+
+    def form_valid(self, form):
+        patient = Patient.objects.get(file_no=self.kwargs['file_no'])
+        form.instance.patient = patient
+        form.instance.collected_by = self.request.user
+
+        result = form.save(commit=False)
+        payment = Paypoint.objects.create(
+            patient=patient,
+            status=False,
+            unit=result.lab,
+            service=result.test, 
+            price=result.test.price,
+        )
+        result.payment = payment 
+        result.save()
+
+        messages.success(self.request, 'success')
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return self.object.patient.get_absolute_url()
+
+class UreaAndElectrolyteUpdateView(LoginRequiredMixin, UpdateView):
+    model = UreaAndElectrolyte
+    form_class = UreaAndElectrolyteResultForm
+    template_name = 'chempath/urea_electrolyte_form.html'
+    success_url=reverse_lazy('serology_request')
+
+    def get_object(self, queryset=None):
+        patient = get_object_or_404(Patient, file_no=self.kwargs['file_no'])
+        return get_object_or_404(UreaAndElectrolyte, patient=patient, pk=self.kwargs['pk'])
+
+    def form_valid(self, form):
+        form.instance.updated_by = self.request.user
+        result = form.save(commit=False)
+        result.result = form.cleaned_data['result']
+        result.save()
+        messages.success(self.request, 'result added successfully')
+        return super().form_valid(form)
