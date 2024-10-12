@@ -34,16 +34,16 @@
           {{forloop.counter}}
       </td>
       <td class="p-3 whitespace-nowrap">
-        {{ result.result_code }}
+        {{ result.code }}
       </td>
       <td class="p-3 whitespace-nowrap text-blue-500">
           {{ result.patient }}
         </td>
         <td class="p-3 whitespace-nowrap text-rose-400">
-            {{ result.test }}
+            {{ result.payment.service }}
         </td>
         <td class="p-3 whitespace-nowrap text-green-600">
-          {{ result.result.html|safe }}
+          {{ result.payment.status }}
           </td>
         <td class="p-3 whitespace-nowrap">
           {{ result.updated|default_if_none:'' }}

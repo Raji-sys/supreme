@@ -9,43 +9,35 @@
 {% endblock %}
 
 {% block content %}
-  <div class="py-2">
-    <div class="max-w-md text-center mx-auto bg-white rounded-xl shadow-black shadow-sm p-8">
-      <form method="post" class="space-y-2 text-xs">
-        {% csrf_token %}
-        <div class="mb-2 uppercase text-cyan-900 px-10">
-          <div class="grid grid-cols-1 gap-2">
-            {% for field in form %}
-              <div>
-                <div class="flex justify-center">
-                  <label for="{{ field.id_for_label }}" class="block">{{ field.label_tag }}</label>
-                </div>
-                <div class="flex justify-center mb-2">
-                  {{ field }}
-                  {% if field.errors %}
-                    <div class="text-red-500 text-xs">
-                      {% for error in field.errors %}
-                        {{ error }}
-                      {% endfor %}
-                    </div>
-                  {% endif %}
-                </div>
-              </div>
-            {% endfor %}
-          </div>
-          {% if form.non_field_errors %}
-            <div class="text-red-500 text-xs">
-              {% for error in form.non_field_errors %}
-                {{ error }}
-              {% endfor %}
-            </div>
-          {% endif %}
-        </div>
-        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-          SAVE
-        </button>
-      </form>
+<div class="rounded-xl bg-white mx-auto w-fit mt-4 p-10">
+    {% if form.errors %}
+    <div class="uk-alert-danger block text-xs uppercase text-rose-700 rounded-xl" uk-alert>
+        <a href class="uk-alert-close font-bold" uk-close></a>
+        <p>{{form.errors}}</p>
     </div>
-  </div>
+        {% endif %}
+<form method="post" enctype="multipart/form-data" class="text-xs">
+{% csrf_token %}
+<div class="uppercase text-cyan-900">
+    <p class="text-green-900 text-sm font-bold text-center border-b border-green-700">enter patient information</p>
+    <div class="grid grid-cols-1 p-4 gap-4">
+  {% for field in form %}
+    <div class="text-center text-xs">
+        <div class="">
+            <label for="{{field.id_for_label}}">{{ field.label_tag }}</label>
+        </div>
+        <div class="text-xs">
+            {{ field }}
+        </div>
+        </div>
+        {%endfor%}
+      </div>
+        <div class="gap-1 flex justify-center align-middle p-2">
+        <input type="submit" value="register" class="text-md focus:opacity-10 uppercase focus:border-green-900 hover:bg-white hover:text-green-600 hover:border-2 hover:border-green-600
+        bg-green-700 text-white py-3 px-8 rounded shadow-lg hover:shadow-xl">
+      </div>
+</div>
+</form>
+</div>
 {% endblock %}
 

@@ -17,7 +17,7 @@ class CustomUserCreationForm(UserCreationForm):
         super(CustomUserCreationForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required = False
-            field.widget.attrs.update({'class': 'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
+            field.widget.attrs.update({'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'})
 
 
 class UserUpdateForm(forms.ModelForm):
@@ -28,7 +28,7 @@ class UserUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(UserUpdateForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
-            field.widget.attrs.update({'class': 'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
+            field.widget.attrs.update({'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'})
 
 
 class ProfileUpdateForm(forms.ModelForm):
@@ -39,21 +39,18 @@ class ProfileUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProfileUpdateForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
-            field.widget.attrs.update({'class': 'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
+            field.widget.attrs.update({'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'})
 
 
 class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient
-        fields = ['surname', 'other_names', 'gender','dob', 'phone']
-        widgets = {
-            'dob': DateInput(attrs={'type': 'date'}),
-        }
+        fields = ['surname', 'other_names', 'gender','age', 'phone']
     def __init__(self, *args, **kwargs):
         super(PatientForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
-            field.required=False 
-            field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
+            field.required=True 
+            field.widget.attrs.update({'class':'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'})
 
 
 class HematologyTestForm(forms.ModelForm):
@@ -65,7 +62,7 @@ class HematologyTestForm(forms.ModelForm):
         super(HematologyTestForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required=False    
-            field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
+            field.widget.attrs.update({'class':'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'})
 
 
 class HematologyResultForm(forms.ModelForm):
@@ -77,7 +74,7 @@ class HematologyResultForm(forms.ModelForm):
         super(HematologyResultForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required=False    
-            field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
+            field.widget.attrs.update({'class':'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'})
 
 
 
@@ -90,7 +87,7 @@ class ChempathTestForm(forms.ModelForm):
         super(ChempathTestForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required=False    
-            field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
+            field.widget.attrs.update({'class':'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'})
 
 
 class ChempathResultForm(forms.ModelForm):
@@ -102,7 +99,7 @@ class ChempathResultForm(forms.ModelForm):
         super(ChempathResultForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required=False    
-            field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
+            field.widget.attrs.update({'class':'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'})
 
 
 class MicroTestForm(forms.ModelForm):
@@ -114,7 +111,7 @@ class MicroTestForm(forms.ModelForm):
         super(MicroTestForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required=False    
-            field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
+            field.widget.attrs.update({'class':'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'})
 
 class MicroResultForm(forms.ModelForm):
     class Meta:
@@ -125,7 +122,7 @@ class MicroResultForm(forms.ModelForm):
         super(MicroResultForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required=False    
-            field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
+            field.widget.attrs.update({'class':'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'})
 
 
 class SerologyTestForm(forms.ModelForm):
@@ -137,7 +134,7 @@ class SerologyTestForm(forms.ModelForm):
         super(SerologyTestForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required=False    
-            field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
+            field.widget.attrs.update({'class':'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'})
 
 class SerologyResultForm(forms.ModelForm):
     class Meta:
@@ -148,7 +145,7 @@ class SerologyResultForm(forms.ModelForm):
         super(SerologyResultForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required=False    
-            field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
+            field.widget.attrs.update({'class':'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'})
 
 
 class GeneralTestForm(forms.ModelForm):
@@ -160,7 +157,7 @@ class GeneralTestForm(forms.ModelForm):
         super(GeneralTestForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required=False    
-            field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
+            field.widget.attrs.update({'class':'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'})
 
 class GeneralTestResultForm(forms.ModelForm):
     class Meta:
@@ -171,7 +168,7 @@ class GeneralTestResultForm(forms.ModelForm):
         super(GeneralTestResultForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.required=False    
-            field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
+            field.widget.attrs.update({'class':'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'})
 
 
 class PayForm(forms.ModelForm):
@@ -204,21 +201,130 @@ class UreaAndElectrolyteTestForm(forms.ModelForm):
     class Meta:
         model = UreaAndElectrolyte
         fields = ['test']
- 
     def __init__(self, *args, **kwargs):
-        super(UreaAndElectrolyteTestForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for field in self.fields.values():
-            field.required=False    
-            field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
+            field.required = False
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
 
 
-class UreaAndElectrolyteResultForm(forms.ModelForm):
+class LiverFunctionForm(forms.ModelForm):
+    class Meta:
+        model = LiverFunction
+        fields = ['alkaline_phosphatase', 'sgot', 'sgpt', 'gamma_gt', 'total_bilirubin', 'direct_bilirubin']
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.required = False
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+class BloodGroupTestForm(forms.ModelForm):
+    class Meta:
+        model = BloodGroup
+        fields = ['test']
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.required = False
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+class BloodGroupForm(forms.ModelForm):
+    class Meta:
+        model = BloodGroup
+        fields = ['result']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        blood_group = super().save(commit=False)
+        if commit:
+            blood_group.save()
+            test_info = blood_group.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return blood_group
+
+
+class GenotypeForm(forms.ModelForm):
+    class Meta:
+        model = Genotype
+        fields = ['result']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        genotype = super().save(commit=False)
+        if commit:
+            genotype.save()
+            test_info = genotype.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return genotype
+    
+
+class UreaAndElectrolyteForm(forms.ModelForm):
     class Meta:
         model = UreaAndElectrolyte
-        fields = ['test','urea', 'sodium', 'potassium', 'bicarbonate', 'chloride','cleared','nature_of_specimen']
- 
+        fields = ['urea', 'sodium', 'potassium', 'bicarbonate', 'chloride', 'caretinine']
+    
     def __init__(self, *args, **kwargs):
-        super(UreaAndElectrolyteResultForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
         for field in self.fields.values():
-            field.required=False    
-            field.widget.attrs.update({'class':'text-center mt-2 text-xs focus:outline-none py-2 rounded-md'})
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        ue = super().save(commit=False)
+        if commit:
+            ue.save()
+            test_info = ue.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return ue

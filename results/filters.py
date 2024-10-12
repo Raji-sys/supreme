@@ -70,3 +70,32 @@ class PayFilter(django_filters.FilterSet):
     class Meta:
         model = Paypoint
         fields = ['user','patient','service']
+
+
+class LabTestFilter(django_filters.FilterSet):
+    collected = django_filters.DateFilter(
+        label="date collected",
+        field_name="collected",
+        lookup_expr='exact',
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        input_formats=['%d-%m-%Y', '%Y-%m-%d', '%m/%d/%Y']
+    )
+    patient_no = django_filters.NumberFilter(
+        label='pn',
+        field_name="patient__file_no",
+        lookup_expr='exact'
+    )
+    test = django_filters.CharFilter(
+        label='test',
+        field_name="test__name",
+        lookup_expr='iexact'
+    )
+    code = django_filters.CharFilter(
+        label='code',
+        field_name="code",
+        lookup_expr='iexact'
+    )
+
+    class Meta:
+        model = Testinfo
+        fields = ['collected', 'code', 'patient_no', 'test']

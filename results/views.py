@@ -29,6 +29,8 @@ from reportlab.lib.colors import black, grey
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db import transaction
+from django.core.exceptions import ImproperlyConfigured
 
 
 def log_anonymous_required(view_function, redirect_to=None):
@@ -230,80 +232,40 @@ class PatientDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
         patient=self.get_object()
+        context['blood_group'] = patient.test_info.filter(bg_test__isnull=False).order_by('-created').select_related('bg_test')
+        context['genotype'] = patient.test_info.filter(gt_test__isnull=False).order_by('-created').select_related('gt_test')
+        context['ue'] = patient.test_info.filter(ue_test__isnull=False).order_by('-created').select_related('ue_test')
+
         context['hematology_results']=patient.hematology_result.all().order_by('-created')
         context['chempath_results']=patient.chemical_pathology_results.all().order_by('-created')
         context['micro_results']=patient.microbiology_results.all().order_by('-created')
         context['serology_results']=patient.serology_results.all().order_by('-created')
         context['general_results']=patient.general_results.all().order_by('-created')
-        context['urea_electrolyte']=patient.urea_electrolyte.all().order_by('-created')
         return context
     
     
 class HematologyRequestListView(ListView):
-    model=HematologyResult
+    model=Testinfo
     template_name='hema/hematology_request.html'
     context_object_name='hematology_request'
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.filter(cleared=False).order_by('-updated')
+        queryset = queryset.filter(payment__unit__iexact="Hematology",cleared=False).order_by('-updated')
+
+        # queryset = queryset.filter(cleared=False,payment__unit="Hematology").order_by('-updated')
         return queryset
 
     
 class HematologyListView(ListView):
-    model=HematologyResult
+    model=Testinfo
     template_name='hema/hematology_list.html'
     context_object_name='hematology_results'
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.filter(result__isnull=False,payment__status=True).order_by('-updated')
+        queryset = queryset.filter(payment__status=True,payment__unit__iexact='Hematology',cleared=True).order_by('-updated')
         return queryset
     
-
-class HematologyTestCreateView(LoginRequiredMixin, CreateView):
-    model = HematologyResult
-    form_class = HematologyTestForm
-    template_name = 'hema/hematology_result.html'
-        
-    def form_valid(self, form):
-        patient = Patient.objects.get(file_no=self.kwargs['file_no'])
-        form.instance.patient = patient
-        form.instance.collected_by = self.request.user
-
-        hematology_result = form.save(commit=False)
-        payment = Paypoint.objects.create(
-            patient=patient,
-            status=False,
-            service=hematology_result.test, 
-            price=hematology_result.test.price,
-        )
-        hematology_result.payment = payment 
-        hematology_result.save()
-        messages.success(self.request, 'Hematology test created successfully')
-        return super().form_valid(form)
-    
-    def get_success_url(self):
-        return self.object.patient.get_absolute_url()
-
-
-class HematologyResultCreateView(LoginRequiredMixin, UpdateView):
-    model = HematologyResult
-    form_class = HematologyResultForm
-    template_name = 'hema/hematology_result.html'
-    success_url=reverse_lazy('hematology_request')
-
-    def get_object(self, queryset=None):
-        patient = get_object_or_404(Patient, file_no=self.kwargs['file_no'])
-        return get_object_or_404(HematologyResult, patient=patient, pk=self.kwargs['pk'])
-
-    def form_valid(self, form):
-        form.instance.updated_by = self.request.user
-        hematology_result = form.save(commit=False)
-        hematology_result.result = form.cleaned_data['result']
-        hematology_result.save()
-        messages.success(self.request, 'Hematology result updated successfully')
-        return super().form_valid(form)
-
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 class HemaReportView(ListView):
@@ -323,35 +285,6 @@ class HemaReportView(ListView):
         context = super().get_context_data(**kwargs)
         context['hema_filter'] = HemaFilter(self.request.GET, queryset=self.get_queryset())
         return context
-
-
-# @login_required
-# def hema_report_pdf(request):
-#     ndate = datetime.datetime.now()
-#     filename = ndate.strftime('on_%d/%m/%Y_at_%I.%M%p.pdf')
-#     f = HemaFilter(request.GET, queryset=HematologyResult.objects.all()).qs
-
-#     result = ""
-#     for key, value in request.GET.items():
-#         if value:
-#             result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {request.user.username.upper()}"
-
-#     context = {'f': f, 'pagesize': 'A4',
-#                'orientation': 'landscape', 'result': result}
-#     response = HttpResponse(content_type='application/pdf',
-#                             headers={'Content-Disposition': f'filename="Report__{filename}"'})
-
-#     buffer = BytesIO()
-
-#     pisa_status = pisa.CreatePDF(get_template('report_pdf.html').render(
-#         context), dest=buffer, encoding='utf-8', link_callback=fetch_resources)
-
-#     if not pisa_status.err:
-#         pdf = buffer.getvalue()
-#         buffer.close()
-#         response.write(pdf)
-#         return response
-#     return HttpResponse('Error generating PDF', status=500)
 
 @login_required
 def hema_report_pdf(request):
@@ -393,72 +326,25 @@ def hema_report_pdf(request):
     return HttpResponse('Error generating PDF', status=500)
 
 class ChempathRequestListView(ListView):
-    model=ChemicalPathologyResult
+    model=Testinfo
     template_name='chempath/chempath_request.html'
     context_object_name='chempath_request'
 
     def get_queryset(self):
         queryset=super().get_queryset()
-        queryset=queryset.filter(cleared=False)
+        queryset = queryset.filter(payment__unit__iexact="Chemical pathology",cleared=False).order_by('-updated')
         return queryset
     
 
 class ChempathListView(ListView):
-    model=ChemicalPathologyResult
+    model=Testinfo
     template_name='chempath/chempath_list.html'
     context_object_name='chempath_results'
 
     def get_queryset(self):
         queryset=super().get_queryset()
-        queryset=queryset.filter(result__isnull=False,payment__status=True).order_by('-updated')
+        queryset=queryset.filter(payment__status=True,payment__unit__iexact='Chemical pathology',cleared=True).order_by('-updated')
         return queryset
-
-
-class ChempathTestCreateView(LoginRequiredMixin, CreateView):
-    model=ChemicalPathologyResult
-    form_class = ChempathTestForm
-    template_name = 'chempath/chempath_result.html'
-
-    def form_valid(self, form):
-        patient = Patient.objects.get(file_no=self.kwargs['file_no'])
-        form.instance.patient = patient
-        form.instance.collected_by = self.request.user
-        
-        chempath_result = form.save(commit=False)
-        payment = Paypoint.objects.create(
-            patient=patient,
-            status=False,
-            service=chempath_result.test, 
-            price=chempath_result.test.price,
-        )
-        chempath_result.payment = payment 
-        chempath_result.save()
-
-        messages.success(self.request, 'Chemical pathology result created successfully')
-        return super().form_valid(form)
-    
-    def get_success_url(self):
-        return self.object.patient.get_absolute_url()
-
-
-class ChempathResultCreateView(LoginRequiredMixin, UpdateView):
-    model = ChemicalPathologyResult
-    form_class = ChempathResultForm
-    template_name = 'chempath/chempath_result.html'
-    success_url=reverse_lazy('chempath_request')
-
-
-    def get_object(self, queryset=None):
-        patient = get_object_or_404(Patient, file_no=self.kwargs['file_no'])
-        return get_object_or_404(ChemicalPathologyResult, patient=patient, pk=self.kwargs['pk'])
-
-    def form_valid(self, form):
-        form.instance.updated_by = self.request.user
-        chempath_result = form.save(commit=False)
-        chempath_result.result = form.cleaned_data['result']
-        chempath_result.save()
-        messages.success(self.request, 'Chemical Pathology result updated successfully')
-        return super().form_valid(form)
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -522,73 +408,25 @@ def chempath_report_pdf(request):
 
 
 class MicroRequestListView(ListView):
-    model=MicrobiologyResult
+    model=Testinfo
     template_name='micro/micro_request.html'
     context_object_name='micro_request'
 
     def get_queryset(self):
         queryset=super().get_queryset()
-        queryset=queryset.filter(cleared=False)
+        queryset = queryset.filter(payment__unit__iexact="Microbiology",cleared=False).order_by('-updated')
         return queryset
 
 
 class MicroListView(ListView):
-    model=MicrobiologyResult
+    model=Testinfo
     template_name='micro/micro_list.html'
     context_object_name='micro_results'
 
     def get_queryset(self):
         queryset=super().get_queryset()
-        queryset=queryset.filter(result__isnull=False,payment__status=True).order_by('-updated')
+        queryset=queryset.filter(payment__status=True,payment__unit__iexact='Microbiology',cleared=True).order_by('-updated')
         return queryset
-
-
-class MicroTestCreateView(LoginRequiredMixin, CreateView):
-    model=MicrobiologyResult
-    form_class = MicroTestForm
-    template_name = 'micro/micro_result.html'
-
-    def form_valid(self, form):
-        patient = Patient.objects.get(file_no=self.kwargs['file_no'])
-        form.instance.patient = patient
-        form.instance.collected_by = self.request.user
-
-        micro_result = form.save(commit=False)
-        payment = Paypoint.objects.create(
-            patient=patient,
-            status=False,
-            service=micro_result.test, 
-            price=micro_result.test.price,
-        )
-        micro_result.payment = payment 
-        micro_result.save()
-
-        messages.success(self.request, 'Microbiology result created successfully')
-        return super().form_valid(form)
-    
-    def get_success_url(self):
-        return self.object.patient.get_absolute_url()
-
-
-class MicroResultCreateView(LoginRequiredMixin, UpdateView):
-    model=MicrobiologyResult
-    form_class = MicroResultForm
-    template_name = 'micro/micro_result.html'
-    success_url=reverse_lazy('micro_request')
-
-
-    def get_object(self, queryset=None):
-        patient = get_object_or_404(Patient, file_no=self.kwargs['file_no'])
-        return get_object_or_404(MicrobiologyResult, patient=patient, pk=self.kwargs['pk'])
-
-    def form_valid(self, form):
-        form.instance.updated_by = self.request.user
-        micro_result = form.save(commit=False)
-        micro_result.result = form.cleaned_data['result']
-        micro_result.save()
-        messages.success(self.request, 'Microbiology result updated successfully')
-        return super().form_valid(form)
-
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -651,72 +489,26 @@ def micro_report_pdf(request):
     return HttpResponse('Error generating PDF', status=500)
 
 class SerologyRequestListView(ListView):
-    model = SerologyResult
+    model = Testinfo
     template_name = 'serology/serology_request.html'
     context_object_name = 'serology_request'
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.filter(cleared=False)
+        queryset = queryset.filter(payment__unit__iexact="Serology",cleared=False).order_by('-updated')
         return queryset
 
 
 class SerologyListView(ListView):
-    model=SerologyResult
+    model=Testinfo
     template_name='serology/serology_list.html'
     context_object_name='serology_results'
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.filter(result__isnull=False,payment__status=True).order_by('-updated')
+        queryset=queryset.filter(payment__status=True,payment__unit__iexact='Serology',cleared=True).order_by('-updated')
         return queryset
     
-
-class SerologyTestCreateView(LoginRequiredMixin, CreateView):
-    model = SerologyResult
-    form_class = SerologyTestForm
-    template_name = 'serology/serology_result.html'
-
-    def form_valid(self, form):
-        patient = Patient.objects.get(file_no=self.kwargs['file_no'])
-        form.instance.patient = patient
-        form.instance.collected_by = self.request.user
-
-        serology_result = form.save(commit=False)
-        payment = Paypoint.objects.create(
-            patient=patient,
-            status=False,
-            service=serology_result.test, 
-            price=serology_result.test.price,
-        )
-        serology_result.payment = payment 
-        serology_result.save()
-
-        messages.success(self.request, 'Serology result created successfully')
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return self.object.patient.get_absolute_url()
-    
-    
-class SerologyResultCreateView(LoginRequiredMixin, UpdateView):
-    model = SerologyResult
-    form_class = SerologyResultForm
-    template_name = 'serology/serology_result.html'
-    success_url=reverse_lazy('serology_request')
-
-
-    def get_object(self, queryset=None):
-        patient = get_object_or_404(Patient, file_no=self.kwargs['file_no'])
-        return get_object_or_404(SerologyResult, patient=patient, pk=self.kwargs['pk'])
-
-    def form_valid(self, form):
-        form.instance.updated_by = self.request.user
-        serology_result = form.save(commit=False)
-        serology_result.result = form.cleaned_data['result']
-        serology_result.save()
-        messages.success(self.request, 'Serology result updated successfully')
-        return super().form_valid(form)
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -949,28 +741,6 @@ class PayUpdateView(UpdateView):
         return context
 
     
-# class PayListView(ListView):
-#     model=Paypoint
-#     template_name='revenue/transaction.html'
-#     context_object_name='pays'
-#     paginate_by = 10
-
-#     def get_queryset(self):
-#         updated = super().get_queryset().filter(status=True).order_by('-updated')
-#         pay_filter = PayFilter(self.request.GET, queryset=updated)
-#         return pay_filter.qs
-    
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         pay_total = self.get_queryset().count()
-#         paid_transactions = self.get_queryset().filter(status=True)
-#         total_worth = paid_transactions.aggregate(total_worth=Sum('price'))['total_worth'] or 0
-
-#         context['payFilter'] = PayFilter(self.request.GET, queryset=self.get_queryset())
-#         context['pay_total'] = pay_total
-#         context['total_worth'] = total_worth
-#         return context    
-
 class PayListView(ListView):
     model = Paypoint
     template_name = 'revenue/transaction.html'
@@ -1152,7 +922,7 @@ class HemaPayListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        hematology_pays = Paypoint.objects.filter(hematology_result_payment__isnull=False).order_by('-updated')
+        hematology_pays = Paypoint.objects.filter(test_payments__isnull=False,unit='Hematology').order_by('-updated')
 
         hema_pay_total = hematology_pays.count()
         hema_paid_transactions = hematology_pays.filter(status=True)
@@ -1164,7 +934,7 @@ class HemaPayListView(ListView):
         context['hema_pay_total'] = hema_pay_total
 
         context['hema_total_worth'] = hema_total_worth
-        return context  
+        return context
 
 
 class MicroPayListView(ListView):
@@ -1210,7 +980,7 @@ class ChempathPayListView(ListView):
         context['chempath_pays'] = chempath_pays
         context['chem_pay_total'] = chem_pay_total
         context['chem_total_worth'] = chem_total_worth
-        return context  
+        return context
 
 
 class SerologyPayListView(ListView):
@@ -1258,49 +1028,187 @@ class GeneralPayListView(ListView):
         context['general_total_worth'] = general_total_worth
         return context  
 
+    
+class BaseTestView(LoginRequiredMixin):
+    template_name = 'shared_test_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
 
 
-class UreaAndElectrolyteCreateView(LoginRequiredMixin, CreateView):
-    model = UreaAndElectrolyte
-    form_class = UreaAndElectrolyteTestForm
-    template_name = 'chempath/urea_electrolyte_form.html'
+
+
+    
+
+# class UreaAndElectrolyteUpdateView(BaseLabResultUpdateView):
+#     model = UreaAndElectrolyte
+#     form_class = UreaAndElectrolyteForm
+
+# class LiverFunctionCreateView(BaseTestCreateView):
+#     model = LiverFunction
+#     form_class = LiverFunctionForm
+
+# class LiverFunctionUpdateView(BaseLabResultUpdateView):
+#     model = LiverFunction
+#     form_class = LiverFunctionForm
+
+
+class BaseLabResultUpdateView(BaseTestView, UpdateView):
+
+    def get_object(self, queryset=None):
+        # Fetch the patient using the file_no
+        patient = get_object_or_404(Patient, file_no=self.kwargs['file_no'])
+        # Return the specific test object related to this patient
+        return get_object_or_404(self.model, test_info__patient=patient, pk=self.kwargs['pk'])
 
     def form_valid(self, form):
-        patient = Patient.objects.get(file_no=self.kwargs['file_no'])
-        form.instance.patient = patient
-        form.instance.collected_by = self.request.user
+        # Mark the test as cleared
+        form.instance.test_info.cleared = True
+        form.instance.test_info.save()
 
-        result = form.save(commit=False)
-        payment = Paypoint.objects.create(
-            patient=patient,
-            status=False,
-            unit=result.lab,
-            service=result.test, 
-            price=result.test.price,
-        )
-        result.payment = payment 
-        result.save()
+        # Add a success message
+        messages.success(self.request, f'{form.instance.test.name} result updated successfully')
 
-        messages.success(self.request, 'success')
-        return super().form_valid(form)
+        # Redirect to the patient's profile page after saving
+        return redirect('patient_details', file_no=self.kwargs['file_no'])
+
+
+class BloodGroupCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name='Blood Group')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            # Create BloodGroup instance
+            blood_group = BloodGroup.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Blood Group test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Blood Group test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class UECreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Urea & Electrolyte')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            # Create BloodGroup instance
+            ue = UreaAndElectrolyte.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'UREA & ELCTROLYTE test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating UREA & ELCTROLYTE test: {str(e)}')
     
-    def get_success_url(self):
-        return self.object.patient.get_absolute_url()
+    
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
 
-class UreaAndElectrolyteUpdateView(LoginRequiredMixin, UpdateView):
-    model = UreaAndElectrolyte
-    form_class = UreaAndElectrolyteResultForm
-    template_name = 'chempath/urea_electrolyte_form.html'
-    success_url=reverse_lazy('serology_request')
+class GenotypeCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name='Genotype')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            # Create BloodGroup instance
+            geno = Genotype.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Genotype test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Genotype test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+
+class BaseLabResultUpdateView(UpdateView):
+    template_name = 'shared_test_form.html'  # Adjust this to your template path
 
     def get_object(self, queryset=None):
         patient = get_object_or_404(Patient, file_no=self.kwargs['file_no'])
-        return get_object_or_404(UreaAndElectrolyte, patient=patient, pk=self.kwargs['pk'])
+        test_info = get_object_or_404(Testinfo, patient=patient, pk=self.kwargs['test_info_pk'])
+        return get_object_or_404(self.model, test_info=test_info)
 
     def form_valid(self, form):
-        form.instance.updated_by = self.request.user
-        result = form.save(commit=False)
-        result.result = form.cleaned_data['result']
-        result.save()
-        messages.success(self.request, 'result added successfully')
-        return super().form_valid(form)
+        instance = form.save(commit=False)
+        instance.test_info.cleared = True
+        instance.test_info.save()
+        instance.save()
+        messages.success(self.request, f'{self.model.__name__} result updated successfully')
+        return redirect('patient_details', file_no=self.kwargs['file_no'])
+
+class UreaAndElectrolyteUpdateView(BaseLabResultUpdateView):
+    model = UreaAndElectrolyte
+    form_class = UreaAndElectrolyteForm
+
+
+class BloodGroupUpdateView(BaseLabResultUpdateView):
+    model = BloodGroup
+    form_class = BloodGroupForm
+
+
+class GenotypeUpdateView(BaseLabResultUpdateView):
+    model = Genotype
+    form_class = GenotypeForm

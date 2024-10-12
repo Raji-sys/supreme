@@ -1,0 +1,43 @@
+<!-- templates/lab/lab_request.html -->
+{% extends 'base.html' %}
+{% block title %}{{ lab_type }} Requests{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow rounded-lg p-6">
+    <h2 class="text-2xl font-bold mb-4">{{ lab_type }} Pending Requests</h2>
+    
+    <div class="overflow-x-auto">
+        <table class="min-w-full table-auto">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="px-4 py-2">Code</th>
+                    <th class="px-4 py-2">Patient</th>
+                    <th class="px-4 py-2">Test</th>
+                    <th class="px-4 py-2">Collected</th>
+                    <th class="px-4 py-2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in lab_requests %}
+                <tr class="{% cycle 'bg-gray-50' 'bg-white' %}">
+                    <td class="border px-4 py-2">{{ request.code }}</td>
+                    <td class="border px-4 py-2">{{ request.patient.full_name }} ({{ request.patient.file_no }})</td>
+                    <td class="border px-4 py-2">{{ request.test.name }}</td>
+                    <td class="border px-4 py-2">{{ request.collected|date:"d/m/Y" }}</td>
+                    <td class="border px-4 py-2">
+                        <a href="{% url 'update_result' file_no=request.patient.file_no pk=request.pk %}" 
+                           class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                            Enter Result
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="border px-4 py-2 text-center">No pending requests</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

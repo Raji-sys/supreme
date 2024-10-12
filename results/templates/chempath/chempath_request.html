@@ -28,9 +28,6 @@
         <th class="p-3 font-medium text-gray-500 uppercase tracking-wider">
           Requested By
         </th>
-        <th class="p-3 font-medium text-gray-500 uppercase tracking-wider">
-          INPUT RESULT
-        </th>
         </tr>
     </thead>
     <tbody class="bg-white divide-y divide-gray-200">
@@ -40,13 +37,13 @@
           {{forloop.counter}}
       </td>
       <td class="p-3 whitespace-nowrap">
-        {{ c.result_code|default_if_none:'' }}
+        {{ c.code|default_if_none:'' }}
       </td>
         <td class="p-3 whitespace-nowrap text-rose-500">
-          {{ c.test|default_if_none:'' }}
+          {{ c.payment.service|default_if_none:'' }}
         </td>
         <td class="p-3 whitespace-nowrap">
-          &#x20A6;{{ c.test.price|default_if_none:'' }}
+          &#x20A6;{{ c.payment.price|default_if_none:'' }}
         </td>
         {% if c.payment.status == False %}
             <td class="p-3 whitespace-nowrap text-red-700">
@@ -65,13 +62,6 @@
         </td>
         <td class="p-3 whitespace-nowrap">
           {{ c.collected_by }}
-        </td>
-        <td>
-          {% if c.payment.status == True %}
-          <a href="{% url 'chempath_result' c.patient.file_no c.id %}" class="text-green-500 hover:text-blue-700"><i class="fa-solid fa-plus-square fa-2xl"></i></a>
-          {%else%}
-          <i class="fa-solid fa-xmark-square text-red-700 fa-2xl"></i>
-          {%endif%}
         </td>
       </tr>
       {% endfor %}

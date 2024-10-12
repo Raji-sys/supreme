@@ -1,0 +1,41 @@
+<!-- templates/lab/lab_list.html -->
+{% extends 'base.html' %}
+
+{% block title %}{{ lab_type }} Results{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow rounded-lg p-6">
+    <h2 class="text-2xl font-bold mb-4">{{ lab_type }} Completed Results</h2>
+    
+    <div class="overflow-x-auto">
+        <table class="min-w-full table-auto">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="px-4 py-2">Code</th>
+                    <th class="px-4 py-2">Patient</th>
+                    <th class="px-4 py-2">Test</th>
+                    <th class="px-4 py-2">Updated</th>
+                    <th class="px-4 py-2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in lab_results %}
+                <tr class="{% cycle 'bg-gray-50' 'bg-white' %}">
+                    <td class="border px-4 py-2">{{ result.code }}</td>
+                    <td class="border px-4 py-2">{{ result.patient.full_name }} ({{ result.patient.file_no }})</td>
+                    <td class="border px-4 py-2">{{ result.test.name }}</td>
+                    <td class="border px-4 py-2">{{ result.updated|date:"d/m/Y H:i" }}</td>
+                    <td class="border px-4 py-2">
+                        <a href="#" class="text-blue-500 hover:text-blue-700">View Result</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="border px-4 py-2 text-center">No completed results</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

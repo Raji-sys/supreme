@@ -71,11 +71,23 @@ urlpatterns = [
     path('general-result/create/<str:file_no>/<int:pk>/',GeneralResultCreateView.as_view(), name='general_result'),
     path('general-report/', GeneralReportView.as_view(), name='general_report'),
     path('general-pdf/', views.general_report_pdf, name='general_report_pdf'),
-    
 
-    # Urea & Electrolyte tests
-    path('test/urea-electrolyte-test/create/<str:file_no>/', views.UreaAndElectrolyteCreateView.as_view(), name='create_ue_test'),
-    path('test/urea-electrolyte-result/<str:file_no>/<int:pk>/', views.UreaAndElectrolyteUpdateView.as_view(), name='edit_ue_test'),
+    path('blood-group/create/<str:file_no>/', BloodGroupCreateView.as_view(), name='create_blood_group'),
+    path('blood-group/update/<str:file_no>/<int:test_info_pk>/', BloodGroupUpdateView.as_view(), name='update_blood_group'),
+
+    path('urea-electrolyte/create/<str:file_no>/', views.UECreateView.as_view(), name='create_urea_electrolyte'),
+    # path('urea-electrolyte/update/<str:file_no>/<int:pk>/', views.UreaAndElectrolyteUpdateView.as_view(), name='update_urea_electrolyte'),
+    path('urea-electrolyte/update/<str:file_no>/<int:test_info_pk>/', UreaAndElectrolyteUpdateView.as_view(), name='update_urea_electrolyte'),
+
+
+    path('genotype/create/<str:file_no>/', GenotypeCreateView.as_view(), name='create_genotype'),
+    path('genotype/update/<str:file_no>/<int:test_info_pk>/', GenotypeUpdateView.as_view(), name='update_genotype'),
+
+    # path('liver-function/create/<str:file_no>/', views.LiverFunctionCreateView.as_view(), name='create_liver_function'),
+    # path('liver-function/update/<str:file_no>/<int:pk>/', views.LiverFunctionUpdateView.as_view(), name='update_liver_function'),
+    
+    # ... add similar paths for BloodGroup and Genotype
+    
 
     path('logout/', CustomLogoutView.as_view(), name='logout'),
 

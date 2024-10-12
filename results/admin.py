@@ -16,7 +16,7 @@ class ProfileAdmin(admin.ModelAdmin):
 
 @admin.register(Patient)
 class PatientAdmin(admin.ModelAdmin):
-    list_display = ('surname', 'other_names', 'gender', 'dob', 'phone',)
+    list_display = ('surname', 'other_names', 'gender', 'age', 'phone',)
     search_fields = ('surname',)
     list_filter = ('gender',)
 
@@ -84,4 +84,21 @@ class PaypointAdmin(admin.ModelAdmin):
 
 @admin.register(GenericTest)
 class GenericTestAdmin(admin.ModelAdmin):
-    list_display = ('lab','name','price')
+    list_display = ('lab','name', 'price','reference_range')
+
+
+@admin.register(Testinfo)
+class TestinfoAdmin(admin.ModelAdmin):
+    list_display = ('patient', 'payment_status', 'code', 'test_lab', 'test_price')
+
+    @admin.display(ordering='test__lab__name', description='Lab')
+    def test_lab(self, obj):
+        return obj.test.lab.name if obj.test.lab else ''
+
+    @admin.display(ordering='test__price', description='Cost')
+    def test_price(self, obj):
+        return obj.test.price if obj.test.price else ''
+
+    @admin.display(ordering='payment__status', description='Payment')
+    def payment_status(self, obj):
+        return obj.payment.status if obj.payment.status else ''
