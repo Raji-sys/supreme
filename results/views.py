@@ -922,7 +922,7 @@ class HemaPayListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        hematology_pays = Paypoint.objects.filter(test_payments__isnull=False,unit='Hematology').order_by('-updated')
+        hematology_pays = Paypoint.objects.filter(test_payments__isnull=False,unit__iexact='Hematology').order_by('-updated')
 
         hema_pay_total = hematology_pays.count()
         hema_paid_transactions = hematology_pays.filter(status=True)
@@ -948,7 +948,7 @@ class MicroPayListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        micro_pays = Paypoint.objects.filter(micro_result_payment__isnull=False).order_by('-updated')
+        micro_pays = Paypoint.objects.filter(micro_result_payment__isnull=False,unit__iexact='Microbiology').order_by('-updated')
 
         micro_pay_total = micro_pays.count()
         micro_paid_transactions = micro_pays.filter(status=True)
@@ -971,7 +971,7 @@ class ChempathPayListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        chempath_pays = Paypoint.objects.filter(chempath_result_payment__isnull=False).order_by('-updated')
+        chempath_pays = Paypoint.objects.filter(chempath_result_payment__isnull=False,unit__iexact='Chemical Pathology').order_by('-updated')
 
         chem_pay_total = chempath_pays.count()
         chem_paid_transactions = chempath_pays.filter(status=True)
@@ -994,7 +994,7 @@ class SerologyPayListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        serology_pays = Paypoint.objects.filter(serology_result_payment__isnull=False).order_by('-updated')
+        serology_pays = Paypoint.objects.filter(serology_result_payment__isnull=False,unit__iexact='Serology').order_by('-updated')
 
         serology_pay_total = serology_pays.count()
         serology_paid_transactions = serology_pays.filter(status=True)
@@ -1036,22 +1036,6 @@ class BaseTestView(LoginRequiredMixin):
         context = super().get_context_data(**kwargs)
         return context
 
-
-
-
-    
-
-# class UreaAndElectrolyteUpdateView(BaseLabResultUpdateView):
-#     model = UreaAndElectrolyte
-#     form_class = UreaAndElectrolyteForm
-
-# class LiverFunctionCreateView(BaseTestCreateView):
-#     model = LiverFunction
-#     form_class = LiverFunctionForm
-
-# class LiverFunctionUpdateView(BaseLabResultUpdateView):
-#     model = LiverFunction
-#     form_class = LiverFunctionForm
 
 
 class BaseLabResultUpdateView(BaseTestView, UpdateView):
@@ -1182,7 +1166,6 @@ class GenotypeCreateView(View):
         return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
 
 
-
 class BaseLabResultUpdateView(UpdateView):
     template_name = 'shared_test_form.html'  # Adjust this to your template path
 
@@ -1199,6 +1182,10 @@ class BaseLabResultUpdateView(UpdateView):
         messages.success(self.request, f'{self.model.__name__} result updated successfully')
         return redirect('patient_details', file_no=self.kwargs['file_no'])
 
+# class LiverFunctionCreateView(BaseTestCreateView):
+#     model = LiverFunction
+#     form_class = LiverFunctionForm
+
 class UreaAndElectrolyteUpdateView(BaseLabResultUpdateView):
     model = UreaAndElectrolyte
     form_class = UreaAndElectrolyteForm
@@ -1212,3 +1199,8 @@ class BloodGroupUpdateView(BaseLabResultUpdateView):
 class GenotypeUpdateView(BaseLabResultUpdateView):
     model = Genotype
     form_class = GenotypeForm
+
+
+# class LiverFunctionUpdateView(BaseLabResultUpdateView):
+#     model = LiverFunction
+#     form_class = LiverFunctionForm
