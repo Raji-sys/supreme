@@ -21,7 +21,6 @@ class PatientAdmin(admin.ModelAdmin):
     list_filter = ('gender',)
 
 
-
 # @admin.register(GeneralTestResult)
 # class GeneralAdmin(admin.ModelAdmin):
 #     list_display = ('name', 'price')

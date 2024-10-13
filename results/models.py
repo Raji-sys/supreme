@@ -202,7 +202,81 @@ class Testinfo(models.Model):
         return f"{self.code} - {self.patient}"
 
 
+# HEMATOLOGY TEST 
+class FBC(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='fbc_test', null=True, blank=True)
+    hb = models.DecimalField(max_digits=5, decimal_places=2)  # Hemoglobin
+    pcv = models.DecimalField(max_digits=5, decimal_places=2)  # Packed Cell Volume
+    mchc = models.DecimalField(max_digits=5, decimal_places=2)  # Mean Corpuscular Hemoglobin Concentration
+    rbc = models.DecimalField(max_digits=5, decimal_places=2)  # Red Blood Cells
+    mch = models.DecimalField(max_digits=5, decimal_places=2)  # Mean Corpuscular Hemoglobin
+    mcv = models.DecimalField(max_digits=5, decimal_places=2)  # Mean Corpuscular Volume
+    retic = models.DecimalField(max_digits=5, decimal_places=2)  # Reticulocyte Count
+    retic_index = models.DecimalField(max_digits=5, decimal_places=2)  # Reticulocyte Index
+    platelets = models.DecimalField(max_digits=6, decimal_places=2)  # Platelets
+    wbc = models.DecimalField(max_digits=6, decimal_places=2)  # White Blood Cells
+    esr = models.DecimalField(max_digits=6, decimal_places=2)  # Erythrocyte Sedimentation Rate
 
+    sickle_cells = models.BooleanField(default=False)  # Sickle Cells
+    hypochromia = models.BooleanField(default=False)  # Hypochromia
+    polychromasia = models.BooleanField(default=False)  # Polychromasia
+    nucleated_rbc = models.BooleanField(default=False)  # Nucleated RBC
+    anisocytosis = models.BooleanField(default=False)  # Anisocytosis
+    macrocytosis = models.BooleanField(default=False)  # Macrocytosis
+    microcytosis = models.BooleanField(default=False)  # Microcytosis
+    poikilocytosis = models.BooleanField(default=False)  # Poikilocytosis
+    target_cells = models.BooleanField(default=False)  # Target Cells
+
+    neutrophils = models.DecimalField(max_digits=5, decimal_places=2)  # Neutrophils %
+    eosinophils = models.DecimalField(max_digits=5, decimal_places=2)  # Eosinophils %
+    basophils = models.DecimalField(max_digits=5, decimal_places=2)  # Basophils %
+    trans_lymph = models.DecimalField(max_digits=5, decimal_places=2)  # Transitional Lymphocytes %
+    lymphocytes = models.DecimalField(max_digits=5, decimal_places=2)  # Lymphocytes %
+    monocytes = models.DecimalField(max_digits=5, decimal_places=2)  # Monocytes %
+
+
+class BloodGroup(models.Model):
+    BLOOD_GROUP_CHOICES = [
+        ('A+', 'A+'),
+        ('A-', 'A-'),
+        ('B+', 'B+'),
+        ('B-', 'B-'),
+        ('AB+', 'AB+'),
+        ('AB-', 'AB-'),
+        ('O+', 'O+'),
+        ('O-', 'O-'),
+    ]
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='bg_test', null=True, blank=True)
+    result = models.CharField(null=True, max_length=3, choices=BLOOD_GROUP_CHOICES)
+
+
+class Genotype(models.Model):
+    GENOTYPE_CHOICES = [
+        ('AA', 'AA'),
+        ('AS', 'AS'),
+        ('SS', 'SS'),
+        ('AC', 'AC'),
+        ('SC', 'SC'),
+    ]
+
+    test=models.ForeignKey(GenericTest,on_delete=models.CASCADE,null=True, blank=True)
+    test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='gt_test',null=True, blank=True)
+    result = models.CharField(null=True,choices=GENOTYPE_CHOICES,max_length=2)
+
+
+class RhesusFactorTest(models.Model):
+    RHESUS_CHOICES = [
+        ('Positive', 'Positive'),
+        ('Negative', 'Negative'),
+    ]    
+    test=models.ForeignKey(GenericTest,on_delete=models.CASCADE,null=True, blank=True)
+    test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='rh_test',null=True, blank=True)
+    rhesus_d = models.CharField(max_length=8, choices=RHESUS_CHOICES, null=True)
+
+
+# CHEMICAL PATHOLOGY TESTs 
 class UreaAndElectrolyte(models.Model):
     test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
     test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='ue_test',null=True, blank=True)
@@ -246,12 +320,260 @@ class LipidProfile(models.Model):
     ldl_cholesterol = models.FloatField(null=True, blank=True)
 
 
-class BloodGroup(models.Model):
+class SerumProteins(models.Model):
     test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
-    test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='bg_test', null=True, blank=True)
-    result = models.CharField(max_length=10, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='sp_test',null=True, blank=True)
+    t_protein = models.DecimalField(max_digits=4, decimal_places=2, help_text="Total Protein (g/dL)", null=True)
+    albumin = models.DecimalField(max_digits=4, decimal_places=2, help_text="Albumin (g/dL)", null=True)
+    globulin = models.DecimalField(max_digits=4, decimal_places=2, help_text="Globulin (g/dL)", null=True)
+    a_g_ratio = models.DecimalField(max_digits=3, decimal_places=2, help_text="A/G Ratio", null=True)
 
-class Genotype(models.Model):
-    test=models.ForeignKey(GenericTest,on_delete=models.CASCADE,null=True, blank=True)
-    test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='gt_test',null=True, blank=True)
-    result = models.FloatField(null=True)
+
+class CerebroSpinalFluid(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='cp_test',null=True, blank=True)
+    csf_glucose = models.DecimalField(max_digits=5, decimal_places=2, help_text="CSF Glucose (mmol/L)", null=True)
+    csf_protein = models.DecimalField(max_digits=5, decimal_places=2, help_text="CSF Protein (mg/dL)", null=True)
+    csf_chloride = models.DecimalField(max_digits=5, decimal_places=2, help_text="CSF Chloride (mmol/L)", null=True)
+
+
+class BoneChemistry(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='bc_test',null=True, blank=True)
+    alkaline_phosphatase = models.DecimalField(max_digits=5, decimal_places=2, help_text="Alkaline Phosphatase (U/L)", null=True)
+    calcium = models.DecimalField(max_digits=4, decimal_places=2, help_text="Calcium (mmol/L)", null=True)
+    inorganic_phosphate = models.DecimalField(max_digits=4, decimal_places=2, help_text="Inorganic Phosphate (mmol/L)", null=True)
+
+
+class MiscellaneousChempathTests(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='misc_test',null=True, blank=True)
+    uric_acid = models.DecimalField(max_digits=5, decimal_places=2, help_text="Uric Acid (umol/L)", null=True)
+    serum_amylase = models.DecimalField(max_digits=5, decimal_places=2, help_text="Serum Amylase (U/L)", null=True)
+    acid_phosphatase_total = models.DecimalField(max_digits=4, decimal_places=2, help_text="Acid Phosphatase Total (U/L)", null=True)
+    acid_phosphatase_prostatic = models.DecimalField(max_digits=4, decimal_places=2, help_text="Acid Phosphatase Prostatic (U/L)", null=True)
+
+
+# MICROBIOLOGY TEST 
+class UrineMicroscopy(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='urine_test',null=True, blank=True)
+    pus_cells = models.CharField(max_length=50, blank=True, null=True)
+    rbc = models.CharField(max_length=50, blank=True, null=True)
+    epithelial_cells = models.CharField(max_length=50, blank=True, null=True)
+    casts = models.CharField(max_length=50, blank=True, null=True)
+    crystals = models.CharField(max_length=50, blank=True, null=True)
+    ova = models.CharField(max_length=50, blank=True, null=True)
+    culture_yield = models.ForeignKey('CultureYield', on_delete=models.CASCADE, null=True)
+    antibiotic_sensitivity = models.ForeignKey('AntibioticSensitivity', on_delete=models.CASCADE, null=True)
+
+
+class HVS(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='hvs_test',null=True, blank=True)
+    pus_cells = models.CharField(max_length=50, blank=True, null=True)
+    rbc = models.CharField(max_length=50, blank=True, null=True)
+    epithelial_cells = models.CharField(max_length=50, blank=True, null=True)
+    t_vaginalis = models.CharField(max_length=50, blank=True, null=True)
+    yeast_cells = models.CharField(max_length=50, blank=True, null=True)
+    culture_yield = models.ForeignKey('CultureYield', on_delete=models.CASCADE, null=True)
+    antibiotic_sensitivity = models.ForeignKey('AntibioticSensitivity', on_delete=models.CASCADE, null=True)
+
+
+class Stool(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='stool_test',null=True, blank=True)
+    consistency = models.CharField(max_length=50, blank=True, null=True)
+    color = models.CharField(max_length=50, blank=True, null=True)
+    mucus = models.CharField(max_length=50, blank=True, null=True)
+    blood = models.CharField(max_length=50, blank=True, null=True)
+    ova = models.CharField(max_length=50, blank=True, null=True)
+    cyst = models.CharField(max_length=50, blank=True, null=True)
+    culture_yield = models.ForeignKey('CultureYield', on_delete=models.CASCADE, null=True)
+    antibiotic_sensitivity = models.ForeignKey('AntibioticSensitivity', on_delete=models.CASCADE, null=True)
+
+
+class BloodCulture(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='blood_culture_test',null=True, blank=True)
+    culture_yield = models.ForeignKey('CultureYield', on_delete=models.CASCADE, null=True)
+    antibiotic_sensitivity = models.ForeignKey('AntibioticSensitivity', on_delete=models.CASCADE, null=True)
+
+
+class OccultBlood(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='occult_blood_test',null=True, blank=True)
+    result = models.CharField(max_length=3, choices=[('Pos', 'Positive'), ('Neg', 'Negative')])
+    culture_yield = models.ForeignKey('CultureYield', on_delete=models.CASCADE, null=True)
+    antibiotic_sensitivity = models.ForeignKey('AntibioticSensitivity', on_delete=models.CASCADE, null=True)
+
+
+class SputumMCS(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='sputum_mcs_test',null=True, blank=True)
+    culture_yield = models.ForeignKey('CultureYield', on_delete=models.CASCADE, null=True)
+    antibiotic_sensitivity = models.ForeignKey('AntibioticSensitivity', on_delete=models.CASCADE, null=True)
+
+
+class GramStain(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='gram_stain_test',null=True, blank=True)
+    # Sample Types
+    urine = models.BooleanField(default=False)
+    hvs = models.BooleanField("High Vaginal Swab", default=False)
+    swab = models.BooleanField(default=False)
+    pus = models.BooleanField(default=False)
+    aspirate = models.BooleanField(default=False)
+    sputum = models.BooleanField(default=False)
+
+    # Gram Stain Findings
+    gram_positive_cocci = models.BooleanField(default=False)
+    gram_negative_cocci = models.BooleanField(default=False)
+    gram_positive_rods = models.BooleanField(default=False)
+    gram_negative_rods = models.BooleanField(default=False)
+    gram_positive_clusters = models.BooleanField(default=False)
+    gram_negative_clusters = models.BooleanField(default=False)
+    gram_positive_chains = models.BooleanField(default=False)
+    gram_negative_chains = models.BooleanField(default=False)
+    other_findings = models.TextField(blank=True, null=True)
+
+    # Culture & Sensitivity
+    culture_yield = models.ForeignKey('CultureYield', on_delete=models.CASCADE, null=True)
+    antibiotic_sensitivity = models.ForeignKey('AntibioticSensitivity', on_delete=models.CASCADE, null=True)
+
+
+class ZNStain(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='zns_stain_test',null=True, blank=True)
+    first_sample = models.CharField(max_length=50, blank=True, null=True)
+    second_sample = models.CharField(max_length=50, blank=True, null=True)
+    third_sample = models.CharField(max_length=50, blank=True, null=True)
+    culture_yield = models.ForeignKey('CultureYield', on_delete=models.CASCADE, null=True)
+    antibiotic_sensitivity = models.ForeignKey('AntibioticSensitivity', on_delete=models.CASCADE, null=True)
+
+
+class SemenAnalysis(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='semen_analysis_test',null=True, blank=True)
+    time_produced = models.TimeField()
+    time_examined = models.TimeField()
+    color = models.CharField(max_length=50)
+    volume = models.DecimalField(max_digits=5, decimal_places=2, help_text="Volume (ml)")
+    viscosity = models.CharField(max_length=50)
+    consistency = models.CharField(max_length=50)
+    motility_active = models.DecimalField(max_digits=5, decimal_places=2, help_text="Active Motility (%)")
+    motility_moderate = models.DecimalField(max_digits=5, decimal_places=2, help_text="Moderate Motility (%)")
+    motility_sluggish = models.DecimalField(max_digits=5, decimal_places=2, help_text="Sluggish Motility (%)")
+    morphology_normal = models.DecimalField(max_digits=5, decimal_places=2, help_text="Normal Morphology (%)")
+    morphology_abnormal = models.DecimalField(max_digits=5, decimal_places=2, help_text="Abnormal Morphology (%)")
+    morphology_sluggish = models.DecimalField(max_digits=5, decimal_places=2, help_text="Sluggish Morphology (%)")
+    total_sperm_count = models.DecimalField(max_digits=5, decimal_places=2, help_text="Total Sperm Count (x10^6/ml)")
+
+
+class UrinalysisTest(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='urinalysis_test',null=True, blank=True)
+    color = models.CharField(max_length=50, blank=True, null=True)
+    appearance = models.CharField(max_length=50, blank=True, null=True)
+    specific_gravity = models.DecimalField(max_digits=5, decimal_places=3, blank=True, null=True)
+    ph = models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
+    protein = models.CharField(max_length=50, blank=True, null=True)
+    glucose = models.CharField(max_length=50, blank=True, null=True)
+    ketones = models.CharField(max_length=50, blank=True, null=True)
+    bilirubin = models.CharField(max_length=50, blank=True, null=True)
+    urobilinogen = models.CharField(max_length=50, blank=True, null=True)
+    nitrites = models.CharField(max_length=50, blank=True, null=True)
+    leukocyte_esterase = models.CharField(max_length=50, blank=True, null=True)
+    blood = models.CharField(max_length=50, blank=True, null=True)
+    culture_yield = models.ForeignKey('CultureYield', on_delete=models.CASCADE, null=True)
+    antibiotic_sensitivity = models.ForeignKey('AntibioticSensitivity', on_delete=models.CASCADE, null=True)
+
+
+class PregnancyTest(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='pregnancy_test',null=True, blank=True)
+    result = models.CharField(max_length=10, choices=[('Pos', 'Positive'), ('Neg', 'Negative')],null=True)
+    method = models.CharField(max_length=50, choices=[('Urine', 'Urine Test'), ('Blood', 'Blood Test')],null=True)
+
+
+class CultureYield(models.Model):
+    no_growth = models.BooleanField(default=False)
+    ecoli = models.BooleanField(default=False)
+    coliform = models.BooleanField(default=False)
+    staph_aureus = models.BooleanField(default=False)
+    pseudomonas = models.BooleanField(default=False)
+    streptococcus = models.BooleanField(default=False)
+    others = models.TextField(blank=True, null=True)
+
+
+class AntibioticSensitivity(models.Model):
+    antibiotic_name = models.CharField(max_length=50)
+    sensitivity_1 = models.BooleanField(default=False)
+    sensitivity_2 = models.BooleanField(default=False)
+    sensitivity_3 = models.BooleanField(default=False)
+    sensitivity_4 = models.BooleanField(default=False)
+    resistance = models.BooleanField(default=False)
+
+
+# SEROLOGY TEST 
+class WidalTest(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='widal_test',null=True, blank=True)
+    o_antigen_s_typhi_d = models.CharField(max_length=10, blank=True, null=True)
+    o_antigen_s_paratyphi_a = models.CharField(max_length=10, blank=True, null=True)
+    o_antigen_s_paratyphi_b = models.CharField(max_length=10, blank=True, null=True)
+    o_antigen_s_paratyphi_c = models.CharField(max_length=10, blank=True, null=True)
+    
+    h_antigen_s_typhi_d = models.CharField(max_length=10, blank=True, null=True)
+    h_antigen_s_paratyphi_a = models.CharField(max_length=10, blank=True, null=True)
+    h_antigen_s_paratyphi_b = models.CharField(max_length=10, blank=True, null=True)
+    h_antigen_s_paratyphi_c = models.CharField(max_length=10, blank=True, null=True)
+    diagnostic_titre = models.CharField(max_length=20, blank=True, null=True,default='> 1/80')
+
+
+class RheumatoidFactor(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='rhematoid_factor_test',null=True, blank=True)
+    result = models.CharField(max_length=10, blank=True, null=True)
+
+
+class HepatitisB(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='hpb_test',null=True, blank=True)
+    result = models.CharField(max_length=10, blank=True, null=True)
+
+
+class HepatitisC(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='hcv_test',null=True, blank=True)
+    result = models.CharField(max_length=10, blank=True, null=True)
+
+
+class VDRL(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='vdrl_test',null=True, blank=True)
+    result = models.CharField(max_length=10, blank=True, null=True)
+
+
+class Mantoux(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='mantoux_test',null=True, blank=True)
+    result = models.CharField(max_length=10, blank=True, null=True)
+
+
+class AsoTitre(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='aso_titre_test',null=True, blank=True)
+    result = models.CharField(max_length=10, blank=True, null=True)
+
+
+class CRP(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='crp_test',null=True, blank=True)
+    result = models.CharField(max_length=10, blank=True, null=True)
+
+
+class HIVScreening(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.ForeignKey(Testinfo, on_delete=models.CASCADE, related_name='hiv_test',null=True, blank=True)
+    result = models.CharField(max_length=10, blank=True, null=True)
