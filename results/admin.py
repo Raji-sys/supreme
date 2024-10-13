@@ -32,7 +32,9 @@ class PaypointAdmin(admin.ModelAdmin):
 
 @admin.register(GenericTest)
 class GenericTestAdmin(admin.ModelAdmin):
-    list_display = ('lab','name', 'price','reference_range')
+    list_display = ('lab','name', 'price')
+    search_fields = ('lab','name','price')
+    list_filter = ('lab','name','price')
 
 
 @admin.register(Testinfo)

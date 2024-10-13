@@ -107,7 +107,6 @@ class Paypoint(models.Model):
     created = models.DateField(auto_now=True)
 
 
-
 class GeneralTestResult(models.Model):
     name = models.CharField(max_length=100, null=True)
     payment=models.ForeignKey(Paypoint,null=True, on_delete=models.CASCADE,related_name='general_result_payment')
@@ -167,9 +166,9 @@ class GenericTest(models.Model):
     lab = models.CharField(choices=LABS, max_length=300,null=True, blank=True)
     name = models.CharField(max_length=100, unique=True,null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2,null=True, blank=True)
-    reference_range = models.CharField(max_length=200, null=True, blank=True)
     def __str__(self):        
         return f"{self.name} - {self.price}"
+
         
 class Testinfo(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='test_info',null=True, blank=True)
