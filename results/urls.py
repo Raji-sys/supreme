@@ -9,6 +9,7 @@ urlpatterns = [
     path('login/', CustomLoginView.as_view(), name='login'),
     path('dashboard/', DashboardView.as_view(), name='dashboard'),
     path('report/', ReportView.as_view(), name='report'),
+    path('print-pdf/', views.report_pdf, name='report_pdf'),
 
     path('create-profile/', UserProfileCreateView.as_view(), name='create_profile'),
     path('profiles/<int:pk>/update/', ProfileUpdateView.as_view(), name='profile-update'),
@@ -35,26 +36,19 @@ urlpatterns = [
     path('hematology/', HematologyView.as_view(), name='hematology'),
     path('hematology-list/', HematologyListView.as_view(), name='hematology_list'),
     path('hematology-request/', HematologyRequestListView.as_view(), name='hematology_request'),
-    path('hematology-report/', HemaReportView.as_view(), name='hema_report'),
-    path('hematology-pdf/', views.hema_report_pdf, name='report_pdf'),
+   
    
     path('chempath/', ChempathView.as_view(), name='chempath'),    
     path('chempath-list/',ChempathListView.as_view(),name='chempath_list'),
     path('chempath-request/',ChempathRequestListView.as_view(),name='chempath_request'),
-    path('chempath-report/', ChempathReportView.as_view(), name='chempath_report'),
-    path('chempath-pdf/', views.chempath_report_pdf, name='chempath_report_pdf'),
 
     path('micro/', MicrobiologyView.as_view(), name='micro'),    
     path('micro-list/',MicroListView.as_view(),name='micro_list'),
     path('micro-request/',MicroRequestListView.as_view(),name='micro_request'),
-    path('micro-report/', MicroReportView.as_view(), name='micro_report'),
-    path('micro-pdf/', views.micro_report_pdf, name='micro_report_pdf'),
     
     path('serology/', SerologyView.as_view(), name='serology'),    
     path('serology-list/',SerologyListView.as_view(),name='serology_list'),
     path('serology-request/',SerologyRequestListView.as_view(),name='serology_request'),
-    path('serology-report/', SerologyReportView.as_view(), name='serology_report'),
-    path('serology-pdf/', views.serology_report_pdf, name='serology_report_pdf'),
     
     path('general/', GeneralView.as_view(), name='general'),    
     path('general-list/',GeneralListView.as_view(),name='general_list'),

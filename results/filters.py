@@ -26,7 +26,7 @@ class PayFilter(django_filters.FilterSet):
         fields = ['user','patient','service']
 
 
-class LabTestFilter(django_filters.FilterSet):
+class TestFilter(django_filters.FilterSet):
     collected = django_filters.DateFilter(
         label="date collected",
         field_name="collected",

@@ -15,34 +15,48 @@
   {% endfor %}
 </section>
 <div class="">
-  <div class="md:mx-20 mx-2">
+  <div class=" mx-auto">
     <div class="bg-white rounded-xl shadow-black shadow-2xl">
-    <div class="p-6 md:p-12 text-center grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="p-6 md:p-10 text-center grid grid-cols-2 md:grid-cols-6 gap-2">
       <div>
         <a href="{% url 'hematology' %}" class="block">
-          <div class=" hover:bg-white hover:text-gray-600 text-white bg-emerald-500  rounded-lg shadow-lg p-8 border-2 border-white transition duration-300">
+          <div class=" hover:bg-white hover:text-gray-600 text-white bg-emerald-500  rounded-lg shadow-lg p-6 border-2 border-white transition duration-300">
             <div class=" uppercase text-xs">Hematology</div>
           </div>
         </a>
       </div>
       <div>
         <a href="{% url 'chempath' %}" class="block">
-          <div class="bg-blue-500 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-8 border-2 border-white transition duration-300">
+          <div class="bg-blue-500 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-6 border-2 border-white transition duration-300">
             <div class="uppercase text-xs">Chemical Pathology</div>
           </div>
         </a>
       </div>
       <div>
         <a href="{% url 'micro' %}" class="block">
-          <div class="bg-purple-600 border-2 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-8 transition duration-300">
+          <div class="bg-purple-600 border-2 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-6 transition duration-300">
             <div class="uppercase text-xs">Microbiology</div>
           </div>
         </a>
       </div>
       <div>
         <a href="{% url 'serology' %}" class="block">
-          <div class="bg-amber-500 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-8 border-2 border-white transition duration-300">
+          <div class="bg-amber-500 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-6 border-2 border-white transition duration-300">
             <div class="uppercase text-xs">Serology</div>
+          </div>
+        </a>
+      </div>
+      <div>
+        <a href="{% url 'general' %}" class="block">
+          <div class="bg-pink-500 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-6 border-2 border-white transition duration-300">
+            <div class="uppercase text-xs">Serology</div>
+          </div>
+        </a>
+      </div>
+      <div>
+        <a href="{% url 'report' %}" class="block">
+          <div class="bg-gray-500 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-6 border-2 border-white transition duration-300">
+            <div class="uppercase text-xs">Report</div>
           </div>
         </a>
       </div>

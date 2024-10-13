@@ -30,7 +30,6 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import transaction
-from django.core.exceptions import ImproperlyConfigured
 
 
 def log_anonymous_required(view_function, redirect_to=None):
@@ -236,10 +235,6 @@ class PatientDetailView(DetailView):
         context['genotype'] = patient.test_info.filter(gt_test__isnull=False).order_by('-created').select_related('gt_test')
         context['ue'] = patient.test_info.filter(ue_test__isnull=False).order_by('-created').select_related('ue_test')
 
-        context['hematology_results']=patient.hematology_result.all().order_by('-created')
-        context['chempath_results']=patient.chemical_pathology_results.all().order_by('-created')
-        context['micro_results']=patient.microbiology_results.all().order_by('-created')
-        context['serology_results']=patient.serology_results.all().order_by('-created')
         context['general_results']=patient.general_results.all().order_by('-created')
         return context
     
@@ -251,8 +246,6 @@ class HematologyRequestListView(ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         queryset = queryset.filter(payment__unit__iexact="Hematology",cleared=False).order_by('-updated')
-
-        # queryset = queryset.filter(cleared=False,payment__unit="Hematology").order_by('-updated')
         return queryset
 
     
@@ -268,31 +261,30 @@ class HematologyListView(ListView):
     
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
-class HemaReportView(ListView):
-    model = HematologyResult
-    template_name = 'hema/hema_report.html'
+class ReportView(ListView):
+    model = Testinfo
+    template_name = 'report.html'
     paginate_by = 10
     context_object_name = 'patient'
 
     def get_queryset(self):
         queryset = super().get_queryset()
 
-        hema_filter = HemaFilter(self.request.GET, queryset=queryset)
-        patient = hema_filter.qs.order_by('-created')
+        test_filter = TestFilter(self.request.GET, queryset=queryset)
+        patient = test_filter.qs.order_by('-created')
         return patient
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['hema_filter'] = HemaFilter(self.request.GET, queryset=self.get_queryset())
+        context['test_filter'] = TestFilter(self.request.GET, queryset=self.get_queryset())
         return context
 
 @login_required
-def hema_report_pdf(request):
+def report_pdf(request):
     ndate = datetime.datetime.now()
-    filename = ndate.strftime('on_%d_%m_%Y_at_%I_%M%p.pdf')  # Changed slashes to underscores
-    f = HemaFilter(request.GET, queryset=HematologyResult.objects.all()).qs
+    filename = ndate.strftime('on_%d_%m_%Y_at_%I_%M%p.pdf')
+    f = TestFilter(request.GET, queryset=Testinfo.objects.all()).qs
     
-    # Get username safely
     username = request.user.username.upper() if hasattr(request.user, 'username') else "UNKNOWN USER"
     
     result = ""
@@ -300,18 +292,9 @@ def hema_report_pdf(request):
         if value:
             result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {username}"
     
-    context = {
-        'f': f, 
-        'pagesize': 'A4',
-        'orientation': 'landscape', 
-        'result': result,
-        'username': username,
-        'generated_date': ndate.strftime('%d-%B-%Y at %I:%M %p')
-    }
+    context = {'f': f,'pagesize': 'A4','orientation': 'potrait', 'result': result,'username': username,'generated_date': ndate.strftime('%d-%B-%Y at %I:%M %p')}
     
-    response = HttpResponse(content_type='application/pdf',
-                           headers={'Content-Disposition': f'attachment; filename="{filename}"'})
-    
+    response = HttpResponse(content_type='application/pdf',headers={'Content-Disposition': f'attachment; filename="{filename}"'})
     html = get_template('report_pdf.html').render(context)
     
     buffer = BytesIO()
@@ -347,66 +330,6 @@ class ChempathListView(ListView):
         return queryset
 
 
-@method_decorator(login_required(login_url='login'), name='dispatch')
-class ChempathReportView(ListView):
-    model=ChemicalPathologyResult
-    template_name = 'chempath/chempath_report.html'
-    paginate_by = 10
-    context_object_name = 'patient'
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        
-        chem_filter = ChemFilter(self.request.GET, queryset=queryset)
-        patient = chem_filter.qs.order_by('-created')
-        return patient
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['chem_filter'] = ChemFilter(self.request.GET, queryset=self.get_queryset())
-        return context
-
-
-@login_required
-def chempath_report_pdf(request):
-    ndate = datetime.datetime.now()
-    filename = ndate.strftime('on_%d_%m_%Y_at_%I_%M%p.pdf')  # Changed slashes to underscores
-    f = ChemFilter(request.GET, queryset=ChemicalPathologyResult.objects.all()).qs
-
-    # Get username safely
-    username = request.user.username.upper() if hasattr(request.user, 'username') else "UNKNOWN USER"
-    
-    result = ""
-    for key, value in request.GET.items():
-        if value:
-            result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {username}"
-    
-    context = {
-        'f': f, 
-        'pagesize': 'A4',
-        'orientation': 'landscape', 
-        'result': result,
-        'username': username,
-        'generated_date': ndate.strftime('%d-%B-%Y at %I:%M %p')
-    }
-    
-    response = HttpResponse(content_type='application/pdf',
-                           headers={'Content-Disposition': f'attachment; filename="{filename}"'})
-    
-    html = get_template('report_pdf.html').render(context)
-    
-    buffer = BytesIO()
-    pisa_status = pisa.CreatePDF(html, dest=buffer, encoding='utf-8', link_callback=fetch_resources)
-    
-    if not pisa_status.err:
-        pdf = buffer.getvalue()
-        buffer.close()
-        response.write(pdf)
-        return response
-    
-    return HttpResponse('Error generating PDF', status=500)
-
-
 class MicroRequestListView(ListView):
     model=Testinfo
     template_name='micro/micro_request.html'
@@ -429,65 +352,6 @@ class MicroListView(ListView):
         return queryset
 
 
-@method_decorator(login_required(login_url='login'), name='dispatch')
-class MicroReportView(ListView):
-    model=MicrobiologyResult
-    template_name = 'micro/micro_report.html'
-    paginate_by = 10
-    context_object_name = 'patient'
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-
-        micro_filter = MicroFilter(self.request.GET, queryset=queryset)
-        patient = micro_filter.qs.order_by('-created')
-        return patient
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['micro_filter'] = MicroFilter(self.request.GET, queryset=self.get_queryset())
-        return context
-
-
-@login_required
-def micro_report_pdf(request):
-    ndate = datetime.datetime.now()
-    filename = ndate.strftime('on_%d_%m_%Y_at_%I_%M%p.pdf')  # Changed slashes to underscores
-    f = MicroFilter(request.GET, queryset=MicrobiologyResult.objects.all()).qs
-
-    # Get username safely
-    username = request.user.username.upper() if hasattr(request.user, 'username') else "UNKNOWN USER"
-    
-    result = ""
-    for key, value in request.GET.items():
-        if value:
-            result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {username}"
-    
-    context = {
-        'f': f, 
-        'pagesize': 'A4',
-        'orientation': 'landscape', 
-        'result': result,
-        'username': username,
-        'generated_date': ndate.strftime('%d-%B-%Y at %I:%M %p')
-    }
-    
-    response = HttpResponse(content_type='application/pdf',
-                           headers={'Content-Disposition': f'attachment; filename="{filename}"'})
-    
-    html = get_template('report_pdf.html').render(context)
-    
-    buffer = BytesIO()
-    pisa_status = pisa.CreatePDF(html, dest=buffer, encoding='utf-8', link_callback=fetch_resources)
-    
-    if not pisa_status.err:
-        pdf = buffer.getvalue()
-        buffer.close()
-        response.write(pdf)
-        return response
-    
-    return HttpResponse('Error generating PDF', status=500)
-
 class SerologyRequestListView(ListView):
     model = Testinfo
     template_name = 'serology/serology_request.html'
@@ -509,66 +373,6 @@ class SerologyListView(ListView):
         queryset=queryset.filter(payment__status=True,payment__unit__iexact='Serology',cleared=True).order_by('-updated')
         return queryset
     
-
-
-@method_decorator(login_required(login_url='login'), name='dispatch')
-class SerologyReportView(ListView):
-    model=SerologyResult
-    template_name = 'serology/serology_report.html'
-    paginate_by = 10
-    context_object_name = 'patient'
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-
-        serology_filter = SerologyFilter(self.request.GET, queryset=queryset)
-        patient = serology_filter.qs.order_by('-created')
-        return patient
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['serology_filter'] = SerologyFilter(self.request.GET, queryset=self.get_queryset())
-        return context
-
-
-@login_required
-def serology_report_pdf(request):
-    ndate = datetime.datetime.now()
-    filename = ndate.strftime('on_%d_%m_%Y_at_%I_%M%p.pdf')  # Changed slashes to underscores
-    f = SerologyFilter(request.GET, queryset=SerologyResult.objects.all()).qs
-
-    # Get username safely
-    username = request.user.username.upper() if hasattr(request.user, 'username') else "UNKNOWN USER"
-    
-    result = ""
-    for key, value in request.GET.items():
-        if value:
-            result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {username}"
-    
-    context = {
-        'f': f, 
-        'pagesize': 'A4',
-        'orientation': 'landscape', 
-        'result': result,
-        'username': username,
-        'generated_date': ndate.strftime('%d-%B-%Y at %I:%M %p')
-    }
-    
-    response = HttpResponse(content_type='application/pdf',
-                           headers={'Content-Disposition': f'attachment; filename="{filename}"'})
-    
-    html = get_template('report_pdf.html').render(context)
-    
-    buffer = BytesIO()
-    pisa_status = pisa.CreatePDF(html, dest=buffer, encoding='utf-8', link_callback=fetch_resources)
-    
-    if not pisa_status.err:
-        pdf = buffer.getvalue()
-        buffer.close()
-        response.write(pdf)
-        return response
-    
-    return HttpResponse('Error generating PDF', status=500)
 
 class GeneralListView(ListView):
     model=GeneralTestResult
