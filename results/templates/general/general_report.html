@@ -89,8 +89,7 @@
                 {{ i.patient.phone|default_if_none:''|upper }}
               </td>
               <td class="p-3 whitespace-nowrap">
-                <span class="text-sm">{{ i.result|default_if_none:''|upper }}</span>
-                <span class="text-xs">{{ i.unit|default_if_none:''|upper }}</span>
+                {{ i.result.html|safe|default_if_none:'' }}
               </td>
               <td class="p-3 whitespace-nowrap">
                 {{ i.reported|default_if_none:'' }}

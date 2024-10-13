@@ -37,13 +37,13 @@
         {{ result.result_code }}
       </td>
         <td class="p-3 whitespace-nowrap">
-          {{ result.test }}
+          {{ result.name }}
         </td>
         <td class="p-3 whitespace-nowrap">
           {{ result.patient }}
         </td>
         <td class="p-3 whitespace-nowrap">
-          {{ result.result|default_if_none:'' }}
+          {{ result.result.html|safe|default_if_none:'' }}
         </td>
         <td class="p-3 whitespace-nowrap">
           {{ result.updated }}

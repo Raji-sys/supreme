@@ -205,17 +205,17 @@ class Testinfo(models.Model):
 class FBC(models.Model):
     test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
     test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='fbc_test', null=True, blank=True)
-    hb = models.DecimalField(max_digits=5, decimal_places=2)  # Hemoglobin
-    pcv = models.DecimalField(max_digits=5, decimal_places=2)  # Packed Cell Volume
-    mchc = models.DecimalField(max_digits=5, decimal_places=2)  # Mean Corpuscular Hemoglobin Concentration
-    rbc = models.DecimalField(max_digits=5, decimal_places=2)  # Red Blood Cells
-    mch = models.DecimalField(max_digits=5, decimal_places=2)  # Mean Corpuscular Hemoglobin
-    mcv = models.DecimalField(max_digits=5, decimal_places=2)  # Mean Corpuscular Volume
-    retic = models.DecimalField(max_digits=5, decimal_places=2)  # Reticulocyte Count
-    retic_index = models.DecimalField(max_digits=5, decimal_places=2)  # Reticulocyte Index
-    platelets = models.DecimalField(max_digits=6, decimal_places=2)  # Platelets
-    wbc = models.DecimalField(max_digits=6, decimal_places=2)  # White Blood Cells
-    esr = models.DecimalField(max_digits=6, decimal_places=2)  # Erythrocyte Sedimentation Rate
+    hb = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Hemoglobin
+    pcv = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Packed Cell Volume
+    mchc = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Mean Corpuscular Hemoglobin Concentration
+    rbc = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Red Blood Cells
+    mch = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Mean Corpuscular Hemoglobin
+    mcv = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Mean Corpuscular Volume
+    retic = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Reticulocyte Count
+    retic_index = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Reticulocyte Index
+    platelets = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)  # Platelets
+    wbc = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)  # White Blood Cells
+    esr = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)  # Erythrocyte Sedimentation Rate
 
     sickle_cells = models.BooleanField(default=False)  # Sickle Cells
     hypochromia = models.BooleanField(default=False)  # Hypochromia
@@ -227,12 +227,12 @@ class FBC(models.Model):
     poikilocytosis = models.BooleanField(default=False)  # Poikilocytosis
     target_cells = models.BooleanField(default=False)  # Target Cells
 
-    neutrophils = models.DecimalField(max_digits=5, decimal_places=2)  # Neutrophils %
-    eosinophils = models.DecimalField(max_digits=5, decimal_places=2)  # Eosinophils %
-    basophils = models.DecimalField(max_digits=5, decimal_places=2)  # Basophils %
-    trans_lymph = models.DecimalField(max_digits=5, decimal_places=2)  # Transitional Lymphocytes %
-    lymphocytes = models.DecimalField(max_digits=5, decimal_places=2)  # Lymphocytes %
-    monocytes = models.DecimalField(max_digits=5, decimal_places=2)  # Monocytes %
+    neutrophils = models.DecimalField(max_digits=5, decimal_places=2 , null=True, blank=True)  # Neutrophils %
+    eosinophils = models.DecimalField(max_digits=5, decimal_places=2 , null=True, blank=True)  # Eosinophils %
+    basophils = models.DecimalField(max_digits=5, decimal_places=2 , null=True, blank=True)  # Basophils %
+    trans_lymph = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Transitional Lymphocytes %
+    lymphocytes = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Lymphocytes %
+    monocytes = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Monocytes %
 
 
 class BloodGroup(models.Model):
@@ -265,14 +265,14 @@ class Genotype(models.Model):
     result = models.CharField(null=True,choices=GENOTYPE_CHOICES,max_length=2)
 
 
-class RhesusFactorTest(models.Model):
+class RhesusFactor(models.Model):
     RHESUS_CHOICES = [
         ('Positive', 'Positive'),
         ('Negative', 'Negative'),
     ]    
     test=models.ForeignKey(GenericTest,on_delete=models.CASCADE,null=True, blank=True)
     test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='rh_test',null=True, blank=True)
-    rhesus_d = models.CharField(max_length=8, choices=RHESUS_CHOICES, null=True)
+    rhesus_d = models.CharField('rhesus (D)',max_length=8, choices=RHESUS_CHOICES, null=True)
 
 
 # CHEMICAL PATHOLOGY TESTs 

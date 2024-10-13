@@ -195,6 +195,95 @@ class GenotypeForm(forms.ModelForm):
             test_info.cleared = self.cleaned_data.get('cleared')
             test_info.save()
         return genotype
+
+
+class RhesusFactorForm(forms.ModelForm):
+    class Meta:
+        model = RhesusFactor
+        fields = ['rhesus_d']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        rhesus = super().save(commit=False)
+        if commit:
+            rhesus.save()
+            test_info = rhesus.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return rhesus
+
+
+class FBCForm(forms.ModelForm):
+    class Meta:
+        model = FBC
+        fields = [ 'hb',
+            'pcv',
+            'mchc',
+            'rbc',
+            'mch',
+            'mcv',
+            'retic',
+            'retic_index',
+            'platelets',
+            'wbc',
+            'esr',
+            'sickle_cells',
+            'hypochromia',
+            'polychromasia',
+            'nucleated_rbc',
+            'anisocytosis',
+            'macrocytosis',
+            'microcytosis',
+            'poikilocytosis',
+            'target_cells',
+            'neutrophils',
+            'eosinophils',
+            'basophils',
+            'trans_lymph',
+            'lymphocytes',
+            'monocytes']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        fbc = super().save(commit=False)
+        if commit:
+            fbc.save()
+            test_info = fbc.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return fbc
     
 
 class UreaAndElectrolyteForm(forms.ModelForm):

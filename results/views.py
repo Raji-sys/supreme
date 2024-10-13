@@ -233,6 +233,8 @@ class PatientDetailView(DetailView):
         patient=self.get_object()
         context['blood_group'] = patient.test_info.filter(bg_test__isnull=False).order_by('-created').select_related('bg_test')
         context['genotype'] = patient.test_info.filter(gt_test__isnull=False).order_by('-created').select_related('gt_test')
+        context['rhesus'] = patient.test_info.filter(rh_test__isnull=False).order_by('-created').select_related('rh_test')
+        context['fbc'] = patient.test_info.filter(fbc_test__isnull=False).order_by('-created').select_related('fbc_test')
         context['ue'] = patient.test_info.filter(ue_test__isnull=False).order_by('-created').select_related('ue_test')
 
         context['general_results']=patient.general_results.all().order_by('-created')
@@ -374,16 +376,6 @@ class SerologyListView(ListView):
         return queryset
     
 
-class GeneralListView(ListView):
-    model=GeneralTestResult
-    template_name='general/general_list.html'
-    context_object_name='general_results'
-
-    def get_queryset(self):
-        queryset=super().get_queryset()
-        queryset=queryset.filter(result__isnull=False)
-        return queryset
-
 class GeneralRequestListView(ListView):
     model=GeneralTestResult
     template_name='general/general_request.html'
@@ -391,7 +383,18 @@ class GeneralRequestListView(ListView):
 
     def get_queryset(self):
         queryset=super().get_queryset()
-        queryset=queryset.filter(result__isnull=True)
+        queryset = queryset.filter(cleared=False).order_by('-updated')
+        return queryset
+    
+
+class GeneralListView(ListView):
+    model=GeneralTestResult
+    template_name='general/general_list.html'
+    context_object_name='general_results'
+
+    def get_queryset(self):
+        queryset=super().get_queryset()
+        queryset=queryset.filter(payment__status=True,cleared=True).order_by('-updated')
         return queryset
 
 
@@ -841,9 +844,7 @@ class BaseTestView(LoginRequiredMixin):
         return context
 
 
-
 class BaseLabResultUpdateView(BaseTestView, UpdateView):
-
     def get_object(self, queryset=None):
         # Fetch the patient using the file_no
         patient = get_object_or_404(Patient, file_no=self.kwargs['file_no'])
@@ -957,7 +958,6 @@ class GenotypeCreateView(View):
                 payment=payment
             )
             
-            # Create BloodGroup instance
             geno = Genotype.objects.create(
                 test=generic_test,
                 test_info=test_info
@@ -966,6 +966,76 @@ class GenotypeCreateView(View):
             messages.success(request, 'Genotype test created successfully')
         except Exception as e:
             messages.error(request, f'Error creating Genotype test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class RhesusCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name='Rhesus Factor')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            rhesus = RhesusFactor.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Rhesus test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Rhesus test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class FBCCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name='Full Blood Count')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            fbc = FBC.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'FBC test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating FBC test: {str(e)}')
         
         return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
 
@@ -1003,6 +1073,16 @@ class BloodGroupUpdateView(BaseLabResultUpdateView):
 class GenotypeUpdateView(BaseLabResultUpdateView):
     model = Genotype
     form_class = GenotypeForm
+
+
+class RhesusUpdateView(BaseLabResultUpdateView):
+    model = RhesusFactor
+    form_class = RhesusFactorForm
+
+
+class FBCUpdateView(BaseLabResultUpdateView):
+    model = FBC
+    form_class = FBCForm
 
 
 # class LiverFunctionUpdateView(BaseLabResultUpdateView):
