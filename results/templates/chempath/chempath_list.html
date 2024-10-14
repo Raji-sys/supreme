@@ -16,8 +16,8 @@
         <th class="p-3  font-medium text-gray-500 uppercase tracking-wider">
           Patient
         </th>
-        <th class="p-3  font-medium text-gray-500 uppercase tracking-wider">
-          Result
+        <th class="p-3 font-medium text-green-700 uppercase tracking-wider">
+          Status
         </th>
         <th class="p-3  font-medium text-gray-500 uppercase tracking-wider">
           Date Reported
@@ -34,16 +34,16 @@
           {{forloop.counter}}
       </td>
       <td class="p-3 whitespace-nowrap">
-        {{ result.result_code }}
+        {{ result.code }}
       </td>
         <td class="p-3 whitespace-nowrap text-rose-500">
-          {{ result.test }}
+          {{ result.payment.service }}
         </td>
         <td class="p-3 whitespace-nowrap">
           {{ result.patient }}
         </td>
-        <td class="p-3 whitespace-nowrap">
-          {{ result.result.html|safe }}
+        <td class="p-3 whitespace-nowrap text-green-600">
+          {{ result.cleared }}
           </td>
         <td class="p-3 whitespace-nowrap">
           {{ result.updated }}

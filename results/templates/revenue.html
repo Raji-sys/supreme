@@ -4,17 +4,7 @@
 
 {%block page_title%}<div class="flex justify-center"><a href="{%url 'index' %}"><i class="fa-solid fa-arrow-left fa-xl mr-4"></i></a>REVENUE DASHBOARD</div>{%endblock%}
 {%block content %}
-<section class="text-center border-cyan-700 p-2 m-1">
-  {% for message in messages %}
-  <div class="">
-    <div class="uk-alert-success rounded-2xl text-sm w-fit mx-auto" uk-alert>
-        <a href class="uk-alert-close font-bold" uk-close></a>
-        <a href="{}"></a>
-        <p class="text-green-700  uppercase p-4">{{ message }}</p>
-    </div>
-</div>
-  {% endfor %}
-</section>
+
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
   <div class="bg-gray-100 rounded-lg shadow-xl overflow-hidden mt-1">
     <div class="bg-gradient-to-r from-emerald-600 to-sky-600 p-2 text-center">

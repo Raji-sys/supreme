@@ -103,36 +103,6 @@ class PayUpdateForm(forms.ModelForm):
                 {'class': 'text-center text-xs focus:outline-none border border-green-400 p-3 rounded shadow-lg focus:shadow-xl focus:border-green-200'})
             
 
-class UreaAndElectrolyteTestForm(forms.ModelForm):
-    class Meta:
-        model = UreaAndElectrolyte
-        fields = ['test']
-
-
-class LiverFunctionForm(forms.ModelForm):
-    class Meta:
-        model = LiverFunction
-        fields = ['alkaline_phosphatase', 'sgot', 'sgpt', 'gamma_gt', 'total_bilirubin', 'direct_bilirubin']
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in self.fields.values():
-            field.required = False
-            field.widget.attrs.update({
-                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
-            })
-
-class BloodGroupTestForm(forms.ModelForm):
-    class Meta:
-        model = BloodGroup
-        fields = ['test']
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in self.fields.values():
-            field.required = False
-            field.widget.attrs.update({
-                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
-            })
-
 class BloodGroupForm(forms.ModelForm):
     class Meta:
         model = BloodGroup
@@ -316,3 +286,259 @@ class UreaAndElectrolyteForm(forms.ModelForm):
             test_info.cleared = self.cleaned_data.get('cleared')
             test_info.save()
         return ue
+
+
+class LiverFunctionForm(forms.ModelForm):
+    class Meta:
+        model = LiverFunction
+        exclude = ['test','test_info']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        liver_function = super().save(commit=False)
+        if commit:
+            liver_function.save()
+            test_info = liver_function.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return liver_function
+
+
+class LipidProfileForm(forms.ModelForm):
+    class Meta:
+        model = LipidProfile
+        exclude = ['test','test_info']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        lipid_profile = super().save(commit=False)
+        if commit:
+            lipid_profile.save()
+            test_info = lipid_profile.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return lipid_profile
+
+
+class LipidProfileForm(forms.ModelForm):
+    class Meta:
+        model = LipidProfile
+        exclude = ['test','test_info']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        lipid_profile = super().save(commit=False)
+        if commit:
+            lipid_profile.save()
+            test_info = lipid_profile.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return lipid_profile
+
+
+class BloodGlucoseForm(forms.ModelForm):
+    class Meta:
+        model = BloodGlucose
+        exclude = ['test','test_info']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        blood_glucose = super().save(commit=False)
+        if commit:
+            blood_glucose.save()
+            test_info = blood_glucose.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return blood_glucose
+
+
+class SerumProteinsForm(forms.ModelForm):
+    class Meta:
+        model = SerumProteins
+        exclude = ['test','test_info']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        serum_proteins = super().save(commit=False)
+        if commit:
+            serum_proteins.save()
+            test_info = serum_proteins.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return serum_proteins
+
+
+class CerebroSpinalFluidForm(forms.ModelForm):
+    class Meta:
+        model = CerebroSpinalFluid
+        exclude = ['test','test_info']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        cerebro_spinal_fluid = super().save(commit=False)
+        if commit:
+            cerebro_spinal_fluid.save()
+            test_info = cerebro_spinal_fluid.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return cerebro_spinal_fluid
+
+
+class BoneChemistryForm(forms.ModelForm):
+    class Meta:
+        model = BoneChemistry
+        exclude = ['test','test_info']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        bone_chemistry = super().save(commit=False)
+        if commit:
+            bone_chemistry.save()
+            test_info = bone_chemistry.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return bone_chemistry
+
+
+class MiscellaneousChempathTestsForm(forms.ModelForm):
+    class Meta:
+        model = MiscellaneousChempathTests
+        exclude = ['test','test_info']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        miscellaneous_chempath_tests = super().save(commit=False)
+        if commit:
+            miscellaneous_chempath_tests.save()
+            test_info = miscellaneous_chempath_tests.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return miscellaneous_chempath_tests

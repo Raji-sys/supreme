@@ -231,11 +231,20 @@ class PatientDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
         patient=self.get_object()
+
         context['blood_group'] = patient.test_info.filter(bg_test__isnull=False).order_by('-created').select_related('bg_test')
         context['genotype'] = patient.test_info.filter(gt_test__isnull=False).order_by('-created').select_related('gt_test')
         context['rhesus'] = patient.test_info.filter(rh_test__isnull=False).order_by('-created').select_related('rh_test')
         context['fbc'] = patient.test_info.filter(fbc_test__isnull=False).order_by('-created').select_related('fbc_test')
-        context['ue'] = patient.test_info.filter(ue_test__isnull=False).order_by('-created').select_related('ue_test')
+
+        context['urea_electrolyte'] = patient.test_info.filter(ue_test__isnull=False).order_by('-created').select_related('ue_test')
+        context['liver_function'] = patient.test_info.filter(lf_test__isnull=False).order_by('-created').select_related('lf_test')
+        context['lipid_profile'] = patient.test_info.filter(lp_test__isnull=False).order_by('-created').select_related('lp_test')
+        context['blood_glucose'] = patient.test_info.filter(bgl_test__isnull=False).order_by('-created').select_related('bgl_test')
+        context['bone_chemistry'] = patient.test_info.filter(bc_test__isnull=False).order_by('-created').select_related('bc_test')
+        context['serum_proteins'] = patient.test_info.filter(sp_test__isnull=False).order_by('-created').select_related('sp_test')
+        context['cerebro_spinal_fluid'] = patient.test_info.filter(csf_test__isnull=False).order_by('-created').select_related('csf_test')
+        context['miscellaneous_chempath_tests'] = patient.test_info.filter(misc_test__isnull=False).order_by('-created').select_related('misc_test')
 
         context['general_results']=patient.general_results.all().order_by('-created')
         return context
@@ -534,6 +543,7 @@ class PayUpdateView(UpdateView):
     form_class = PayUpdateForm
 
     def get_success_url(self):
+        messages.success(self.request, 'TRANSACTION SUCCESSFULLY')
         next_url = self.request.GET.get('next')
         if next_url:
             return next_url
@@ -755,7 +765,7 @@ class MicroPayListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        micro_pays = Paypoint.objects.filter(micro_result_payment__isnull=False,unit__iexact='Microbiology').order_by('-updated')
+        micro_pays = Paypoint.objects.filter(test_payments__isnull=False,unit__iexact='Microbiology').order_by('-updated')
 
         micro_pay_total = micro_pays.count()
         micro_paid_transactions = micro_pays.filter(status=True)
@@ -778,7 +788,7 @@ class ChempathPayListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        chempath_pays = Paypoint.objects.filter(chempath_result_payment__isnull=False,unit__iexact='Chemical Pathology').order_by('-updated')
+        chempath_pays = Paypoint.objects.filter(test_payments__isnull=False,unit__iexact='Chemical Pathology').order_by('-updated')
 
         chem_pay_total = chempath_pays.count()
         chem_paid_transactions = chempath_pays.filter(status=True)
@@ -801,7 +811,7 @@ class SerologyPayListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        serology_pays = Paypoint.objects.filter(serology_result_payment__isnull=False,unit__iexact='Serology').order_by('-updated')
+        serology_pays = Paypoint.objects.filter(test_payments__isnull=False,unit__iexact='Serology').order_by('-updated')
 
         serology_pay_total = serology_pays.count()
         serology_paid_transactions = serology_pays.filter(status=True)
@@ -862,13 +872,13 @@ class BaseLabResultUpdateView(BaseTestView, UpdateView):
         # Redirect to the patient's profile page after saving
         return redirect('patient_details', file_no=self.kwargs['file_no'])
 
-
+# hematology 
 class BloodGroupCreateView(View):
     @transaction.atomic
     def get(self, request, file_no):
         try:
             patient = get_object_or_404(Patient, file_no=file_no)
-            generic_test = get_object_or_404(GenericTest, name='Blood Group')
+            generic_test = get_object_or_404(GenericTest, name__iexact='Blood Group')
             
             # Create Paypoint first
             payment = Paypoint.objects.create(
@@ -886,7 +896,7 @@ class BloodGroupCreateView(View):
                 payment=payment
             )
             
-            # Create BloodGroup instance
+            
             blood_group = BloodGroup.objects.create(
                 test=generic_test,
                 test_info=test_info
@@ -899,48 +909,12 @@ class BloodGroupCreateView(View):
         return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
 
 
-class UECreateView(View):
-    @transaction.atomic
-    def get(self, request, file_no):
-        try:
-            patient = get_object_or_404(Patient, file_no=file_no)
-            generic_test = get_object_or_404(GenericTest, name__iexact='Urea & Electrolyte')
-            
-            # Create Paypoint first
-            payment = Paypoint.objects.create(
-                patient=patient,
-                status=False,
-                unit=generic_test.lab,
-                service=generic_test.name,
-                price=generic_test.price,
-            )
-            
-            # Now create Testinfo with the payment
-            test_info = Testinfo.objects.create(
-                patient=patient,
-                collected_by=request.user,
-                payment=payment
-            )
-            
-            # Create BloodGroup instance
-            ue = UreaAndElectrolyte.objects.create(
-                test=generic_test,
-                test_info=test_info
-            )
-
-            messages.success(request, 'UREA & ELCTROLYTE test created successfully')
-        except Exception as e:
-            messages.error(request, f'Error creating UREA & ELCTROLYTE test: {str(e)}')
-    
-    
-        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
-
 class GenotypeCreateView(View):
     @transaction.atomic
     def get(self, request, file_no):
         try:
             patient = get_object_or_404(Patient, file_no=file_no)
-            generic_test = get_object_or_404(GenericTest, name='Genotype')
+            generic_test = get_object_or_404(GenericTest, name__iexact='Genotype')
             
             # Create Paypoint first
             payment = Paypoint.objects.create(
@@ -975,7 +949,7 @@ class RhesusCreateView(View):
     def get(self, request, file_no):
         try:
             patient = get_object_or_404(Patient, file_no=file_no)
-            generic_test = get_object_or_404(GenericTest, name='Rhesus Factor')
+            generic_test = get_object_or_404(GenericTest, name__iexact='Rhesus Factor')
             
             # Create Paypoint first
             payment = Paypoint.objects.create(
@@ -1010,7 +984,7 @@ class FBCCreateView(View):
     def get(self, request, file_no):
         try:
             patient = get_object_or_404(Patient, file_no=file_no)
-            generic_test = get_object_or_404(GenericTest, name='Full Blood Count')
+            generic_test = get_object_or_404(GenericTest, name__iexact='Full Blood Count')
             
             # Create Paypoint first
             payment = Paypoint.objects.create(
@@ -1039,9 +1013,289 @@ class FBCCreateView(View):
         
         return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
 
+# chempath 
+class UECreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Urea & Electrolyte')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            ue = UreaAndElectrolyte.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'UREA & ELCTROLYTE test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating UREA & ELCTROLYTE test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class LiverFunctionCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Liver Function')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            liver_function = LiverFunction.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Liver Function test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Liver Function test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class LipidProfileCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Lipid Profile')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            lipid_profile = LipidProfile.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Lipid Profile test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Lipid Profile test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class SerumProteinsCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Serum Proteins')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            serum_proteins = SerumProteins.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Serum Proteins test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Serum Proteins test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class CerebroSpinalFluidCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Cerebro Spinal Fluid')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            cerebro_spinal_fluid = CerebroSpinalFluid.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Cerebro Spinal Fluid test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Cerebro Spinal Fluid test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class BoneChemistryCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Bone Chemistry')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            bone_chemistry = BoneChemistry.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Bone Chemistry test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Bone Chemistry test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class MiscellaneousChempathTestsCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Miscellaneous Chempath Tests')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            miscellaneous_chempath_tests = MiscellaneousChempathTests.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Miscellaneous Chempath Tests  created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Miscellaneous Chempath Tests: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class BloodGlucoseCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Blood Glucose')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            blood_glucose = BloodGlucose.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Blood Glucose test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Blood Glucose test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
 
 class BaseLabResultUpdateView(UpdateView):
-    template_name = 'shared_test_form.html'  # Adjust this to your template path
+    template_name = 'shared_test_form.html'
 
     def get_object(self, queryset=None):
         patient = get_object_or_404(Patient, file_no=self.kwargs['file_no'])
@@ -1056,15 +1310,8 @@ class BaseLabResultUpdateView(UpdateView):
         messages.success(self.request, f'{self.model.__name__} result updated successfully')
         return redirect('patient_details', file_no=self.kwargs['file_no'])
 
-# class LiverFunctionCreateView(BaseTestCreateView):
-#     model = LiverFunction
-#     form_class = LiverFunctionForm
 
-class UreaAndElectrolyteUpdateView(BaseLabResultUpdateView):
-    model = UreaAndElectrolyte
-    form_class = UreaAndElectrolyteForm
-
-
+# hematology 
 class BloodGroupUpdateView(BaseLabResultUpdateView):
     model = BloodGroup
     form_class = BloodGroupForm
@@ -1084,7 +1331,41 @@ class FBCUpdateView(BaseLabResultUpdateView):
     model = FBC
     form_class = FBCForm
 
+# chempath 
+class UreaAndElectrolyteUpdateView(BaseLabResultUpdateView):
+    model = UreaAndElectrolyte
+    form_class = UreaAndElectrolyteForm
 
-# class LiverFunctionUpdateView(BaseLabResultUpdateView):
-#     model = LiverFunction
-#     form_class = LiverFunctionForm
+class LiverFunctionUpdateView(BaseLabResultUpdateView):
+    model = LiverFunction
+    form_class = LiverFunctionForm
+
+
+class LipidProfileUpdateView(BaseLabResultUpdateView):
+    model = LipidProfile
+    form_class = LipidProfileForm
+
+
+class SerumProteinsUpdateView(BaseLabResultUpdateView):
+    model = SerumProteins
+    form_class = SerumProteinsForm
+
+
+class CerebroSpinalFluidUpdateView(BaseLabResultUpdateView):
+    model = CerebroSpinalFluid
+    form_class = CerebroSpinalFluidForm
+
+
+class BoneChemistryUpdateView(BaseLabResultUpdateView):
+    model = BoneChemistry
+    form_class = BoneChemistryForm
+
+
+class BloodGlucoseUpdateView(BaseLabResultUpdateView):
+    model = BloodGlucose
+    form_class = BloodGlucoseForm
+
+
+class MiscellaneousChempathTestsUpdateView(BaseLabResultUpdateView):
+    model = MiscellaneousChempathTests
+    form_class = MiscellaneousChempathTestsForm

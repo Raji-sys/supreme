@@ -61,10 +61,6 @@ urlpatterns = [
     path('blood-group/create/<str:file_no>/', BloodGroupCreateView.as_view(), name='create_blood_group'),
     path('blood-group/update/<str:file_no>/<int:test_info_pk>/', BloodGroupUpdateView.as_view(), name='update_blood_group'),
 
-    path('urea-electrolyte/create/<str:file_no>/', views.UECreateView.as_view(), name='create_urea_electrolyte'),
-    path('urea-electrolyte/update/<str:file_no>/<int:test_info_pk>/', UreaAndElectrolyteUpdateView.as_view(), name='update_urea_electrolyte'),
-
-
     path('genotype/create/<str:file_no>/', GenotypeCreateView.as_view(), name='create_genotype'),
     path('genotype/update/<str:file_no>/<int:test_info_pk>/', GenotypeUpdateView.as_view(), name='update_genotype'),
 
@@ -74,11 +70,31 @@ urlpatterns = [
     path('fbc/create/<str:file_no>/', FBCCreateView.as_view(), name='create_fbc'),
     path('fbc/update/<str:file_no>/<int:test_info_pk>/', FBCUpdateView.as_view(), name='update_fbc'),
 
-    # path('liver-function/create/<str:file_no>/', views.LiverFunctionCreateView.as_view(), name='create_liver_function'),
-    # path('liver-function/update/<str:file_no>/<int:pk>/', views.LiverFunctionUpdateView.as_view(), name='update_liver_function'),
-    
-    
+    path('urea-electrolyte/create/<str:file_no>/', UECreateView.as_view(), name='create_urea_electrolyte'),
+    path('urea-electrolyte/update/<str:file_no>/<int:test_info_pk>/', UreaAndElectrolyteUpdateView.as_view(), name='update_urea_electrolyte'),
 
+    path('liver-function/create/<str:file_no>/', LiverFunctionCreateView.as_view(), name='create_liver_function'),
+    path('liver-function/update/<str:file_no>/<int:test_info_pk>/', LiverFunctionUpdateView.as_view(), name='update_liver_function'),
+    
+    path('lipid-profile/create/<str:file_no>/', LipidProfileCreateView.as_view(), name='create_lipid_profile'),
+    path('lipid-profile/update/<str:file_no>/<int:test_info_pk>/', LipidProfileUpdateView.as_view(), name='update_lipid_profile'),
+    
+    path('blood-glucose/create/<str:file_no>/', BloodGlucoseCreateView.as_view(), name='create_blood_glucose'),
+    path('blood-glucose/update/<str:file_no>/<int:test_info_pk>/', BloodGlucoseUpdateView.as_view(), name='update_blood_glucose'),
+    
+    path('serum-proteins/create/<str:file_no>/', SerumProteinsCreateView.as_view(), name='create_serum_proteins'),
+    path('serum-proteins/update/<str:file_no>/<int:test_info_pk>/', SerumProteinsUpdateView.as_view(), name='update_serum_proteins'),
+    
+    path('bone-chemistry/create/<str:file_no>/', BoneChemistryCreateView.as_view(), name='create_bone_chemistry'),
+    path('bone-chemistry/update/<str:file_no>/<int:test_info_pk>/', BoneChemistryUpdateView.as_view(), name='update_bone_chemistry'),
+    
+    path('cerebro-spinal-fluid/create/<str:file_no>/', CerebroSpinalFluidCreateView.as_view(), name='create_cerebro_spinal_fluid'),
+    path('cerebro-spinal-fluid/update/<str:file_no>/<int:test_info_pk>/', CerebroSpinalFluidUpdateView.as_view(), name='update_cerebro_spinal_fluid'),
+    
+    path('miscellaneous-chempath-tests/create/<str:file_no>/', MiscellaneousChempathTestsCreateView.as_view(), name='create_miscellaneous_chempath_tests'),
+    path('miscellaneous-chempath-tests/update/<str:file_no>/<int:test_info_pk>/', MiscellaneousChempathTestsUpdateView.as_view(), name='update_miscellaneous_chempath_tests'),
+    
+    
     path('logout/', CustomLogoutView.as_view(), name='logout'),
 
     path('', include('django.contrib.auth.urls')),
