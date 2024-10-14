@@ -487,7 +487,6 @@
                       <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">alkaline phosphatase</th>
                       <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">calcium</th>
                       <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">inorganic phosphate</th>
-                      <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">gamma_gt</th>
                       <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">date</th>
                       <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider"></th>
                     </tr>
@@ -505,7 +504,7 @@
                     </tr>
                     {%empty%}
                     <tr>
-                      <td colspan="7" class="p-3 text-center">No bone chemistry test yet.</td>
+                      <td colspan="6" class="p-3 text-center">No bone chemistry test yet.</td>
                   </tr>
                   {% endfor %}
                   </tbody>
@@ -619,6 +618,7 @@
                     <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
                       <td class=" p-3 whitespace-nowrap">{{ forloop.counter }}</td>
                       <td class=" p-3 whitespace-nowrap">{{ test_info.bgl_test.test_type|default_if_none:'N/A' }}</td>
+                      <td class=" p-3 whitespace-nowrap">{{ test_info.bgl_test.result|default_if_none:'N/A'}}</td>
                       <td class=" p-3 whitespace-nowrap">{{ test_info.updated }}</td>
                       <td class=" p-3 whitespace-nowrap"> <a href="{%url 'update_blood_glucose' patient.file_no test_info.id %}" class=" hover:text-green-700"><i class="fa-solid fa-edit fa-2xl"></i></a></td>
                     </tr>
