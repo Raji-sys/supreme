@@ -103,14 +103,17 @@ urlpatterns = [
     path('rheumatoid-factor/create/<str:file_no>/', RheumatoidFactorCreateView.as_view(), name='create_rheumatoid_factor'),
     path('rheumatoid-factor/update/<str:file_no>/<int:test_info_pk>/', RheumatoidFactorUpdateView.as_view(), name='update_rheumatoid_factor'),
 
-    path('hepatitis-b/create/<str:file_no>/', HepatitisBCreateView.as_view(), name='create_hepatitis_b'),
-    path('hepatitis-b/update/<str:file_no>/<int:test_info_pk>/', HepatitisBUpdateView.as_view(), name='update_hepatitis_b'),
+    path('hpb/create/<str:file_no>/', HepatitisBCreateView.as_view(), name='create_hpb'),
+    path('hpb-test/update/<str:file_no>/<int:test_info_pk>/', views.HepatitisBUpdateView.as_view(), name='update_hpb'),
 
-    path('hepatitis-c/create/<str:file_no>/', HepatitisCCreateView.as_view(), name='create_hepatitis_c'),
-    path('hepatitis-c/update/<str:file_no>/<int:test_info_pk>/', HepatitisCUpdateView.as_view(), name='update_hepatitis_c'),
+    path('testing/create/<str:file_no>/', TestingCreateView.as_view(), name='create_testing'),
+    path('testing/update/<str:file_no>/<int:test_info_pk>/', TestingUpdateView.as_view(), name='update_testing'),
+
+    path('hcv/create/<str:file_no>/', HepatitisCCreateView.as_view(), name='create_hcv'),
+    path('hcv/update/<str:file_no>/<int:test_info_pk>/', HepatitisCUpdateView.as_view(), name='update_hcv'),
 
     path('vdrl/create/<str:file_no>/', VDRLCreateView.as_view(), name='create_vdrl'),
-    path('vdrl/update/<str:file_no>/<int:test_info_pk>/', VDRLUpdateView.as_view(), name='update_vdrl'),
+    path('vdrl/update/<str:file_no>/<int:test_info_pk>/', VDRLUpdateView.as_view(), name='vdrl_update'),
 
     path('mantoux/create/<str:file_no>/', MantouxCreateView.as_view(), name='create_mantoux'),
     path('mantoux/update/<str:file_no>/<int:test_info_pk>/', MantouxUpdateView.as_view(), name='update_mantoux'),

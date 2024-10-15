@@ -21,6 +21,10 @@ class PatientAdmin(admin.ModelAdmin):
     list_filter = ('gender',)
 
 
+@admin.register(AsoTitre)
+class Testingdmin(admin.ModelAdmin):
+    list_display = ('id',)
+
 # @admin.register(GeneralTestResult)
 # class GeneralAdmin(admin.ModelAdmin):
 #     list_display = ('name', 'price')
@@ -39,15 +43,19 @@ class GenericTestAdmin(admin.ModelAdmin):
 
 @admin.register(Testinfo)
 class TestinfoAdmin(admin.ModelAdmin):
-    list_display = ('patient', 'payment_status', 'code', 'test_lab', 'test_price')
+    list_display = ('patient', 'payment_status', 'code', 'test_lab', 'test_name', 'test_price')
 
-    @admin.display(ordering='test__lab__name', description='Lab')
+    @admin.display(ordering='payment__unit', description='Lab')
     def test_lab(self, obj):
-        return obj.test.lab.name if obj.test.lab else ''
+        return obj.payment.unit if obj.payment.unit else ''
+    
+    @admin.display(ordering='payment__unit', description='Test')
+    def test_name(self, obj):
+        return obj.payment.service if obj.payment.service else ''
 
-    @admin.display(ordering='test__price', description='Cost')
+    @admin.display(ordering='payment__price', description='Cost')
     def test_price(self, obj):
-        return obj.test.price if obj.test.price else ''
+        return obj.payment.price if obj.payment.price else ''
 
     @admin.display(ordering='payment__status', description='Payment')
     def payment_status(self, obj):

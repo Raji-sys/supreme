@@ -578,7 +578,7 @@ class WidalForm(forms.ModelForm):
 
 class HepatitisBForm(forms.ModelForm):
     class Meta:
-        model = HepatitisB
+        model = HPB
         exclude = ['test','test_info']
     
     def __init__(self, *args, **kwargs):
@@ -608,9 +608,41 @@ class HepatitisBForm(forms.ModelForm):
         return hepatitis_b
 
 
+class TestingForm(forms.ModelForm):
+    class Meta:
+        model = Testing
+        exclude = ['test','test_info']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        testing = super().save(commit=False)
+        if commit:
+            testing.save()
+            test_info = testing.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return testing
+
+
 class HepatitisCForm(forms.ModelForm):
     class Meta:
-        model = HepatitisC
+        model = HCV
         exclude = ['test','test_info']
     
     def __init__(self, *args, **kwargs):

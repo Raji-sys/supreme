@@ -532,17 +532,23 @@ class Widal(models.Model):
 
 class RheumatoidFactor(models.Model):
     test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
-    test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='rhematoid_factor_test',null=True, blank=True)
+    test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='rheumatoid_factor_test',null=True, blank=True)
     result = models.CharField(max_length=10, blank=True, null=True)
 
 
-class HepatitisB(models.Model):
+class HPB(models.Model):
     test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
     test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='hpb_test',null=True, blank=True)
     result = models.CharField(max_length=10, blank=True, null=True)
 
 
-class HepatitisC(models.Model):
+class Testing(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='testing',null=True, blank=True)
+    result = models.CharField(max_length=10, blank=True, null=True)
+
+
+class HCV(models.Model):
     test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
     test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='hcv_test',null=True, blank=True)
     result = models.CharField(max_length=10, blank=True, null=True)
