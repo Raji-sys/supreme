@@ -58,6 +58,7 @@ urlpatterns = [
     path('general-report/', GeneralReportView.as_view(), name='general_report'),
     path('general-pdf/', views.general_report_pdf, name='general_report_pdf'),
 
+    # hematology 
     path('blood-group/create/<str:file_no>/', BloodGroupCreateView.as_view(), name='create_blood_group'),
     path('blood-group/update/<str:file_no>/<int:test_info_pk>/', BloodGroupUpdateView.as_view(), name='update_blood_group'),
 
@@ -70,6 +71,7 @@ urlpatterns = [
     path('fbc/create/<str:file_no>/', FBCCreateView.as_view(), name='create_fbc'),
     path('fbc/update/<str:file_no>/<int:test_info_pk>/', FBCUpdateView.as_view(), name='update_fbc'),
 
+    # chempath
     path('urea-electrolyte/create/<str:file_no>/', UECreateView.as_view(), name='create_urea_electrolyte'),
     path('urea-electrolyte/update/<str:file_no>/<int:test_info_pk>/', UreaAndElectrolyteUpdateView.as_view(), name='update_urea_electrolyte'),
 
@@ -94,6 +96,35 @@ urlpatterns = [
     path('miscellaneous-chempath-tests/create/<str:file_no>/', MiscellaneousChempathTestsCreateView.as_view(), name='create_miscellaneous_chempath_tests'),
     path('miscellaneous-chempath-tests/update/<str:file_no>/<int:test_info_pk>/', MiscellaneousChempathTestsUpdateView.as_view(), name='update_miscellaneous_chempath_tests'),
     
+    # serology 
+    path('widal/create/<str:file_no>/', WidalCreateView.as_view(), name='create_widal'),
+    path('widal/update/<str:file_no>/<int:test_info_pk>/', WidalUpdateView.as_view(), name='update_widal'),
+
+    path('rheumatoid-factor/create/<str:file_no>/', RheumatoidFactorCreateView.as_view(), name='create_rheumatoid_factor'),
+    path('rheumatoid-factor/update/<str:file_no>/<int:test_info_pk>/', RheumatoidFactorUpdateView.as_view(), name='update_rheumatoid_factor'),
+
+    path('hepatitis-b/create/<str:file_no>/', HepatitisBCreateView.as_view(), name='create_hepatitis_b'),
+    path('hepatitis-b/update/<str:file_no>/<int:test_info_pk>/', HepatitisBUpdateView.as_view(), name='update_hepatitis_b'),
+
+    path('hepatitis-c/create/<str:file_no>/', HepatitisCCreateView.as_view(), name='create_hepatitis_c'),
+    path('hepatitis-c/update/<str:file_no>/<int:test_info_pk>/', HepatitisCUpdateView.as_view(), name='update_hepatitis_c'),
+
+    path('vdrl/create/<str:file_no>/', VDRLCreateView.as_view(), name='create_vdrl'),
+    path('vdrl/update/<str:file_no>/<int:test_info_pk>/', VDRLUpdateView.as_view(), name='update_vdrl'),
+
+    path('mantoux/create/<str:file_no>/', MantouxCreateView.as_view(), name='create_mantoux'),
+    path('mantoux/update/<str:file_no>/<int:test_info_pk>/', MantouxUpdateView.as_view(), name='update_mantoux'),
+
+    path('aso-titre/create/<str:file_no>/', AsoTitreCreateView.as_view(), name='create_aso_titre'),
+    path('aso-titre/update/<str:file_no>/<int:test_info_pk>/', AsoTitreUpdateView.as_view(), name='update_aso_titre'),
+
+    path('crp/create/<str:file_no>/', CRPCreateView.as_view(), name='create_crp'),
+    path('crp/update/<str:file_no>/<int:test_info_pk>/', CRPUpdateView.as_view(), name='update_crp'),
+
+    path('hiv-screening/create/<str:file_no>/', HIVScreeningCreateView.as_view(), name='create_hiv_screening'),
+    path('hiv-screening/update/<str:file_no>/<int:test_info_pk>/', HIVScreeningUpdateView.as_view(), name='update_hiv_screening'),
+
+    # microbiology
     
     path('logout/', CustomLogoutView.as_view(), name='logout'),
 

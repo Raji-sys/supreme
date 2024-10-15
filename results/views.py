@@ -1293,6 +1293,321 @@ class BloodGlucoseCreateView(View):
         
         return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
 
+# serology 
+class WidalCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Widal')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            widal = Widal.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Widal test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Widal test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+    
+
+class RheumatoidFactorCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Rheumatoid Factor')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            rheumatoid_factor = RheumatoidFactor.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Rheumatoid Factor test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Rheumatoid Factor test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class HepatitisBCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='HepatitisB')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            hepatitis_b = HepatitisB.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Hepatitis B test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Hepatitis B test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class HepatitisCCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='HepatitisC')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            hepatitis_c = HepatitisC.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Hepatitis C test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Hepatitis C test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class VDRLCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='VDRL')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            vdrl = VDRL.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'VDRL test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating VDRL test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class MantouxCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Mantoux')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            mantoux = Mantoux.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Mantoux test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Mantoux test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class AsoTitreCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='AsoTitre')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            aso_titre = AsoTitre.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Aso Titre test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Aso Titre test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class CRPCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='CRP')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            crp = CRP.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'CRP test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating CRP test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class HIVScreeningCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='HIVScreening')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            hiv_screening = HIVScreening.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'HIV Screening test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating HIVScreening test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+    
 
 class BaseLabResultUpdateView(UpdateView):
     template_name = 'shared_test_form.html'
@@ -1369,3 +1684,49 @@ class BloodGlucoseUpdateView(BaseLabResultUpdateView):
 class MiscellaneousChempathTestsUpdateView(BaseLabResultUpdateView):
     model = MiscellaneousChempathTests
     form_class = MiscellaneousChempathTestsForm
+
+
+#SEROLOGY TEST
+class WidalUpdateView(BaseLabResultUpdateView):
+    model = Widal
+    form_class = WidalForm
+
+
+class RheumatoidFactorUpdateView(BaseLabResultUpdateView):
+    model = RheumatoidFactor
+    form_class = RheumatoidFactorForm
+
+
+class HepatitisBUpdateView(BaseLabResultUpdateView):
+    model = HepatitisB
+    form_class = HepatitisBForm
+
+
+class HepatitisCUpdateView(BaseLabResultUpdateView):
+    model = HepatitisC
+    form_class = HepatitisCForm
+
+
+class VDRLUpdateView(BaseLabResultUpdateView):
+    model = VDRL
+    form_class = VDRLForm
+
+
+class MantouxUpdateView(BaseLabResultUpdateView):
+    model = Mantoux
+    form_class = MantouxForm
+
+
+class AsoTitreUpdateView(BaseLabResultUpdateView):
+    model = AsoTitre
+    form_class = AsoTitreForm
+
+
+class CRPUpdateView(BaseLabResultUpdateView):
+    model = CRP
+    form_class = CRPForm
+
+
+class HIVScreeningUpdateView(BaseLabResultUpdateView):
+    model = HIVScreening
+    form_class = HIVScreeningForm

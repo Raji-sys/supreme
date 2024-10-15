@@ -454,19 +454,19 @@ class ZNStain(models.Model):
 class SemenAnalysis(models.Model):
     test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
     test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='semen_analysis_test',null=True, blank=True)
-    time_produced = models.TimeField()
-    time_examined = models.TimeField()
-    color = models.CharField(max_length=50)
-    volume = models.DecimalField(max_digits=5, decimal_places=2, help_text="Volume (ml)")
-    viscosity = models.CharField(max_length=50)
-    consistency = models.CharField(max_length=50)
-    motility_active = models.DecimalField(max_digits=5, decimal_places=2, help_text="Active Motility (%)")
-    motility_moderate = models.DecimalField(max_digits=5, decimal_places=2, help_text="Moderate Motility (%)")
-    motility_sluggish = models.DecimalField(max_digits=5, decimal_places=2, help_text="Sluggish Motility (%)")
-    morphology_normal = models.DecimalField(max_digits=5, decimal_places=2, help_text="Normal Morphology (%)")
-    morphology_abnormal = models.DecimalField(max_digits=5, decimal_places=2, help_text="Abnormal Morphology (%)")
-    morphology_sluggish = models.DecimalField(max_digits=5, decimal_places=2, help_text="Sluggish Morphology (%)")
-    total_sperm_count = models.DecimalField(max_digits=5, decimal_places=2, help_text="Total Sperm Count (x10^6/ml)")
+    time_produced = models.TimeField(blank=True, null=True)
+    time_examined = models.TimeField(blank=True, null=True)
+    color = models.CharField(max_length=50, blank=True, null=True)
+    volume = models.DecimalField(max_digits=5, decimal_places=2, help_text="Volume (ml)", blank=True, null=True)
+    viscosity = models.CharField(max_length=50, blank=True, null=True)
+    consistency = models.CharField(max_length=50, blank=True, null=True)
+    motility_active = models.DecimalField(max_digits=5, decimal_places=2, help_text="Active Motility (%)", blank=True, null=True)
+    motility_moderate = models.DecimalField(max_digits=5, decimal_places=2, help_text="Moderate Motility (%)", blank=True, null=True)
+    motility_sluggish = models.DecimalField(max_digits=5, decimal_places=2, help_text="Sluggish Motility (%)", blank=True, null=True)
+    morphology_normal = models.DecimalField(max_digits=5, decimal_places=2, help_text="Normal Morphology (%)", blank=True, null=True)
+    morphology_abnormal = models.DecimalField(max_digits=5, decimal_places=2, help_text="Abnormal Morphology (%)", blank=True, null=True)
+    morphology_sluggish = models.DecimalField(max_digits=5, decimal_places=2, help_text="Sluggish Morphology (%)", blank=True, null=True)
+    total_sperm_count = models.DecimalField(max_digits=5, decimal_places=2, help_text="Total Sperm Count (x10^6/ml)", blank=True, null=True)
 
 
 class UrinalysisTest(models.Model):
@@ -515,7 +515,7 @@ class AntibioticSensitivity(models.Model):
 
 
 # SEROLOGY TEST 
-class WidalTest(models.Model):
+class Widal(models.Model):
     test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
     test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='widal_test',null=True, blank=True)
     o_antigen_s_typhi_d = models.CharField(max_length=10, blank=True, null=True)
