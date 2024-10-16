@@ -106,14 +106,11 @@ urlpatterns = [
     path('hpb/create/<str:file_no>/', HepatitisBCreateView.as_view(), name='create_hpb'),
     path('hpb-test/update/<str:file_no>/<int:test_info_pk>/', views.HepatitisBUpdateView.as_view(), name='update_hpb'),
 
-    path('testing/create/<str:file_no>/', TestingCreateView.as_view(), name='create_testing'),
-    path('testing/update/<str:file_no>/<int:test_info_pk>/', TestingUpdateView.as_view(), name='update_testing'),
-
     path('hcv/create/<str:file_no>/', HepatitisCCreateView.as_view(), name='create_hcv'),
     path('hcv/update/<str:file_no>/<int:test_info_pk>/', HepatitisCUpdateView.as_view(), name='update_hcv'),
 
     path('vdrl/create/<str:file_no>/', VDRLCreateView.as_view(), name='create_vdrl'),
-    path('vdrl/update/<str:file_no>/<int:test_info_pk>/', VDRLUpdateView.as_view(), name='vdrl_update'),
+    path('vdrl/update/<str:file_no>/<int:test_info_pk>/', VDRLUpdateView.as_view(), name='update_vdrl'),
 
     path('mantoux/create/<str:file_no>/', MantouxCreateView.as_view(), name='create_mantoux'),
     path('mantoux/update/<str:file_no>/<int:test_info_pk>/', MantouxUpdateView.as_view(), name='update_mantoux'),
@@ -128,7 +125,39 @@ urlpatterns = [
     path('hiv-screening/update/<str:file_no>/<int:test_info_pk>/', HIVScreeningUpdateView.as_view(), name='update_hiv_screening'),
 
     # microbiology
-    
+    path('urine-microscopy/create/<str:file_no>/', UrineMicroscopyCreateView.as_view(), name='create_urine_microscopy'),
+    path('urine-microscopy/update/<str:file_no>/<int:test_info_pk>/', UrineMicroscopyUpdateView.as_view(), name='update_urine_microscopy'),
+
+    path('hvs/create/<str:file_no>/', HVSCreateView.as_view(), name='create_hvs'),
+    path('hvs/update/<str:file_no>/<int:test_info_pk>/', HVSUpdateView.as_view(), name='update_hvs'),
+
+    path('stool/create/<str:file_no>/', StoolCreateView.as_view(), name='create_stool'),
+    path('stool/update/<str:file_no>/<int:test_info_pk>/', StoolUpdateView.as_view(), name='update_stool'),
+
+    path('blood-culture/create/<str:file_no>/', BloodCultureCreateView.as_view(), name='create_blood_culture'),
+    path('blood-culture/update/<str:file_no>/<int:test_info_pk>/', BloodCultureUpdateView.as_view(), name='update_blood_culture'),
+
+    path('occult-blood/create/<str:file_no>/', OccultBloodCreateView.as_view(), name='create_occult_blood'),
+    path('occult-blood/update/<str:file_no>/<int:test_info_pk>/', OccultBloodUpdateView.as_view(), name='update_occult_blood'),
+
+    path('sputum_mcs/create/<str:file_no>/', SputumMCSCreateView.as_view(), name='create_sputum_mcs'),
+    path('sputum_mcs/update/<str:file_no>/<int:test_info_pk>/', SputumMCSUpdateView.as_view(), name='update_sputum_mcs'),
+
+    path('gram-stain/create/<str:file_no>/', GramStainCreateView.as_view(), name='create_gram_stain'),
+    path('gram-stain/update/<str:file_no>/<int:test_info_pk>/', GramStainUpdateView.as_view(), name='update_gram_stain'),
+
+    path('zn-stain/create/<str:file_no>/', ZNStainCreateView.as_view(), name='create_zn_stain'),
+    path('zn-stain/update/<str:file_no>/<int:test_info_pk>/', ZNStainUpdateView.as_view(), name='update_zn_stain'),
+
+    path('semen-analysis/create/<str:file_no>/', SemenAnalysisCreateView.as_view(), name='create_semen_analysis'),
+    path('semen-analysis/update/<str:file_no>/<int:test_info_pk>/', SemenAnalysisUpdateView.as_view(), name='update_semen_analysis'),
+
+    path('urinalysis/create/<str:file_no>/', UrinalysisCreateView.as_view(), name='create_urinalysis'),
+    path('urinalysis/update/<str:file_no>/<int:test_info_pk>/', UrinalysisUpdateView.as_view(), name='update_urinalysis'),
+
+    path('pregnancy/create/<str:file_no>/', PregnancyCreateView.as_view(), name='create_pregnancy_test'),
+    path('pregnancy/update/<str:file_no>/<int:test_info_pk>/', PregnancyUpdateView.as_view(), name='update_pregnancy_test'),
+
     path('logout/', CustomLogoutView.as_view(), name='logout'),
 
     path('', include('django.contrib.auth.urls')),

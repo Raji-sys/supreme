@@ -21,9 +21,9 @@ class PatientAdmin(admin.ModelAdmin):
     list_filter = ('gender',)
 
 
-@admin.register(AsoTitre)
-class Testingdmin(admin.ModelAdmin):
-    list_display = ('id',)
+# @admin.register(AsoTitre)
+# class Testingdmin(admin.ModelAdmin):
+#     list_display = ('id',)
 
 # @admin.register(GeneralTestResult)
 # class GeneralAdmin(admin.ModelAdmin):

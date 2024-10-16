@@ -443,7 +443,7 @@ class GramStain(models.Model):
 
 class ZNStain(models.Model):
     test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
-    test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='zns_stain_test',null=True, blank=True)
+    test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='zn_stain_test',null=True, blank=True)
     first_sample = models.CharField(max_length=50, blank=True, null=True)
     second_sample = models.CharField(max_length=50, blank=True, null=True)
     third_sample = models.CharField(max_length=50, blank=True, null=True)
@@ -469,7 +469,7 @@ class SemenAnalysis(models.Model):
     total_sperm_count = models.DecimalField(max_digits=5, decimal_places=2, help_text="Total Sperm Count (x10^6/ml)", blank=True, null=True)
 
 
-class UrinalysisTest(models.Model):
+class Urinalysis(models.Model):
     test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
     test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='urinalysis_test',null=True, blank=True)
     color = models.CharField(max_length=50, blank=True, null=True)
@@ -488,7 +488,7 @@ class UrinalysisTest(models.Model):
     antibiotic_sensitivity = models.ForeignKey('AntibioticSensitivity', on_delete=models.CASCADE, null=True)
 
 
-class PregnancyTest(models.Model):
+class Pregnancy(models.Model):
     test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
     test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='pregnancy_test',null=True, blank=True)
     result = models.CharField(max_length=10, choices=[('Pos', 'Positive'), ('Neg', 'Negative')],null=True)
@@ -539,12 +539,6 @@ class RheumatoidFactor(models.Model):
 class HPB(models.Model):
     test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
     test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='hpb_test',null=True, blank=True)
-    result = models.CharField(max_length=10, blank=True, null=True)
-
-
-class Testing(models.Model):
-    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
-    test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='testing',null=True, blank=True)
     result = models.CharField(max_length=10, blank=True, null=True)
 
 

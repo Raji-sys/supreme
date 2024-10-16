@@ -250,17 +250,29 @@ class PatientDetailView(DetailView):
         context['widal'] = patient.test_info.filter(widal_test__isnull=False).order_by('-created').select_related('widal_test')
         context['rheumatoid_factor'] = patient.test_info.filter(rheumatoid_factor_test__isnull=False).order_by('-created').select_related('rheumatoid_factor_test')
         context['hpb'] = patient.test_info.filter(hpb_test__isnull=False).order_by('-created').select_related('hpb_test')
-        context['testing'] = patient.test_info.filter(testing__isnull=False).order_by('-created').select_related('testing')
         context['hcv'] = patient.test_info.filter(hcv_test__isnull=False).order_by('-created').select_related('hcv_test')
         context['vdrl']= patient.test_info.filter(vdrl_test__isnull=False).order_by('-created').select_related('vdrl_test')
         context['mantoux']= patient.test_info.filter(mantoux_test__isnull=False).order_by('-created').select_related('mantoux_test')
         context['crp']=patient.test_info.filter(crp_test__isnull=False).order_by('-created').select_related('crp_test')
         context['hiv_screening']= patient.test_info.filter(hiv_test__isnull=False).order_by('-created').select_related('hiv_test')
         context['aso_titre'] = patient.test_info.filter(aso_titre_test__isnull=False).order_by('-created').select_related('aso_titre_test')
- 
+        
+        context['urine_microscopy'] = patient.test_info.filter(urine_test__isnull=False).order_by('-created').select_related('urine_test')
+        context['hvs'] = patient.test_info.filter(hvs_test__isnull=False).order_by('-created').select_related('hvs_test')
+        context['stool'] = patient.test_info.filter(stool_test__isnull=False).order_by('-created').select_related('stool_test')
+        context['blood_culture'] = patient.test_info.filter(blood_culture_test__isnull=False).order_by('-created').select_related('blood_culture_test')
+        context['occult_blood'] = patient.test_info.filter(occult_blood_test__isnull=False).order_by('-created').select_related('occult_blood_test')
+        context['sputum_mcs'] = patient.test_info.filter(sputum_mcs_test__isnull=False).order_by('-created').select_related('sputum_mcs_test')
+        context['gram_stain'] = patient.test_info.filter(gram_stain_test__isnull=False).order_by('-created').select_related('gram_stain_test')
+        context['zn_stain'] = patient.test_info.filter(zn_stain_test__isnull=False).order_by('-created').select_related('zn_stain_test')
+        context['semen_analysis'] = patient.test_info.filter(semen_analysis_test__isnull=False).order_by('-created').select_related('semen_analysis_test')
+        context['urinalysis'] = patient.test_info.filter(urinalysis_test__isnull=False).order_by('-created').select_related('urinalysis_test')
+        context['pregnancy'] = patient.test_info.filter(pregnancy_test__isnull=False).order_by('-created').select_related('pregnancy_test')
+
 
 
         context['general_results']=patient.general_results.all().order_by('-created')
+        
         return context
     
     
@@ -1523,7 +1535,7 @@ class AsoTitreCreateView(View):
     def get(self, request, file_no):
         try:
             patient = get_object_or_404(Patient, file_no=file_no)
-            generic_test = get_object_or_404(GenericTest, name__iexact='AsoTitre')
+            generic_test = get_object_or_404(GenericTest, name__iexact='Aso Titre')
             
             # Create Paypoint first
             payment = Paypoint.objects.create(
@@ -1623,12 +1635,13 @@ class HIVScreeningCreateView(View):
         return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
 
 
-class TestingCreateView(View):
+#microbiology
+class UrineMicroscopyCreateView(View):
     @transaction.atomic
     def get(self, request, file_no):
         try:
             patient = get_object_or_404(Patient, file_no=file_no)
-            generic_test = get_object_or_404(GenericTest, name__iexact='Hepatitis B')
+            generic_test = get_object_or_404(GenericTest, name__iexact='Urine Microscopy')
             
             # Create Paypoint first
             payment = Paypoint.objects.create(
@@ -1646,17 +1659,367 @@ class TestingCreateView(View):
                 payment=payment
             )
             
-            testing = Testing.objects.create(
+            urine_microscopy = UrineMicroscopy.objects.create(
                 test=generic_test,
                 test_info=test_info
             )
 
-            messages.success(request, 'test created successfully')
+            messages.success(request, 'Urine Microscopy test created successfully')
         except Exception as e:
-            messages.error(request, f'Error creating test: {str(e)}')
+            messages.error(request, f'Error creating Urine Microscopy test: {str(e)}')
         
         return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
-    
+
+
+class HVSCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='HVS')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            hvs = HVS.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'HVS test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating HVS test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class StoolCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Stool')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            stool = Stool.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Stool test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Stool test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class BloodCultureCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Blood Culture')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            blood_culture = BloodCulture.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Blood Culture test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Blood Culture test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class OccultBloodCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Occult Blood')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            occult_blood = OccultBlood.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Occult Blood test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Occult Blood test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class SputumMCSCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Sputum MCS')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            sputum_mcs = SputumMCS.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Sputum MCS test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Sputum MCS test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class GramStainCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Gram Stain')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            gram_stain = GramStain.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Gram Stain test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Gram Stain test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class ZNStainCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='ZN Stain')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            zn_stain = ZNStain.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'ZN Stain test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating ZN Stain test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class SemenAnalysisCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Semen Analysis')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            semen_analysis = SemenAnalysis.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Semen Analysis test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Semen Analysis Stain test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class UrinalysisCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Urinalysis')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            urinalysis = Urinalysis.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Urinalysis test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Urinalysis test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+class PregnancyCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Pregnancy')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            pregnancy = Pregnancy.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'Pregnancy test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating Pregnancy test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
 
 class BaseLabResultUpdateView(UpdateView):
     template_name = 'shared_test_form.html'
@@ -1781,6 +2144,57 @@ class HIVScreeningUpdateView(BaseLabResultUpdateView):
     form_class = HIVScreeningForm
 
 
-class TestingUpdateView(BaseLabResultUpdateView):
-    model = HIVScreening
-    form_class = HIVScreeningForm
+#MICROBIOLOGY
+class UrineMicroscopyUpdateView(BaseLabResultUpdateView):
+    model = UrineMicroscopy
+    form_class = UrineMicroscopyForm
+
+
+class HVSUpdateView(BaseLabResultUpdateView):
+    model = HVS
+    form_class = HVSForm
+
+
+class StoolUpdateView(BaseLabResultUpdateView):
+    model = Stool
+    form_class = StoolForm
+
+
+class BloodCultureUpdateView(BaseLabResultUpdateView):
+    model = BloodCulture
+    form_class = BloodCultureForm
+
+
+class OccultBloodUpdateView(BaseLabResultUpdateView):
+    model = OccultBlood
+    form_class = OccultBloodForm
+
+
+class SputumMCSUpdateView(BaseLabResultUpdateView):
+    model = SputumMCS
+    form_class = SputumMCSForm
+
+
+class GramStainUpdateView(BaseLabResultUpdateView):
+    model = GramStain
+    form_class = GramStainForm
+
+
+class ZNStainUpdateView(BaseLabResultUpdateView):
+    model = ZNStain
+    form_class = ZNStainForm
+
+
+class SemenAnalysisUpdateView(BaseLabResultUpdateView):
+    model = SemenAnalysis
+    form_class = SemenAnalysisForm
+
+
+class UrinalysisUpdateView(BaseLabResultUpdateView):
+    model = Urinalysis
+    form_class = UrinalysisForm
+
+
+class PregnancyUpdateView(BaseLabResultUpdateView):
+    model = Pregnancy
+    form_class = PregnancyForm

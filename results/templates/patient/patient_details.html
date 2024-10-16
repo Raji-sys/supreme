@@ -687,18 +687,24 @@
         <div> 
           <div class="text-center rounded-xl p-2 m-4  md:p-10 bg-gray-50">
             <ul class="uk-subnav uk-subnav-pill uppercase flex justify-center gap-2 " uk-switcher="animation: uk-animation-slide-left-medium, uk-animation-slide-right-medium">
-              <li ><a href="#" class="rounded-lg ">Urea & Electrolyte </a></li>
-              <li><a href="#" class="rounded-lg ">Liver function</a></li>
-              <li><a href="#" class="rounded-lg ">lipid profile</a></li>
-              <li><a href="#" class="rounded-lg ">blood group</a></li>
-              <li><a href="#" class="rounded-lg ">genotype</a></li>
+              <li ><a href="#" class="rounded-lg ">Urine microscopy </a></li>
+              <li><a href="#" class="rounded-lg ">HVS</a></li>
+              <li><a href="#" class="rounded-lg ">Stool</a></li>
+              <li><a href="#" class="rounded-lg ">blood culture</a></li>
+              <li><a href="#" class="rounded-lg ">occult blood</a></li>
+              <li><a href="#" class="rounded-lg ">sputum mcs</a></li>
+              <li><a href="#" class="rounded-lg ">gram stain</a></li>
+              <li><a href="#" class="rounded-lg ">zn stain</a></li>
+              <li><a href="#" class="rounded-lg ">semen analysis</a></li>
+              <li><a href="#" class="rounded-lg ">urinalysis</a></li>
+              <li><a href="#" class="rounded-lg ">pregnancy</a></li>
             </ul>
             
             <div class="uk-switcher uk-margin">
        
               <div>
                 <div>
-              <a href="{% url 'create_urea_electrolyte' patient.file_no %}" class="text-xs text-amber-600 hover:text-green-700">
+              <a href="{% url 'create_urine_microscopy' patient.file_no %}" class="text-xs text-amber-600 hover:text-green-700">
                   <i class="fa-solid fa-plus fa-2xl"></i> SEND REQUEST
               </a>
 
@@ -709,204 +715,579 @@
                       <tr class="text-xs">
                         <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
                         <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">Code</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">Urea</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">Sodium</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">potassium</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">Bicarbonate</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">Chloride</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">Caretanine</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">Pus cells</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">rbc</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">epithelial cells</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">casts</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">Crystals</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">ova</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">culture yield</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">antibiotic sensitivity</th>
                         <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">Date</th>
                         <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">input result</th>
                       </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-cyan-200">
-                      {% for test_info in ue %}
+                      {% for test_info in urine_microscopy%}
                       <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
                         <td class=" p-3 whitespace-nowrap">{{ forloop.counter }}</td>
                         <td class=" p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A'}}</td>
-                        <td class=" p-3 whitespace-nowrap">{{ test_info.ue_test.urea|default_if_none:'N/A'}}</td>
-                        <td class=" p-3 whitespace-nowrap">{{ test_info.ue_test.sodium|default_if_none:'N/A' }}</td>
-                        <td class=" p-3 whitespace-nowrap">{{ test_info.ue_test.potassium|default_if_none:'N/A' }}</td>
-                        <td class=" p-3 whitespace-nowrap">{{ test_info.ue_test.bicarbonate|default_if_none:'N/A' }}</td>
-                        <td class=" p-3 whitespace-nowrap">{{ test_info.ue_test.chloride|default_if_none:'N/A' }}</td>
-                        <td class=" p-3 whitespace-nowrap">{{ test_info.ue_test.caretinine|default_if_none:'N/A' }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ test_info.urine_test.pus_cells|default_if_none:'N/A'}}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ test_info.urine_test.rbc|default_if_none:'N/A' }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ test_info.urine_test.epithelial_cells|default_if_none:'N/A' }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ test_info.urine_test.casts|default_if_none:'N/A' }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ test_info.urine_test.crystals|default_if_none:'N/A' }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ test_info.urine_test.ova|default_if_none:'N/A' }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ test_info.urine_test.culture_yield|default_if_none:'N/A' }}</td>
+                        <td class=" p-3 whitespace-nowrap">{{ test_info.urine_test.antibiotic_sensitivity|default_if_none:'N/A' }}</td>
                         <td class=" p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
-                        <td class="p-3 whitespace-nowrap">  <a href="{% url 'update_urea_electrolyte' patient.file_no test_info.id %}" class="text-xs hover:text-green-700">
+                        <td class="p-3 whitespace-nowrap">  <a href="{% url 'update_urine_microscopy' patient.file_no test_info.id %}" class="text-xs hover:text-green-700">
                           <i class="fa-solid fa-edit fa-2xl"></i> </a>
                     </td>
                       </tr>
                       {%empty%}
                       <tr>
-                        <td colspan="10" class="p-3 text-center">No Urea & Electrolyte test yet.</td>
+                        <td colspan="10" class="p-3 text-center">No Urine microscopy test yet.</td>
                     </tr>
                     {% endfor %}
                     </tbody>
                   </table>
                 </div>
               </div>
-            
-            <!-- new test  -->
-              <div>
-                <div>
-                  <a href="#" class="text-xs text-amber-600 hover:text-green-700"><i class="fa-solid fa-plus fa-2xl"></i> SEND REQUEST</a>
-                </div>
-                <div class="overflow-x-auto max-h-[50vh] p-2">
-                  <table class="min-w-full divide-y divide-cyan-200 mb-4">
-                    <thead class="bg-cyan-50">
-            
-                      <tr class="text-xs">
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">alkaline phosphatase</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">sgot</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">sgpt</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">gamma_gt</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">total_bilirubin</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">direct_bilirubin</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider"></th>
-                      </tr>
-            
-                    </thead>
-                    <tbody class="bg-white divide-y divide-cyan-200">
-                      <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
-                        <td class=" p-3 whitespace-nowrap">{{ forloop.counter }}</td>
-                        <td class=" p-3 whitespace-nowrap">{{ test_infoalkaline_phosphatase }}</td>
-                        <td class=" p-3 whitespace-nowrap">{{ test_infosgot }}</td>
-                        <td class=" p-3 whitespace-nowrap">{{ test_infosgpt }}</td>
-                        <td class=" p-3 whitespace-nowrap">{{ test_infogamma_gt }}</td>
-                        <td class=" p-3 whitespace-nowrap">{{ test_infototal_bilirubin|default_if_none:'N/A' }}</td>
-                        <td class=" p-3 whitespace-nowrap">{{ test_infodirect_bilirubin|default_if_none:'N/A' }}</td>
-                        <td class=" p-3 whitespace-nowrap">  <a href="#" class="text-green-600 hover:text-green-700"><i class="fa-solid fa-edit fa-2xl"></i></a></td> 
-                      </tr>
-                      <div class="p-2">
-                          <p>No liver function test yet</p>
-                      </div>
-                    </tbody>
-                  </table>
-                </div>
-              </div>  
-            
-              <!-- new test  -->
-            
-              <div>
-                <div>
-                  <a href="#" class="text-xs text-amber-600 hover:text-green-700"><i class="fa-solid fa-plus fa-2xl"></i> SEND REQUEST</a>
-                </div>
-                <div class="overflow-x-auto max-h-[50vh] p-2">
-                  <table class="min-w-full divide-y divide-cyan-200 mb-4">
-                    <thead class="bg-cyan-50">
-            
-                      <tr class="text-xs">
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">cholesterol</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">triglyceride</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">hdl_cholesterol</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">ldl_cholesterol</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider"></th>
-                      </tr>
-            
-                    </thead>
-                    <tbody class="bg-white divide-y divide-cyan-200">
-                      <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
-                        <td class=" p-3 whitespace-nowrap">{{ forloop.counter }}</td>
-                        <td class=" p-3 whitespace-nowrap">{{ test_infocholesterol }}</td>
-                        <td class=" p-3 whitespace-nowrap">{{ test_infotriglyceride }}</td>
-                        <td class=" p-3 whitespace-nowrap">{{ test_infohdl_cholesterol }}</td>
-                        <td class=" p-3 whitespace-nowrap">{{ test_infoldl_cholesterol }}</td>
-                        <td class=" p-3 whitespace-nowrap"> <a href="#" class="text-green-600 hover:text-green-700"><i class="fa-solid fa-edit fa-2xl"></i></a></td>
-                      </tr>
-                      <div class="p-2">
-                          <p>No lipid profile test yet</p>
-                      </div>
-                    </tbody>
-                  </table>
-                </div>
-              </div>  
-            
-            <!-- new test  -->
-              <div>
-                <div>
-              <a href="{% url 'create_blood_group' patient.file_no %}" class="text-xs text-amber-600 hover:text-green-700">
-                  <i class="fa-solid fa-plus fa-2xl"></i> SEND REQUEST
-              </a>
-                </div>
-                <div class="overflow-x-auto max-h-[50vh] p-2">
-                  <table class="min-w-full divide-y divide-cyan-200 mb-4">
-                    <thead class="bg-cyan-50">
-            
-                      <tr class="text-xs">
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">code</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">result</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">Date</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">input result</th>
-                      </tr>
-            
-                    </thead>
-                    <tbody class="bg-white divide-y divide-cyan-200">
-                      {% for test_info in blood_group %}
-                      <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
-                          <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
-                          <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
-                          <td class="p-3 whitespace-nowrap">{{ test_info.bg_test.result|default_if_none:'N/A' }}</td>
-                          <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
-                          <td class="p-3 whitespace-nowrap">  <a href="{% url 'update_blood_group' patient.file_no test_info.id %}" class="text-xs text-amber-600 hover:text-green-700">
-                            <i class="fa-solid fa-edit fa-2xl"></i> input result</a>
-                      </td>
-                      </tr>
-                      {% empty %}
-                      <tr>
-                          <td colspan="5" class="p-3 text-center">No blood group tests available.</td>
-                      </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
-                </div>
-              </div>  
+                          <!-- new test  -->
+                          <div>
+                            <!-- HVS Section -->
+                            <div>
+                              <a href="{% url 'create_hvs' patient.file_no %}" class="text-xs text-amber-600 hover:text-green-700">
+                                <i class="fa-solid fa-plus fa-2xl"></i> SEND REQUEST
+                              </a>
+                            </div>
+                            <div class="overflow-x-auto max-h-[50vh] p-2">
+                              <table class="min-w-full divide-y divide-cyan-200 mb-4">
+                                <thead class="bg-cyan-50">
+                                  <tr class="text-xs">
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Code</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Pus cells</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">RBC</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Epithelial cells</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">T. vaginalis</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Yeast cells</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Culture yield</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Antibiotic sensitivity</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Date</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Input result</th>
+                                  </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-cyan-200">
+                                  {% for test_info in hvs_tests %}
+                                  <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
+                                    <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
+                                    <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
+                                    <td class="p-3 whitespace-nowrap">{{ test_info.hvs_test.pus_cells|default_if_none:'N/A' }}</td>
+                                    <td class="p-3 whitespace-nowrap">{{ test_info.hvs_test.rbc|default_if_none:'N/A' }}</td>
+                                    <td class="p-3 whitespace-nowrap">{{ test_info.hvs_test.epithelial_cells|default_if_none:'N/A' }}</td>
+                                    <td class="p-3 whitespace-nowrap">{{ test_info.hvs_test.t_vaginalis|default_if_none:'N/A' }}</td>
+                                    <td class="p-3 whitespace-nowrap">{{ test_info.hvs_test.yeast_cells|default_if_none:'N/A' }}</td>
+                                    <td class="p-3 whitespace-nowrap">{{ test_info.hvs_test.culture_yield|default_if_none:'N/A' }}</td>
+                                    <td class="p-3 whitespace-nowrap">{{ test_info.hvs_test.antibiotic_sensitivity|default_if_none:'N/A' }}</td>
+                                    <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
+                                    <td class="p-3 whitespace-nowrap">
+                                      <a href="{% url 'update_hvs' patient.file_no test_info.id %}" class="text-xs hover:text-green-700">
+                                        <i class="fa-solid fa-edit fa-2xl"></i>
+                                      </a>
+                                    </td>
+                                  </tr>
+                                  {% empty %}
+                                  <tr>
+                                    <td colspan="11" class="p-3 text-center">No HVS test yet.</td>
+                                  </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                          
+                          <!-- Stool Section -->
+                          <div>
+                            <div>
+                              <a href="{% url 'create_stool' patient.file_no %}" class="text-xs text-amber-600 hover:text-green-700">
+                                <i class="fa-solid fa-plus fa-2xl"></i> SEND REQUEST
+                              </a>
+                            </div>
+                            <div class="overflow-x-auto max-h-[50vh] p-2">
+                              <table class="min-w-full divide-y divide-cyan-200 mb-4">
+                                <thead class="bg-cyan-50">
+                                  <tr class="text-xs">
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Code</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Consistency</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Color</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Mucus</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Blood</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Ova</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Cyst</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Culture yield</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Antibiotic sensitivity</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Date</th>
+                                    <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Input result</th>
+                                  </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-cyan-200">
+                                  {% for test_info in stool_tests %}
+                                  <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
+                                    <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
+                                    <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
+                                    <td class="p-3 whitespace-nowrap">{{ test_info.stool_test.consistency|default_if_none:'N/A' }}</td>
+                                    <td class="p-3 whitespace-nowrap">{{ test_info.stool_test.color|default_if_none:'N/A' }}</td>
+                                    <td class="p-3 whitespace-nowrap">{{ test_info.stool_test.mucus|default_if_none:'N/A' }}</td>
+                                    <td class="p-3 whitespace-nowrap">{{ test_info.stool_test.blood|default_if_none:'N/A' }}</td>
+                                    <td class="p-3 whitespace-nowrap">{{ test_info.stool_test.ova|default_if_none:'N/A' }}</td>
+                                    <td class="p-3 whitespace-nowrap">{{ test_info.stool_test.cyst|default_if_none:'N/A' }}</td>
+                                    <td class="p-3 whitespace-nowrap">{{ test_info.stool_test.culture_yield|default_if_none:'N/A' }}</td>
+                                    <td class="p-3 whitespace-nowrap">{{ test_info.stool_test.antibiotic_sensitivity|default_if_none:'N/A' }}</td>
+                                    <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
+                                    <td class="p-3 whitespace-nowrap">
+                                      <a href="{% url 'update_stool' patient.file_no test_info.id %}" class="text-xs hover:text-green-700">
+                                        <i class="fa-solid fa-edit fa-2xl"></i>
+                                      </a>
+                                    </td>
+                                  </tr>
+                                  {% empty %}
+                                  <tr>
+                                    <td colspan="12" class="p-3 text-center">No Stool test yet.</td>
+                                  </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                          <!-- new test  -->
+<!-- Previous content remains the same -->
 
-            <!-- new test  -->
+<!-- Blood Culture Section -->
+<div>
+  <div>
+    <a href="{% url 'create_blood_culture' patient.file_no %}" class="text-xs text-amber-600 hover:text-green-700">
+      <i class="fa-solid fa-plus fa-2xl"></i> SEND REQUEST
+    </a>
+  </div>
+  <div class="overflow-x-auto max-h-[50vh] p-2">
+    <table class="min-w-full divide-y divide-cyan-200 mb-4">
+      <thead class="bg-cyan-50">
+        <tr class="text-xs">
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Code</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Culture yield</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Antibiotic sensitivity</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Date</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Input result</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-cyan-200">
+        {% for test_info in blood_culture_tests %}
+        <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
+          <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.blood_culture_test.culture_yield|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.blood_culture_test.antibiotic_sensitivity|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">
+            <a href="{% url 'update_blood_culture' patient.file_no test_info.id %}" class="text-xs hover:text-green-700">
+              <i class="fa-solid fa-edit fa-2xl"></i>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="p-3 text-center">No Blood Culture test yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 
-              <div>
-                <div>
-              <a href="{% url 'create_genotype' patient.file_no %}" class="text-xs text-amber-600 hover:text-green-700">
-                  <i class="fa-solid fa-plus fa-2xl"></i> SEND REQUEST
-              </a>
-                </div>
-                <div class="overflow-x-auto max-h-[50vh] p-2">
-                  <table class="min-w-full divide-y divide-cyan-200 mb-4">
-                    <thead class="bg-cyan-50">
-            
-                      <tr class="text-xs">
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">code</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">result</th>
-                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">Date</th>
-                      <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">input result</th>
-                      </tr>
-            
-                    </thead>
-                    <tbody class="bg-white divide-y divide-cyan-200">
-                      {% for test_info in genotype %}
-                      <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
-                          <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
-                          <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
-                          <td class="p-3 whitespace-nowrap">{{ test_info.gt_test.result|default_if_none:'N/A' }}</td>
-                          <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
-                          <td class="p-3 whitespace-nowrap">  <a href="{% url 'update_genotype' patient.file_no test_info.id %}" class="text-xs text-amber-600 hover:text-green-700">
-                            <i class="fa-solid fa-edit fa-2xl"></i> input result</a>
-                      </td>
-                      </tr>
-                      {% empty %}
-                      <tr>
-                          <td colspan="5" class="p-3 text-center">No genotype tests available.</td>
-                      </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
-                </div>
-              </div>  
-            
-            <!-- new test  -->
-            
+<!-- Occult Blood Section -->
+<div>
+  <div>
+    <a href="{% url 'create_occult_blood' patient.file_no %}" class="text-xs text-amber-600 hover:text-green-700">
+      <i class="fa-solid fa-plus fa-2xl"></i> SEND REQUEST
+    </a>
+  </div>
+  <div class="overflow-x-auto max-h-[50vh] p-2">
+    <table class="min-w-full divide-y divide-cyan-200 mb-4">
+      <thead class="bg-cyan-50">
+        <tr class="text-xs">
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Code</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Result</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Culture yield</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Antibiotic sensitivity</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Date</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Input result</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-cyan-200">
+        {% for test_info in occult_blood_tests %}
+        <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
+          <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.occult_blood_test.result|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.occult_blood_test.culture_yield|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.occult_blood_test.antibiotic_sensitivity|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">
+            <a href="{% url 'update_occult_blood' patient.file_no test_info.id %}" class="text-xs hover:text-green-700">
+              <i class="fa-solid fa-edit fa-2xl"></i>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="p-3 text-center">No Occult Blood test yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Sputum MCS Section -->
+<div>
+  <div>
+    <a href="{% url 'create_sputum_mcs' patient.file_no %}" class="text-xs text-amber-600 hover:text-green-700">
+      <i class="fa-solid fa-plus fa-2xl"></i> SEND REQUEST
+    </a>
+  </div>
+  <div class="overflow-x-auto max-h-[50vh] p-2">
+    <table class="min-w-full divide-y divide-cyan-200 mb-4">
+      <thead class="bg-cyan-50">
+        <tr class="text-xs">
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Code</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Culture yield</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Antibiotic sensitivity</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Date</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Input result</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-cyan-200">
+        {% for test_info in sputum_mcs_tests %}
+        <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
+          <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.sputum_mcs_test.culture_yield|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.sputum_mcs_test.antibiotic_sensitivity|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">
+            <a href="{% url 'update_sputum_mcs' patient.file_no test_info.id %}" class="text-xs hover:text-green-700">
+              <i class="fa-solid fa-edit fa-2xl"></i>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="p-3 text-center">No Sputum MCS test yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Previous content remains the same -->
+
+<!-- Gram Stain Section -->
+<div>
+  <div>
+    <a href="{% url 'create_gram_stain' patient.file_no %}" class="text-xs text-amber-600 hover:text-green-700">
+      <i class="fa-solid fa-plus fa-2xl"></i> SEND REQUEST
+    </a>
+  </div>
+  <div class="overflow-x-auto max-h-[50vh] p-2">
+    <table class="min-w-full divide-y divide-cyan-200 mb-4">
+      <thead class="bg-cyan-50">
+        <tr class="text-xs">
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Code</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Sample Type</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Gram Stain Findings</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Other Findings</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Culture Yield</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Antibiotic Sensitivity</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Date</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Input result</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-cyan-200">
+        {% for test_info in gram_stain_tests %}
+        <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
+          <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">
+            {% if test_info.gram_stain_test.urine %}Urine{% endif %}
+            {% if test_info.gram_stain_test.hvs %}HVS{% endif %}
+            {% if test_info.gram_stain_test.swab %}Swab{% endif %}
+            {% if test_info.gram_stain_test.pus %}Pus{% endif %}
+            {% if test_info.gram_stain_test.aspirate %}Aspirate{% endif %}
+            {% if test_info.gram_stain_test.sputum %}Sputum{% endif %}
+          </td>
+          <td class="p-3 whitespace-nowrap">
+            {% if test_info.gram_stain_test.gram_positive_cocci %}Gram +ve cocci{% endif %}
+            {% if test_info.gram_stain_test.gram_negative_cocci %}Gram -ve cocci{% endif %}
+            {% if test_info.gram_stain_test.gram_positive_rods %}Gram +ve rods{% endif %}
+            {% if test_info.gram_stain_test.gram_negative_rods %}Gram -ve rods{% endif %}
+            {% if test_info.gram_stain_test.gram_positive_clusters %}Gram +ve clusters{% endif %}
+            {% if test_info.gram_stain_test.gram_negative_clusters %}Gram -ve clusters{% endif %}
+            {% if test_info.gram_stain_test.gram_positive_chains %}Gram +ve chains{% endif %}
+            {% if test_info.gram_stain_test.gram_negative_chains %}Gram -ve chains{% endif %}
+          </td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.gram_stain_test.other_findings|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.gram_stain_test.culture_yield|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.gram_stain_test.antibiotic_sensitivity|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">
+            <a href="{% url 'update_gram_stain' patient.file_no test_info.id %}" class="text-xs hover:text-green-700">
+              <i class="fa-solid fa-edit fa-2xl"></i>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="9" class="p-3 text-center">No Gram Stain test yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ZN Stain Section -->
+<div>
+  <div>
+    <a href="{% url 'create_zn_stain' patient.file_no %}" class="text-xs text-amber-600 hover:text-green-700">
+      <i class="fa-solid fa-plus fa-2xl"></i> SEND REQUEST
+    </a>
+  </div>
+  <div class="overflow-x-auto max-h-[50vh] p-2">
+    <table class="min-w-full divide-y divide-cyan-200 mb-4">
+      <thead class="bg-cyan-50">
+        <tr class="text-xs">
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Code</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">First Sample</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Second Sample</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Third Sample</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Culture Yield</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Antibiotic Sensitivity</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Date</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Input result</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-cyan-200">
+        {% for test_info in zn_stain_tests %}
+        <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
+          <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.zn_stain_test.first_sample|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.zn_stain_test.second_sample|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.zn_stain_test.third_sample|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.zn_stain_test.culture_yield|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.zn_stain_test.antibiotic_sensitivity|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">
+            <a href="{% url 'update_zn_stain' patient.file_no test_info.id %}" class="text-xs hover:text-green-700">
+              <i class="fa-solid fa-edit fa-2xl"></i>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="9" class="p-3 text-center">No ZN Stain test yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Previous content remains the same -->
+
+<!-- Semen Analysis Section -->
+<div>
+  <div>
+    <a href="{% url 'create_semen_analysis' patient.file_no %}" class="text-xs text-amber-600 hover:text-green-700">
+      <i class="fa-solid fa-plus fa-2xl"></i> SEND REQUEST
+    </a>
+  </div>
+  <div class="overflow-x-auto max-h-[50vh] p-2">
+    <table class="min-w-full divide-y divide-cyan-200 mb-4">
+      <thead class="bg-cyan-50">
+        <tr class="text-xs">
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Code</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Time Produced</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Time Examined</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Color</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Volume (ml)</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Viscosity</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Consistency</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Motility (%)</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Morphology (%)</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Total Sperm Count</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Date</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Input result</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-cyan-200">
+        {% for test_info in semen_analysis_tests %}
+        <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
+          <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.semen_analysis_test.time_produced|time:"H:i"|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.semen_analysis_test.time_examined|time:"H:i"|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.semen_analysis_test.color|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.semen_analysis_test.volume|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.semen_analysis_test.viscosity|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.semen_analysis_test.consistency|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">
+            Active: {{ test_info.semen_analysis_test.motility_active|default_if_none:'N/A' }}<br>
+            Moderate: {{ test_info.semen_analysis_test.motility_moderate|default_if_none:'N/A' }}<br>
+            Sluggish: {{ test_info.semen_analysis_test.motility_sluggish|default_if_none:'N/A' }}
+          </td>
+          <td class="p-3 whitespace-nowrap">
+            Normal: {{ test_info.semen_analysis_test.morphology_normal|default_if_none:'N/A' }}<br>
+            Abnormal: {{ test_info.semen_analysis_test.morphology_abnormal|default_if_none:'N/A' }}<br>
+            Sluggish: {{ test_info.semen_analysis_test.morphology_sluggish|default_if_none:'N/A' }}
+          </td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.semen_analysis_test.total_sperm_count|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">
+            <a href="{% url 'update_semen_analysis' patient.file_no test_info.id %}" class="text-xs hover:text-green-700">
+              <i class="fa-solid fa-edit fa-2xl"></i>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="13" class="p-3 text-center">No Semen Analysis test yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Urinalysis Section -->
+<div>
+  <div>
+    <a href="{% url 'create_urinalysis' patient.file_no %}" class="text-xs text-amber-600 hover:text-green-700">
+      <i class="fa-solid fa-plus fa-2xl"></i> SEND REQUEST
+    </a>
+  </div>
+  <div class="overflow-x-auto max-h-[50vh] p-2">
+    <table class="min-w-full divide-y divide-cyan-200 mb-4">
+      <thead class="bg-cyan-50">
+        <tr class="text-xs">
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Code</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Color</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Appearance</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Specific Gravity</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">pH</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Protein</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Glucose</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Ketones</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Bilirubin</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Urobilinogen</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Nitrites</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Leukocyte Esterase</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Blood</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Culture Yield</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Antibiotic Sensitivity</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Date</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Input result</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-cyan-200">
+        {% for test_info in urinalysis_tests %}
+        <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
+          <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.urinalysis_test.color|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.urinalysis_test.appearance|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.urinalysis_test.specific_gravity|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.urinalysis_test.ph|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.urinalysis_test.protein|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.urinalysis_test.glucose|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.urinalysis_test.ketones|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.urinalysis_test.bilirubin|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.urinalysis_test.urobilinogen|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.urinalysis_test.nitrites|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.urinalysis_test.leukocyte_esterase|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.urinalysis_test.blood|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.urinalysis_test.culture_yield|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.urinalysis_test.antibiotic_sensitivity|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">
+            <a href="{% url 'update_urinalysis' patient.file_no test_info.id %}" class="text-xs hover:text-green-700">
+              <i class="fa-solid fa-edit fa-2xl"></i>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="18" class="p-3 text-center">No Urinalysis test yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Pregnancy Test Section -->
+<div>
+  <div>
+    <a href="{% url 'create_pregnancy_test' patient.file_no %}" class="text-xs text-amber-600 hover:text-green-700">
+      <i class="fa-solid fa-plus fa-2xl"></i> SEND REQUEST
+    </a>
+  </div>
+  <div class="overflow-x-auto max-h-[50vh] p-2">
+    <table class="min-w-full divide-y divide-cyan-200 mb-4">
+      <thead class="bg-cyan-50">
+        <tr class="text-xs">
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Code</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Result</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Method</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Date</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Input result</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-cyan-200">
+        {% for test_info in pregnancy_tests %}
+        <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
+          <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.pregnancy_test.result|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.pregnancy_test.method|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">
+            <a href="{% url 'update_pregnancy_test' patient.file_no test_info.id %}" class="text-xs hover:text-green-700">
+              <i class="fa-solid fa-edit fa-2xl"></i>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="p-3 text-center">No Pregnancy test yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
       </div>    
       </div>
 
@@ -1059,45 +1440,7 @@
 <!-- new test  -->
 <div>
   <div>
-    <a href="{%url 'create_hpb' patient.file_no %}" class="text-xs text-amber-600 hover:text-green-700"><i class="fa-solid fa-plus fa-2xl"></i> SEND REQUEST</a>
-  </div>
-  <div class="overflow-x-auto max-h-[50vh] p-2">
-    <table class="min-w-full divide-y divide-cyan-200 mb-4">
-      <thead class="bg-cyan-50">
-        <tr class="text-xs">
-          <th class=" p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
-          <th class=" p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">code</th>
-          <th class=" p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">result</th>
-          <th class=" p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">date</th>
-          <th class=" p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider"></th>
-        </tr>
-      </thead>
-      <tbody class="bg-white divide-y divide-cyan-200">
-        {% for test_info in hpb %}
-        <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
-          <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
-          <td class="p-3 whitespace-nowrap">{{ test_info.code }}</td>
-          <td class="p-3 whitespace-nowrap">{{ test_info.hpb_test.result|default_if_none:'N/A' }}</td>
-          <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
-          <td class="p-3 whitespace-nowrap"><a href="{%url 'update_hpb' patient.file_no test_info.id %}" class="text-green-600 hover:text-green-700"><i class="fa-solid fa-edit fa-2xl"></i></a></td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="9" class="p-3 text-center">No Hepatitis B test yet.</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
-<!-- new test  -->
-
-            
-            <!-- new test  -->
-<!-- new test  -->
-<div>
-  <div>
-    <a href="{% url 'create_hcv' patient.file_no %}" class="text-xs text-amber-600 hover:text-green-700"><i class="fa-solid fa-plus fa-2xl"></i> SEND REQUEST</a>
+    <a href="{%url 'create_hcv' patient.file_no %}" class="text-xs text-amber-600 hover:text-green-700"><i class="fa-solid fa-plus fa-2xl"></i> SEND REQUEST</a>
   </div>
   <div class="overflow-x-auto max-h-[50vh] p-2">
     <table class="min-w-full divide-y divide-cyan-200 mb-4">
@@ -1115,7 +1458,7 @@
         <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
           <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.code }}</td>
-          <td class="p-3 whitespace-nowrap">{{ test_info.hcv_test.result|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.hpb_test.result|default_if_none:'N/A' }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
           <td class="p-3 whitespace-nowrap"><a href="{%url 'update_hcv' patient.file_no test_info.id %}" class="text-green-600 hover:text-green-700"><i class="fa-solid fa-edit fa-2xl"></i></a></td>
         </tr>
@@ -1130,8 +1473,9 @@
 </div>
 <!-- new test  -->
 
+            
             <!-- new test  -->
-<!-- VDRL Test Results -->
+<!-- new test  -->
 <div>
   <div>
     <a href="{% url 'create_vdrl' patient.file_no %}" class="text-xs text-amber-600 hover:text-green-700"><i class="fa-solid fa-plus fa-2xl"></i> SEND REQUEST</a>
@@ -1148,23 +1492,27 @@
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-cyan-200">
-        {% for test_info in vdrl_tests %}
+        {% for test_info in vdrl %}
         <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
           <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.code }}</td>
-          <td class="p-3 whitespace-nowrap">{{ test_info.vdrl_test.result }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.hcv_test.result|default_if_none:'N/A' }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
-          <td class="p-3 whitespace-nowrap"><a href="{% url 'update_vdrl' patient.file_no test_info.id %}" class="text-green-600 hover:text-green-700"><i class="fa-solid fa-edit fa-2xl"></i></a></td>
+          <td class="p-3 whitespace-nowrap"><a href="{%url 'update_vdrl' patient.file_no test_info.id %}" class="text-green-600 hover:text-green-700"><i class="fa-solid fa-edit fa-2xl"></i></a></td>
         </tr>
         {% empty %}
         <tr>
-          <td colspan="5" class="p-3 text-center">No VDRL test yet.</td>
+          <td colspan="9" class="p-3 text-center">No VDRL test yet.</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
 </div>
+<!-- new test  -->
+
+            <!-- new test  -->
+
 
 <!-- Mantoux Test Results -->
 <div>
@@ -1183,17 +1531,17 @@
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-cyan-200">
-        {% for test_info in mantoux_tests %}
+        {% for test_info in mantoux %}
         <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
           <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.code }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.mantoux_test.result }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
-          <td class="p-3 whitespace-nowrap"><a href="{% url 'update_mantoux' patient.file_no test_info.id %}" class="text-green-600 hover:text-green-700"><i class="fa-solid fa-edit fa-2xl"></i></a></td>
+          <td class="p-3 whitespace-nowrap"><a href="{% url 'update_aso_titre' patient.file_no test_info.id %}" class="text-green-600 hover:text-green-700"><i class="fa-solid fa-edit fa-2xl"></i></a></td>
         </tr>
         {% empty %}
         <tr>
-          <td colspan="5" class="p-3 text-center">No Mantoux test yet.</td>
+          <td colspan="5" class="p-3 text-center">No mantoux test yet.</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -1218,7 +1566,7 @@
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-cyan-200">
-        {% for test_info in aso_titre_tests %}
+        {% for test_info in aso_titre %}
         <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
           <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.code }}</td>
@@ -1253,7 +1601,7 @@
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-cyan-200">
-        {% for test_info in crp_tests %}
+        {% for test_info in crp %}
         <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
           <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.code }}</td>
@@ -1288,7 +1636,7 @@
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-cyan-200">
-        {% for test_info in hiv_screening_tests %}
+        {% for test_info in hiv_screening %}
         <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
           <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.code }}</td>

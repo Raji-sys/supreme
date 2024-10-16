@@ -608,37 +608,6 @@ class HepatitisBForm(forms.ModelForm):
         return hepatitis_b
 
 
-class TestingForm(forms.ModelForm):
-    class Meta:
-        model = Testing
-        exclude = ['test','test_info']
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.instance and self.instance.test_info:
-            self.fields['nature_of_specimen'] = forms.CharField(
-                initial=self.instance.test_info.nature_of_specimen,
-                required=False
-            )
-            self.fields['cleared'] = forms.BooleanField(
-                initial=self.instance.test_info.cleared,
-                required=False
-            )
-        for field in self.fields.values():
-            field.widget.attrs.update({
-                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
-            })
-
-    def save(self, commit=True):
-        testing = super().save(commit=False)
-        if commit:
-            testing.save()
-            test_info = testing.test_info
-            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
-            test_info.cleared = self.cleaned_data.get('cleared')
-            test_info.save()
-        return testing
-
 
 class HepatitisCForm(forms.ModelForm):
     class Meta:
@@ -862,3 +831,355 @@ class RheumatoidFactorForm(forms.ModelForm):
             test_info.cleared = self.cleaned_data.get('cleared')
             test_info.save()
         return rheumatoid_factor
+
+
+class UrineMicroscopyForm(forms.ModelForm):
+    class Meta:
+        model = UrineMicroscopy
+        exclude = ['test','test_info']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        urine_microscopy = super().save(commit=False)
+        if commit:
+            urine_microscopy.save()
+            test_info = urine_microscopy.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return urine_microscopy
+
+
+class HVSForm(forms.ModelForm):
+    class Meta:
+        model = HVS
+        exclude = ['test','test_info']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        hvs = super().save(commit=False)
+        if commit:
+            hvs.save()
+            test_info = hvs.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return hvs
+
+
+class StoolForm(forms.ModelForm):
+    class Meta:
+        model = Stool
+        exclude = ['test','test_info']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        stool = super().save(commit=False)
+        if commit:
+            stool.save()
+            test_info = stool.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return stool
+
+
+class BloodCultureForm(forms.ModelForm):
+    class Meta:
+        model = BloodCulture
+        exclude = ['test','test_info']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        blood_culture = super().save(commit=False)
+        if commit:
+            blood_culture.save()
+            test_info = blood_culture.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return blood_culture
+
+
+class OccultBloodForm(forms.ModelForm):
+    class Meta:
+        model = OccultBlood
+        exclude = ['test','test_info']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        occult_blood = super().save(commit=False)
+        if commit:
+            occult_blood.save()
+            test_info = occult_blood.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return occult_blood
+
+
+class SputumMCSForm(forms.ModelForm):
+    class Meta:
+        model = SputumMCS
+        exclude = ['test','test_info']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        sputum_mcs = super().save(commit=False)
+        if commit:
+            sputum_mcs.save()
+            test_info = sputum_mcs.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return sputum_mcs
+
+
+class GramStainForm(forms.ModelForm):
+    class Meta:
+        model = GramStain
+        exclude = ['test','test_info']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        gram_stain = super().save(commit=False)
+        if commit:
+            gram_stain.save()
+            test_info = gram_stain.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return gram_stain
+
+
+class ZNStainForm(forms.ModelForm):
+    class Meta:
+        model = ZNStain
+        exclude = ['test','test_info']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        zn_stain = super().save(commit=False)
+        if commit:
+            zn_stain.save()
+            test_info = zn_stain.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return zn_stain
+
+
+class SemenAnalysisForm(forms.ModelForm):
+    class Meta:
+        model = SemenAnalysis
+        exclude = ['test','test_info']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        semen_analysis = super().save(commit=False)
+        if commit:
+            semen_analysis.save()
+            test_info = semen_analysis.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return semen_analysis
+
+
+class UrinalysisForm(forms.ModelForm):
+    class Meta:
+        model = Urinalysis
+        exclude = ['test','test_info']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        urinalysis = super().save(commit=False)
+        if commit:
+            urinalysis.save()
+            test_info = urinalysis.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return urinalysis
+
+
+class PregnancyForm(forms.ModelForm):
+    class Meta:
+        model = Pregnancy
+        exclude = ['test','test_info']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        pregnancy = super().save(commit=False)
+        if commit:
+            pregnancy.save()
+            test_info = pregnancy.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return pregnancy
