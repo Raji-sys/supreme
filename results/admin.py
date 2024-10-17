@@ -25,10 +25,6 @@ class PatientAdmin(admin.ModelAdmin):
 # class Testingdmin(admin.ModelAdmin):
 #     list_display = ('id',)
 
-# @admin.register(GeneralTestResult)
-# class GeneralAdmin(admin.ModelAdmin):
-#     list_display = ('name', 'price')
-
 @admin.register(Paypoint)
 class PaypointAdmin(admin.ModelAdmin):
     list_display = ('patient','service','price','status')

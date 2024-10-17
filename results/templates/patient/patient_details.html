@@ -780,7 +780,7 @@
                                   </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-cyan-200">
-                                  {% for test_info in hvs_tests %}
+                                  {% for test_info in hvs %}
                                   <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
                                     <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
                                     <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
@@ -834,7 +834,7 @@
                                   </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-cyan-200">
-                                  {% for test_info in stool_tests %}
+                                  {% for test_info in stool %}
                                   <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
                                     <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
                                     <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
@@ -878,6 +878,7 @@
         <tr class="text-xs">
           <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
           <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Code</th>
+          <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Result</th>
           <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Culture yield</th>
           <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Antibiotic sensitivity</th>
           <th class="p-3 text-xs font-medium text-cyan-500 uppercase tracking-wider">Date</th>
@@ -885,10 +886,11 @@
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-cyan-200">
-        {% for test_info in blood_culture_tests %}
+        {% for test_info in blood_culture %}
         <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
           <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.blood_culture_test.result|default_if_none:'N/A' }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.blood_culture_test.culture_yield|default_if_none:'N/A' }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.blood_culture_test.antibiotic_sensitivity|default_if_none:'N/A' }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>

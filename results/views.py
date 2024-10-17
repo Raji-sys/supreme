@@ -331,7 +331,8 @@ def report_pdf(request):
     
     context = {'f': f,'pagesize': 'A4','orientation': 'potrait', 'result': result,'username': username,'generated_date': ndate.strftime('%d-%B-%Y at %I:%M %p')}
     
-    response = HttpResponse(content_type='application/pdf',headers={'Content-Disposition': f'attachment; filename="{filename}"'})
+    # response = HttpResponse(content_type='application/pdf',headers={'Content-Disposition': f'attachment; filename="{filename}"'})
+    response = HttpResponse(content_type='application/pdf',headers={'Content-Disposition': f'inline; filename="{filename}"'})
     html = get_template('report_pdf.html').render(context)
     
     buffer = BytesIO()
