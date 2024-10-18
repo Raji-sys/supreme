@@ -525,9 +525,9 @@ def general_report_pdf(request):
     }
     
     response = HttpResponse(content_type='application/pdf',
-                           headers={'Content-Disposition': f'attachment; filename="{filename}"'})
+                           headers={'Content-Disposition': f'inline; filename="{filename}"'})
     
-    html = get_template('report_pdf.html').render(context)
+    html = get_template('gen_pdf.html').render(context)
     
     buffer = BytesIO()
     pisa_status = pisa.CreatePDF(html, dest=buffer, encoding='utf-8', link_callback=fetch_resources)

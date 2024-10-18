@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Results</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 1.5cm;
+        }
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: 11px;
+            line-height: 1.4;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e63946;
+            padding-bottom: 15px;
+        }
+        .header h1 {
+            color: #e63946;
+            font-size: 28px;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+        .meta-info {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            font-size: 10px;
+            text-align: left;
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 25px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        table th, table td {
+            border: 1px solid #e0e0e0;
+            padding: 5px;
+            text-align: center;
+        }
+        table th {
+            background-color: #e63946;
+            color: white;
+            font-weight: 600;
+        }
+        .test-info {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            color: #333;
+        }
+        .parameters {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        .values {
+            background-color: #ffffff;
+        }
+        .result-section {
+            margin-bottom: 30px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 9px;
+            color: #666;
+            border-top: 1px solid #e0e0e0;
+            padding-top: 10px;
+        }
+        .patient-info {
+            background-color: #e63946;
+            color: black;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Supreme Diagnostic Laboratories</h1>
+        <p>No 301 Hadejia Road, Yankaba, P.O. Box 4982, Kano.<br>
+           Tel: 080-59455403, 064-978055 | E-Mail: supremelab@yahoo.com</p>
+    </div>
+
+    <div class="meta-info">
+        {% if result %}
+        <p><strong>code:</strong> {{ result|safe }}</p>
+        {% endif %}
+    </div>
+
+    <div class="result-section">
+        {% for item in f %}
+        <div class="patient-info">
+            <table>
+
+                <tr>
+                    <td>
+                        <strong>Patient:</strong> {{ item.patient|default:"N/A"|upper }}
+                    </td>
+                    <td>
+                        <strong>Age:</strong> {{ item.patient.age|default:"N/A"|upper }}
+                    </td>
+                    <td>
+                        <strong>Sex:</strong> {{ item.patient.gender|default:"N/A"|upper }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        {% if item.patient.general_results %}
+        <table>
+            <tr class="test-info">
+                <th colspan="4">{{ item.name }} Test Result</th>
+            </tr>
+            <tr class="parameters">
+                <th colspan="2">Parameter</th>
+                <th colspan="2">Result</th>
+            </tr>
+            <tr>
+                <td colspan="2">Result Code</td>
+                <td colspan="2">{{ item.result_code|default:"N/A" }}</td>
+            </tr>
+            <tr>
+                <td colspan="2">Nature of Specimen</td>
+                <td colspan="2">{{ item.nature_of_specimen|default:"N/A" }}</td>
+            </tr>
+            <tr>
+                <td colspan="2">Result</td>
+                <td colspan="2">{{ item.result.html|safe|default:"N/A" }}</td>
+            </tr>
+            <tr>
+                <td colspan="2">Comments</td>
+                <td colspan="2">{{ item.comments|default:"N/A" }}</td>
+            </tr>
+            <tr>
+                <td colspan="2">Collected By</td>
+                <td colspan="2">{{ item.collected_by|default:"N/A" }}</td>
+            </tr>
+            <tr>
+                <td colspan="2">Reported By</td>
+                <td colspan="2">{{ item.updated_by|default:"N/A" }}</td>
+            </tr>
+            <tr>
+                <td colspan="2">Date Collected</td>
+                <td colspan="2">{{ item.collected|default:"N/A" }}</td>
+            </tr>
+            <tr>
+                <td colspan="2">Date Reported</td>
+                <td colspan="2">{{ item.updated|default:"N/A" }}</td>
+            </tr>
+        </table>
+    {% endif %}
+
+
+
+    {% endfor %}
+    </div>
+    <div class="footer">
+        <p>This is a computer-generated report and does not require a signature. | Page 1 of 1</p>
+    </div>
+</body>
+</html>
