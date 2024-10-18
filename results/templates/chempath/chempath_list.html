@@ -40,11 +40,14 @@
           {{ result.payment.service }}
         </td>
         <td class="p-3 whitespace-nowrap">
+          <a href="{{result.patient.get_absolute_url}}" class="text-blue-500 hover:text-blue-700">
+
           {{ result.patient }}
+          </a>
         </td>
         <td class="p-3 whitespace-nowrap text-green-600">
-          {{ result.cleared }}
-          </td>
+          {%if result.cleared %} cleared {%endif%}
+           </td>
         <td class="p-3 whitespace-nowrap">
           {{ result.updated }}
         </td>

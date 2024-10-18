@@ -635,6 +635,7 @@ class OccultBlood(models.Model):
 class SputumMCS(models.Model):
     test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
     test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='sputum_mcs_test',null=True, blank=True)
+    result=models.CharField(max_length=300,null=True,blank=True)
 
     # Culture yield fields with Yes/No options
     no_growth = models.BooleanField(default=False)
@@ -702,7 +703,7 @@ class GramStain(models.Model):
     gram_negative_clusters = models.BooleanField(default=False)
     gram_positive_chains = models.BooleanField(default=False)
     gram_negative_chains = models.BooleanField(default=False)
-    other_findings = models.TextField(blank=True, null=True)
+    other_findings = models.CharField(max_length=2000,blank=True, null=True)
     # Culture yield fields with Yes/No options
     no_growth = models.BooleanField(default=False)
     e_coli = models.BooleanField(default=False)

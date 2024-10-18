@@ -280,15 +280,111 @@
                              
                               {% endif %}
 
-                              {% if test_info.fbc_test.target_cells %}
                              
-                              <li class="flex justify-between items-center py-1">
-                              <span class="font-medium">TARGET CELL:</span>
-                              <span class="text-right">{{ test_info.fbc_test.target_cells }}</span>
-                              </li>
-                             
-                              {% endif %}
-                             
+                              {% if test_info.fbc_test.sickle_cells %}
+<li class="flex justify-between items-center py-1">
+<span class="font-medium">SICKLE CELLS:</span>
+<span class="text-right">{{ test_info.fbc_test.sickle_cells }}</span>
+</li>
+{% endif %}
+
+{% if test_info.fbc_test.hypochromia %}
+<li class="flex justify-between items-center py-1">
+<span class="font-medium">HYPOCHROMIA:</span>
+<span class="text-right">{{ test_info.fbc_test.hypochromia }}</span>
+</li>
+{% endif %}
+
+{% if test_info.fbc_test.polychromasia %}
+<li class="flex justify-between items-center py-1">
+<span class="font-medium">POLYCHROMASIA:</span>
+<span class="text-right">{{ test_info.fbc_test.polychromasia }}</span>
+</li>
+{% endif %}
+
+{% if test_info.fbc_test.nucleated_rbc %}
+<li class="flex justify-between items-center py-1">
+<span class="font-medium">NUCLEATED RBC:</span>
+<span class="text-right">{{ test_info.fbc_test.nucleated_rbc }}</span>
+</li>
+{% endif %}
+
+{% if test_info.fbc_test.anisocytosis %}
+<li class="flex justify-between items-center py-1">
+<span class="font-medium">ANISOCYTOSIS:</span>
+<span class="text-right">{{ test_info.fbc_test.anisocytosis }}</span>
+</li>
+{% endif %}
+
+{% if test_info.fbc_test.macrocytosis %}
+<li class="flex justify-between items-center py-1">
+<span class="font-medium">MACROCYTOSIS:</span>
+<span class="text-right">{{ test_info.fbc_test.macrocytosis }}</span>
+</li>
+{% endif %}
+
+{% if test_info.fbc_test.microcytosis %}
+<li class="flex justify-between items-center py-1">
+<span class="font-medium">MICROCYTOSIS:</span>
+<span class="text-right">{{ test_info.fbc_test.microcytosis }}</span>
+</li>
+{% endif %}
+
+{% if test_info.fbc_test.poikilocytosis %}
+<li class="flex justify-between items-center py-1">
+<span class="font-medium">POIKILOCYTOSIS:</span>
+<span class="text-right">{{ test_info.fbc_test.poikilocytosis }}</span>
+</li>
+{% endif %}
+
+{% if test_info.fbc_test.target_cells %}
+<li class="flex justify-between items-center py-1">
+<span class="font-medium">TARGET CELLS:</span>
+<span class="text-right">{{ test_info.fbc_test.target_cells }}</span>
+</li>
+{% endif %}
+
+{% if test_info.fbc_test.neutrophils %}
+<li class="flex justify-between items-center py-1">
+<span class="font-medium">NEUTROPHILS:</span>
+<span class="text-right">{{ test_info.fbc_test.neutrophils }}%</span>
+</li>
+{% endif %}
+
+{% if test_info.fbc_test.eosinophils %}
+<li class="flex justify-between items-center py-1">
+<span class="font-medium">EOSINOPHILS:</span>
+<span class="text-right">{{ test_info.fbc_test.eosinophils }}%</span>
+</li>
+{% endif %}
+
+{% if test_info.fbc_test.basophils %}
+<li class="flex justify-between items-center py-1">
+<span class="font-medium">BASOPHILS:</span>
+<span class="text-right">{{ test_info.fbc_test.basophils }}%</span>
+</li>
+{% endif %}
+
+{% if test_info.fbc_test.trans_lymph %}
+<li class="flex justify-between items-center py-1">
+<span class="font-medium">TRANSITIONAL LYMPHOCYTES:</span>
+<span class="text-right">{{ test_info.fbc_test.trans_lymph }}%</span>
+</li>
+{% endif %}
+
+{% if test_info.fbc_test.lymphocytes %}
+<li class="flex justify-between items-center py-1">
+<span class="font-medium">LYMPHOCYTES:</span>
+<span class="text-right">{{ test_info.fbc_test.lymphocytes }}%</span>
+</li>
+{% endif %}
+
+{% if test_info.fbc_test.monocytes %}
+<li class="flex justify-between items-center py-1">
+<span class="font-medium">MONOCYTES:</span>
+<span class="text-right">{{ test_info.fbc_test.monocytes }}%</span>
+</li>
+{% endif %}
                               </ul>
                              
                               {% endif %}
@@ -931,7 +1027,7 @@
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-cyan-200">
-        {% for test_info in occult_blood_tests %}
+        {% for test_info in occult_blood %}
         <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
           <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
@@ -975,7 +1071,7 @@
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-cyan-200">
-        {% for test_info in sputum_mcs_tests %}
+        {% for test_info in sputum_mcs %}
         <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
           <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
@@ -1023,7 +1119,7 @@
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-cyan-200">
-        {% for test_info in gram_stain_tests %}
+        {% for test_info in gram_stain %}
         <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
           <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
@@ -1088,7 +1184,7 @@
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-cyan-200">
-        {% for test_info in zn_stain_tests %}
+        {% for test_info in zn_stain %}
         <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
           <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
@@ -1143,7 +1239,7 @@
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-cyan-200">
-        {% for test_info in semen_analysis_tests %}
+        {% for test_info in semen_analysis %}
         <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
           <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
@@ -1213,7 +1309,7 @@
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-cyan-200">
-        {% for test_info in urinalysis_tests %}
+        {% for test_info in urinalysis %}
         <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
           <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
@@ -1268,7 +1364,7 @@
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-cyan-200">
-        {% for test_info in pregnancy_tests %}
+        {% for test_info in pregnancy %}
         <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
           <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.code|default_if_none:'N/A' }}</td>
@@ -1460,7 +1556,7 @@
         <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
           <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.code }}</td>
-          <td class="p-3 whitespace-nowrap">{{ test_info.hpb_test.result|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.hcv_test.result|default_if_none:'N/A' }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
           <td class="p-3 whitespace-nowrap"><a href="{%url 'update_hcv' patient.file_no test_info.id %}" class="text-green-600 hover:text-green-700"><i class="fa-solid fa-edit fa-2xl"></i></a></td>
         </tr>
@@ -1498,7 +1594,7 @@
         <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
           <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.code }}</td>
-          <td class="p-3 whitespace-nowrap">{{ test_info.hcv_test.result|default_if_none:'N/A' }}</td>
+          <td class="p-3 whitespace-nowrap">{{ test_info.vdrl_test.result|default_if_none:'N/A' }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
           <td class="p-3 whitespace-nowrap"><a href="{%url 'update_vdrl' patient.file_no test_info.id %}" class="text-green-600 hover:text-green-700"><i class="fa-solid fa-edit fa-2xl"></i></a></td>
         </tr>
@@ -1539,7 +1635,7 @@
           <td class="p-3 whitespace-nowrap">{{ test_info.code }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.mantoux_test.result }}</td>
           <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
-          <td class="p-3 whitespace-nowrap"><a href="{% url 'update_aso_titre' patient.file_no test_info.id %}" class="text-green-600 hover:text-green-700"><i class="fa-solid fa-edit fa-2xl"></i></a></td>
+          <td class="p-3 whitespace-nowrap"><a href="{% url 'update_mantoux' patient.file_no test_info.id %}" class="text-green-600 hover:text-green-700"><i class="fa-solid fa-edit fa-2xl"></i></a></td>
         </tr>
         {% empty %}
         <tr>

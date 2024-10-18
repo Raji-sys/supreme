@@ -8,8 +8,8 @@
   <table class="min-w-full divide-y divide-gray-500">
     <thead class="bg-gray-100">
       <tr class="text-xs bg-emerald-100 text-center">
-        <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S/N</th>
-        <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
+        <th class="p-3 text-xs font-medium text-gray-500 uppercase tracking-wider">S/N</th>
+        <th class="p-3  text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
         <th class="p-3  font-medium text-rose-500 uppercase tracking-wider">
           Test
         </th>
@@ -17,7 +17,7 @@
           Patient
         </th>
         <th class="p-3  font-medium text-gray-500 uppercase tracking-wider">
-          Result
+          Status
         </th>
         <th class="p-3  font-medium text-gray-500 uppercase tracking-wider">
           Date Reported
@@ -34,17 +34,20 @@
           {{forloop.counter}}
       </td>
       <td class="p-3 whitespace-nowrap">
-        {{ result.result_code }}
+        {{ result.code }}
       </td>
         <td class="p-3 whitespace-nowrap text-rose-500">
-          {{ result.test }}
+          {{ result.payment.service }}
         </td>
         <td class="p-3 whitespace-nowrap">
+          <a href="{{result.patient.get_absolute_url}}" class="text-blue-500 hover:text-blue-700">
+
           {{ result.patient }}
+          </a>
         </td>
-        <td class="p-3 whitespace-nowrap">
-          {{ result.result.html|safe }}
-          </td>
+        <td class="p-3 whitespace-nowrap text-green-600">
+          {%if result.cleared %} cleared {%endif%}
+           </td>
         <td class="p-3 whitespace-nowrap">
           {{ result.updated }}
         </td>

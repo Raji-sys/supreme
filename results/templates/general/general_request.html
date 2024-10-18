@@ -34,7 +34,7 @@
 
       </tr>
     </thead>
-    <tbody class="bg-white divide-y divide-gray-200">
+    <tbody class="bg-white divide-y divide-gray-200 uppercase">
       {% for g in general_request %}
       <tr class="bg-gray-50 hover:bg-gray-200 transition-colors duration-300 text-xs text-center uppercase">
         <td class="p-3 whitespace-nowrap">
@@ -59,7 +59,9 @@
            </td>
         {% endif %}
         <td class="p-3 whitespace-nowrap">
+          <a href="{{g.patient.get_absolute_url}}" class="text-blue-500 hover:text-blue-700">
                 {{ g.patient|default_if_none:'' }}
+                </a>
         </td>
         <td class="p-3 whitespace-nowrap">
           {{ g.created|default_if_none:'' }}

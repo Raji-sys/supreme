@@ -1125,7 +1125,7 @@ class UrinalysisForm(forms.ModelForm):
     class Meta:
         model = Urinalysis
         exclude = ['test','test_info']
-    
+        
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.test_info:

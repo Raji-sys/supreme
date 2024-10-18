@@ -28,9 +28,6 @@
         <th class="p-3 font-medium text-gray-500 uppercase tracking-wider">
           Requested By
         </th>
-        <th class="p-3 font-medium text-gray-500 uppercase tracking-wider">
-          INPUT RESULT
-        </th>
       </tr>
     </thead>
     <tbody class="bg-white divide-y divide-gray-200">
@@ -40,13 +37,13 @@
           {{forloop.counter}}
       </td>
       <td class="p-3 whitespace-nowrap">
-        {{ s.result_code|default_if_none:'' }}
+        {{ s.code|default_if_none:'' }}
       </td>
         <td class="p-3 whitespace-nowrap text-rose-500">
-          {{ s.test|default_if_none:'' }}
+          {{ s.payment.service|default_if_none:'' }}
         </td>
         <td class="p-3 whitespace-nowrap">
-          &#x20A6;{{ s.test.price|default_if_none:'' }}
+          &#x20A6;{{ s.payment.price|default_if_none:'' }}
         </td>
         {% if s.payment.status == False %}
             <td class="p-3 whitespace-nowrap text-red-700">
@@ -58,20 +55,15 @@
            </td>
         {% endif %}
         <td class="p-3 whitespace-nowrap">
-                {{ s.patient|default_if_none:'' }}
-        </td>
+          <a href="{{s.patient.get_absolute_url}}" class="text-blue-500 hover:text-blue-700">
+
+          {{ s.patient }}
+          </a>
         <td class="p-3 whitespace-nowrap">
           {{ s.created|default_if_none:'' }}
         </td>
         <td class="p-3 whitespace-nowrap">
           {{ s.collected_by }}
-        </td>
-        <td>
-          {% if s.payment.status == True %}
-          <a href="{% url 'serology_result' s.patient.file_no s.id %}" class="text-green-500 hover:text-blue-700"><i class="fa-solid fa-plus-square fa-2xl"></i></a>
-          {%else%}
-          <i class="fa-solid fa-xmark-square text-red-700 fa-2xl"></i>
-          {%endif%}
         </td>
       </tr>
       {% endfor %}

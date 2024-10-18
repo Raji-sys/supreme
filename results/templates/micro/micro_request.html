@@ -28,9 +28,6 @@
         <th class="p-3 font-medium text-gray-500 uppercase tracking-wider">
           Requested By
         </th>
-        <th class="p-3 font-medium text-gray-500 uppercase tracking-wider">
-          INPUT RESULT
-        </th>
       </tr>
     </thead>
     <tbody class="bg-white divide-y divide-gray-200">
@@ -40,13 +37,13 @@
           {{forloop.counter}}
       </td>
       <td class="p-3 whitespace-nowrap">
-        {{ m.result_code|default_if_none:'' }}
+        {{ m.code|default_if_none:'' }}
       </td>
         <td class="p-3 whitespace-nowrap text-rose-500">
-          {{ m.test|default_if_none:'' }}
+          {{ m.payment.service|default_if_none:'' }}
         </td>
         <td class="p-3 whitespace-nowrap">
-          &#x20A6;{{ m.test.price|default_if_none:'' }}
+          &#x20A6;{{ m.payment.price|default_if_none:'' }}
         </td>
         {% if m.payment.status == False %}
             <td class="p-3 whitespace-nowrap text-red-700">
@@ -58,7 +55,9 @@
            </td>
         {% endif %}
         <td class="p-3 whitespace-nowrap">
+          <a href="{{m.patient.get_absolute_url}}" class="text-blue-500 hover:text-blue-700">
                 {{ m.patient|default_if_none:'' }}
+                </a>
         </td>
         <td class="p-3 whitespace-nowrap">
           {{ m.created|default_if_none:'' }}
@@ -66,13 +65,7 @@
         <td class="p-3 whitespace-nowrap">
           {{ m.collected_by }}
         </td>
-        <td>
-          {% if m.payment.status == True %}
-          <a href="{% url 'micro_result' m.patient.file_no m.id %}" class="text-green-500 hover:text-blue-700"><i class="fa-solid fa-plus-square fa-2xl"></i></a>
-          {%else%}
-          <i class="fa-solid fa-xmark-square text-red-700 fa-2xl"></i>
-          {%endif%}
-        </td>
+
       </tr>
             {% endfor %}
     </tbody>

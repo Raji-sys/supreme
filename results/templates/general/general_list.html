@@ -27,7 +27,7 @@
         </th>
       </tr>
     </thead>
-    <tbody class="bg-white divide-y divide-gray-200">
+    <tbody class="bg-white divide-y divide-gray-200 uppercase">
       {% for result in general_results %}
       <tr class="text-xs bg-gray-50 hover:bg-gray-200 transition-colors duration-300">
         <td class="p-3 whitespace-nowrap">
@@ -40,7 +40,9 @@
           {{ result.name }}
         </td>
         <td class="p-3 whitespace-nowrap">
+          <a href="{{result.patient.get_absolute_url}}" class="text-blue-500 hover:text-blue-700">
           {{ result.patient }}
+          </a>
         </td>
         <td class="p-3 whitespace-nowrap">
           {{ result.result.html|safe|default_if_none:'' }}

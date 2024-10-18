@@ -77,7 +77,7 @@
                 {{forloop.counter}}
               </td>
               <td class="p-3 whitespace-nowrap">
-                {{ i.test|default_if_none:''|upper }}
+                {{ i.name|default_if_none:''|upper }}
               </td>
               <td class="p-3 whitespace-nowrap">
                 {{ i.result_code|default_if_none:''|upper }}
@@ -92,13 +92,13 @@
                 {{ i.result.html|safe|default_if_none:'' }}
               </td>
               <td class="p-3 whitespace-nowrap">
-                {{ i.reported|default_if_none:'' }}
+                {{ i.updated|default_if_none:'' }}
               </td>
               <td class="p-3 whitespace-nowrap">
-                {{ i.creator|default_if_none:'' }}
+                {{ i.collected_by|default_if_none:'' }}
               </td>
               <td class="p-3 whitespace-nowrap">
-                {{ i.updater|default_if_none:'' }}
+                {{ i.updated_by|default_if_none:'' }}
               </td>
             </tr>
             {% empty %}
