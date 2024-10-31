@@ -39,7 +39,7 @@ def log_anonymous_required(view_function, redirect_to=None):
     return user_passes_test(lambda u: not u.is_authenticated, login_url=redirect_to)(view_function)
 
 
-@login_required
+
 def fetch_resources(uri, rel):
     if uri.startswith(settings.STATIC_URL):
         path = os.path.join(settings.STATIC_ROOT,uri.replace(settings.STATIC_URL, ""))

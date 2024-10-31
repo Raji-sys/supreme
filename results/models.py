@@ -483,6 +483,7 @@ class Stool(models.Model):
     blood = models.CharField(max_length=50, blank=True, null=True)
     ova = models.CharField(max_length=50, blank=True, null=True)
     cyst = models.CharField(max_length=50, blank=True, null=True)
+
     # Culture yield fields with Yes/No options
     no_growth = models.BooleanField(default=False)
     e_coli = models.BooleanField(default=False)

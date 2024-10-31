@@ -1,3 +1,4 @@
+{%load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,9 +85,23 @@
             text-align: center;
             margin-top: 10px;
         }
+        .logo-container {
+        text-align: center;
+        margin-top: 0%;
+    }
+
+    .logo-image {
+        width: 150px;
+        display: inline-block;
+        margin-top: 0%;
+
+    }
     </style>
 </head>
 <body>
+    <div class="logo-container">
+        <img class="logo-image" src="{% static "images/lg.jpg" %}" alt="">
+    </div>
     <div class="header">
         <h1>Supreme Diagnostic Laboratories</h1>
         <p>No 301 Hadejia Road, Yankaba, P.O. Box 4982, Kano.<br>
