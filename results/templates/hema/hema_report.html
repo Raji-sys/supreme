@@ -1,17 +1,17 @@
 {%extends "base.html" %}
-{% block title %}REPORT{% endblock%}
-{%block page_title%}<div class="flex justify-center"><a href="{%url 'index' %}"><i class="fa-solid fa-arrow-left fa-xl mr-4"></i></a>REPORT</div>{%endblock%}
+{% block title %}HEMATOLOGY REPORT{% endblock%}
+{%block page_title%}<div class="flex justify-center"><a href="{%url 'hematology' %}"><i class="fa-solid fa-arrow-left fa-xl mr-4"></i></a>HEMATOLOGY REPORT</div>{%endblock%}
 {% block content %}
 <div class="mt-2">
 <div class="grid grid-rows-2 mt-0 relative ">
     <div class="center-2 h-full overflow-y-auto ">
         <div class="flex flex-row justify-center items-center md:mx-20 mx-2 rounded-xl p-4 shadow-2xl bg-green-50 text-black m-2">
           <form method="get" class="text-xs text-center uppercase">
-            {% for field in test_filter.form %}
+            {% for field in hema_filter.form %}
                 {{field.errors}}
                 {% endfor %}
                 <div class="flex flex-wrap flex-row gap-1 justify-center items-center text-center">
-                    {% for field in test_filter.form %}
+                    {% for field in hema_filter.form %}
                     <div class="flex justify-center items-start flex-col">
                         <label class="form-label">{{ field.label_tag }}</label>
                         <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" value="{{ field.value|default:'' }}"
@@ -57,10 +57,16 @@
                 Phone
               </th>
               <th class="p-3 font-medium text-green-500 uppercase tracking-wider">
+                Result
+              </th>
+              <th class="p-3 font-medium text-green-500 uppercase tracking-wider">
                 Date Reported
               </th>
               <th class="p-3 font-medium text-green-500 uppercase tracking-wider">
                 Collected By
+              </th>
+              <th class="p-3 font-medium text-green-500 uppercase tracking-wider">
+                Report By
               </th>
             </tr>
           </thead>
@@ -72,10 +78,10 @@
                 {{forloop.counter}}
               </td>
               <td class="p-3 whitespace-nowrap">
-                {{ i.payment.service|default_if_none:''|upper }}
+                {{ i.test|default_if_none:''|upper }}
               </td>
               <td class="p-3 whitespace-nowrap">
-                {{ i.code|default_if_none:''|upper }}
+                {{ i.result_code|default_if_none:''|upper }}
               </td>
               <td class="p-3 whitespace-nowrap">
                 {{ i.patient|default_if_none:''|upper }}
@@ -84,10 +90,16 @@
                 {{ i.patient.phone|default_if_none:''|upper }}
               </td>
               <td class="p-3 whitespace-nowrap">
+                {{ i.result.html|safe|default_if_none:'' }}
+              </td>
+              <td class="p-3 whitespace-nowrap">
                 {{ i.collected|default_if_none:'' }}
               </td>
               <td class="p-3 whitespace-nowrap">
                 {{ i.collected_by|default_if_none:'' }}
+              </td>
+              <td class="p-3 whitespace-nowrap">
+                {{ i.updated_by|default_if_none:'' }}
               </td>
             </tr>
             {% empty %}

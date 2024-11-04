@@ -39,7 +39,6 @@ def log_anonymous_required(view_function, redirect_to=None):
     return user_passes_test(lambda u: not u.is_authenticated, login_url=redirect_to)(view_function)
 
 
-
 def fetch_resources(uri, rel):
     if uri.startswith(settings.STATIC_URL):
         path = os.path.join(settings.STATIC_ROOT,uri.replace(settings.STATIC_URL, ""))
@@ -89,10 +88,7 @@ class CustomLoginView(LoginView):
     template_name = 'login.html'
 
     def get_success_url(self):
-        if self.request.user.is_superuser:
-            return reverse_lazy('index')
-        else:
-            return reverse_lazy('profile_details', args=[self.request.user.username])
+        return reverse_lazy('index')
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
@@ -235,7 +231,6 @@ class PatientDetailView(DetailView):
 
         context['blood_group'] = patient.test_info.filter(bg_test__isnull=False).order_by('-created').select_related('bg_test')
         context['genotype'] = patient.test_info.filter(gt_test__isnull=False).order_by('-created').select_related('gt_test')
-        context['rhesus'] = patient.test_info.filter(rh_test__isnull=False).order_by('-created').select_related('rh_test')
         context['fbc'] = patient.test_info.filter(fbc_test__isnull=False).order_by('-created').select_related('fbc_test')
 
         context['urea_electrolyte'] = patient.test_info.filter(ue_test__isnull=False).order_by('-created').select_related('ue_test')
@@ -264,6 +259,7 @@ class PatientDetailView(DetailView):
         context['occult_blood'] = patient.test_info.filter(occult_blood_test__isnull=False).order_by('-created').select_related('occult_blood_test')
         context['sputum_mcs'] = patient.test_info.filter(sputum_mcs_test__isnull=False).order_by('-created').select_related('sputum_mcs_test')
         context['gram_stain'] = patient.test_info.filter(gram_stain_test__isnull=False).order_by('-created').select_related('gram_stain_test')
+        context['swab_pus_aspirate_mcs'] = patient.test_info.filter(swab_pus_aspirate_test__isnull=False).order_by('-created').select_related('swab_pus_aspirate_test')
         context['zn_stain'] = patient.test_info.filter(zn_stain_test__isnull=False).order_by('-created').select_related('zn_stain_test')
         context['semen_analysis'] = patient.test_info.filter(semen_analysis_test__isnull=False).order_by('-created').select_related('semen_analysis_test')
         context['urinalysis'] = patient.test_info.filter(urinalysis_test__isnull=False).order_by('-created').select_related('urinalysis_test')
@@ -280,6 +276,8 @@ class HematologyRequestListView(ListView):
     model=Testinfo
     template_name='hema/hematology_request.html'
     context_object_name='hematology_request'
+    paginate_by = 10
+
     def get_queryset(self):
         queryset = super().get_queryset()
         queryset = queryset.filter(payment__unit__iexact="Hematology",cleared=False).order_by('-updated')
@@ -290,6 +288,7 @@ class HematologyListView(ListView):
     model=Testinfo
     template_name='hema/hematology_list.html'
     context_object_name='hematology_results'
+    paginate_by = 10
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -327,7 +326,7 @@ def report_pdf(request):
     result = ""
     for key, value in request.GET.items():
         if value:
-            result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {username}"
+            result += f" {value.upper()}, Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}, By: {username}"
     
     context = {'f': f,'pagesize': 'A4','orientation': 'potrait', 'result': result,'username': username,'generated_date': ndate.strftime('%d-%B-%Y at %I:%M %p')}
     
@@ -350,6 +349,7 @@ class ChempathRequestListView(ListView):
     model=Testinfo
     template_name='chempath/chempath_request.html'
     context_object_name='chempath_request'
+    paginate_by = 10
 
     def get_queryset(self):
         queryset=super().get_queryset()
@@ -361,7 +361,8 @@ class ChempathListView(ListView):
     model=Testinfo
     template_name='chempath/chempath_list.html'
     context_object_name='chempath_results'
-
+    paginate_by = 10
+    
     def get_queryset(self):
         queryset=super().get_queryset()
         queryset=queryset.filter(payment__status=True,payment__unit__iexact='Chemical pathology',cleared=True).order_by('-updated')
@@ -372,6 +373,7 @@ class MicroRequestListView(ListView):
     model=Testinfo
     template_name='micro/micro_request.html'
     context_object_name='micro_request'
+    paginate_by = 10
 
     def get_queryset(self):
         queryset=super().get_queryset()
@@ -383,6 +385,7 @@ class MicroListView(ListView):
     model=Testinfo
     template_name='micro/micro_list.html'
     context_object_name='micro_results'
+    paginate_by = 10
 
     def get_queryset(self):
         queryset=super().get_queryset()
@@ -394,6 +397,7 @@ class SerologyRequestListView(ListView):
     model = Testinfo
     template_name = 'serology/serology_request.html'
     context_object_name = 'serology_request'
+    paginate_by = 10
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -405,6 +409,7 @@ class SerologyListView(ListView):
     model=Testinfo
     template_name='serology/serology_list.html'
     context_object_name='serology_results'
+    paginate_by = 10
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -416,6 +421,7 @@ class GeneralRequestListView(ListView):
     model=GeneralTestResult
     template_name='general/general_request.html'
     context_object_name='general_request'
+    paginate_by = 10
 
     def get_queryset(self):
         queryset=super().get_queryset()
@@ -427,6 +433,7 @@ class GeneralListView(ListView):
     model=GeneralTestResult
     template_name='general/general_list.html'
     context_object_name='general_results'
+    paginate_by = 10
 
     def get_queryset(self):
         queryset=super().get_queryset()
@@ -513,7 +520,7 @@ def general_report_pdf(request):
     result = ""
     for key, value in request.GET.items():
         if value:
-            result += f" {value.upper()}<br>Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}</br>By: {username}"
+            result += f" {value.upper()}, Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}, By: {username}"
     
     context = {
         'f': f, 
@@ -971,39 +978,39 @@ class GenotypeCreateView(View):
         return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
 
 
-class RhesusCreateView(View):
-    @transaction.atomic
-    def get(self, request, file_no):
-        try:
-            patient = get_object_or_404(Patient, file_no=file_no)
-            generic_test = get_object_or_404(GenericTest, name__iexact='Rhesus Factor')
+# class RhesusCreateView(View):
+#     @transaction.atomic
+#     def get(self, request, file_no):
+#         try:
+#             patient = get_object_or_404(Patient, file_no=file_no)
+#             generic_test = get_object_or_404(GenericTest, name__iexact='Rhesus Factor')
             
-            # Create Paypoint first
-            payment = Paypoint.objects.create(
-                patient=patient,
-                status=False,
-                unit=generic_test.lab,
-                service=generic_test.name,
-                price=generic_test.price,
-            )
+#             # Create Paypoint first
+#             payment = Paypoint.objects.create(
+#                 patient=patient,
+#                 status=False,
+#                 unit=generic_test.lab,
+#                 service=generic_test.name,
+#                 price=generic_test.price,
+#             )
             
-            # Now create Testinfo with the payment
-            test_info = Testinfo.objects.create(
-                patient=patient,
-                collected_by=request.user,
-                payment=payment
-            )
+#             # Now create Testinfo with the payment
+#             test_info = Testinfo.objects.create(
+#                 patient=patient,
+#                 collected_by=request.user,
+#                 payment=payment
+#             )
             
-            rhesus = RhesusFactor.objects.create(
-                test=generic_test,
-                test_info=test_info
-            )
+#             rhesus = RhesusFactor.objects.create(
+#                 test=generic_test,
+#                 test_info=test_info
+#             )
 
-            messages.success(request, 'Rhesus test created successfully')
-        except Exception as e:
-            messages.error(request, f'Error creating Rhesus test: {str(e)}')
+#             messages.success(request, 'Rhesus test created successfully')
+#         except Exception as e:
+#             messages.error(request, f'Error creating Rhesus test: {str(e)}')
         
-        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+#         return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
 
 
 class FBCCreateView(View):
@@ -1326,7 +1333,7 @@ class WidalCreateView(View):
     def get(self, request, file_no):
         try:
             patient = get_object_or_404(Patient, file_no=file_no)
-            generic_test = get_object_or_404(GenericTest, name__iexact='Widal')
+            generic_test = get_object_or_404(GenericTest, name__iexact='MP/Widal')
             
             # Create Paypoint first
             payment = Paypoint.objects.create(
@@ -1642,7 +1649,7 @@ class UrineMicroscopyCreateView(View):
     def get(self, request, file_no):
         try:
             patient = get_object_or_404(Patient, file_no=file_no)
-            generic_test = get_object_or_404(GenericTest, name__iexact='Urine Microscopy')
+            generic_test = get_object_or_404(GenericTest, name__iexact='Urine MCS')
             
             # Create Paypoint first
             payment = Paypoint.objects.create(
@@ -1677,7 +1684,7 @@ class HVSCreateView(View):
     def get(self, request, file_no):
         try:
             patient = get_object_or_404(Patient, file_no=file_no)
-            generic_test = get_object_or_404(GenericTest, name__iexact='HVS')
+            generic_test = get_object_or_404(GenericTest, name__iexact='HVS MCS')
             
             # Create Paypoint first
             payment = Paypoint.objects.create(
@@ -1712,7 +1719,7 @@ class StoolCreateView(View):
     def get(self, request, file_no):
         try:
             patient = get_object_or_404(Patient, file_no=file_no)
-            generic_test = get_object_or_404(GenericTest, name__iexact='Stool')
+            generic_test = get_object_or_404(GenericTest, name__iexact='Stool MCS')
             
             # Create Paypoint first
             payment = Paypoint.objects.create(
@@ -1741,6 +1748,39 @@ class StoolCreateView(View):
         
         return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
 
+class SwabPusAspirateCreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='SWAB PUS ASPIRATE (MCS)')
+            
+            # Create Paypoint first
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+            
+            # Now create Testinfo with the payment
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+            
+            swab_pus_aspirate_mcs = Swab_Pus_Aspirate_MCS.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'swab pus aspirate test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating SWAB PUS ASPIRATE (MCS) test: {str(e)}')
+        
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
 
 class BloodCultureCreateView(View):
     @transaction.atomic
@@ -2050,9 +2090,9 @@ class GenotypeUpdateView(BaseLabResultUpdateView):
     form_class = GenotypeForm
 
 
-class RhesusUpdateView(BaseLabResultUpdateView):
-    model = RhesusFactor
-    form_class = RhesusFactorForm
+# class RhesusUpdateView(BaseLabResultUpdateView):
+#     model = RhesusFactor
+#     form_class = RhesusFactorForm
 
 
 class FBCUpdateView(BaseLabResultUpdateView):
@@ -2179,6 +2219,10 @@ class SputumMCSUpdateView(BaseLabResultUpdateView):
 class GramStainUpdateView(BaseLabResultUpdateView):
     model = GramStain
     form_class = GramStainForm
+
+class SwabPusAspirateUpdateView(BaseLabResultUpdateView):
+    model = Swab_Pus_Aspirate_MCS
+    form_class = Swab_pus_asiprate_mcsForm
 
 
 class ZNStainUpdateView(BaseLabResultUpdateView):

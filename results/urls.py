@@ -65,8 +65,8 @@ urlpatterns = [
     path('genotype/create/<str:file_no>/', GenotypeCreateView.as_view(), name='create_genotype'),
     path('genotype/update/<str:file_no>/<int:test_info_pk>/', GenotypeUpdateView.as_view(), name='update_genotype'),
 
-    path('rhesus/create/<str:file_no>/', RhesusCreateView.as_view(), name='create_rhesus'),
-    path('rhesus/update/<str:file_no>/<int:test_info_pk>/', RhesusUpdateView.as_view(), name='update_rhesus'),
+    # path('rhesus/create/<str:file_no>/', RhesusCreateView.as_view(), name='create_rhesus'),
+    # path('rhesus/update/<str:file_no>/<int:test_info_pk>/', RhesusUpdateView.as_view(), name='update_rhesus'),
 
     path('fbc/create/<str:file_no>/', FBCCreateView.as_view(), name='create_fbc'),
     path('fbc/update/<str:file_no>/<int:test_info_pk>/', FBCUpdateView.as_view(), name='update_fbc'),
@@ -142,6 +142,9 @@ urlpatterns = [
 
     path('sputum_mcs/create/<str:file_no>/', SputumMCSCreateView.as_view(), name='create_sputum_mcs'),
     path('sputum_mcs/update/<str:file_no>/<int:test_info_pk>/', SputumMCSUpdateView.as_view(), name='update_sputum_mcs'),
+
+    path('swab_pus_aspirate_mcs/create/<str:file_no>/', SwabPusAspirateCreateView.as_view(), name='create_swab_pus_aspirate_mcs'),
+    path('swab_pus_aspirate_mcs/update/<str:file_no>/<int:test_info_pk>/', SwabPusAspirateUpdateView.as_view(), name='update_swab_pus_aspirate_mcs'),
 
     path('gram-stain/create/<str:file_no>/', GramStainCreateView.as_view(), name='create_gram_stain'),
     path('gram-stain/update/<str:file_no>/<int:test_info_pk>/', GramStainUpdateView.as_view(), name='update_gram_stain'),

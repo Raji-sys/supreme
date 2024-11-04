@@ -45,7 +45,7 @@ class ProfileUpdateForm(forms.ModelForm):
 class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient
-        fields = ['surname', 'other_names', 'gender','age', 'phone']
+        fields = ['surname', 'other_names', 'gender','age', 'phone','hospital_clinic']
     def __init__(self, *args, **kwargs):
         super(PatientForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
@@ -68,7 +68,7 @@ class GeneralTestForm(forms.ModelForm):
 class GeneralTestResultForm(forms.ModelForm):
     class Meta:
         model=GeneralTestResult
-        fields=['result','cleared','nature_of_specimen']
+        fields=['result','cleared','nature_of_specimen','comments']
     
     def __init__(self, *args, **kwargs):
         super(GeneralTestResultForm, self).__init__(*args, **kwargs)
@@ -167,67 +167,42 @@ class GenotypeForm(forms.ModelForm):
         return genotype
 
 
-class RhesusFactorForm(forms.ModelForm):
-    class Meta:
-        model = RhesusFactor
-        fields = ['rhesus_d']
+# class RhesusFactorForm(forms.ModelForm):
+#     class Meta:
+#         model = RhesusFactor
+#         fields = ['rhesus_d']
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.instance and self.instance.test_info:
-            self.fields['nature_of_specimen'] = forms.CharField(
-                initial=self.instance.test_info.nature_of_specimen,
-                required=False
-            )
-            self.fields['cleared'] = forms.BooleanField(
-                initial=self.instance.test_info.cleared,
-                required=False
-            )
-        for field in self.fields.values():
-            field.widget.attrs.update({
-                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
-            })
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         if self.instance and self.instance.test_info:
+#             self.fields['nature_of_specimen'] = forms.CharField(
+#                 initial=self.instance.test_info.nature_of_specimen,
+#                 required=False
+#             )
+#             self.fields['cleared'] = forms.BooleanField(
+#                 initial=self.instance.test_info.cleared,
+#                 required=False
+#             )
+#         for field in self.fields.values():
+#             field.widget.attrs.update({
+#                 'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+#             })
 
-    def save(self, commit=True):
-        rhesus = super().save(commit=False)
-        if commit:
-            rhesus.save()
-            test_info = rhesus.test_info
-            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
-            test_info.cleared = self.cleaned_data.get('cleared')
-            test_info.save()
-        return rhesus
+#     def save(self, commit=True):
+#         rhesus = super().save(commit=False)
+#         if commit:
+#             rhesus.save()
+#             test_info = rhesus.test_info
+#             test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+#             test_info.cleared = self.cleaned_data.get('cleared')
+#             test_info.save()
+#         return rhesus
 
 
 class FBCForm(forms.ModelForm):
     class Meta:
         model = FBC
-        fields = [ 'hb',
-            'pcv',
-            'mchc',
-            'rbc',
-            'mch',
-            'mcv',
-            'retic',
-            'retic_index',
-            'platelets',
-            'wbc',
-            'esr',
-            'sickle_cells',
-            'hypochromia',
-            'polychromasia',
-            'nucleated_rbc',
-            'anisocytosis',
-            'macrocytosis',
-            'microcytosis',
-            'poikilocytosis',
-            'target_cells',
-            'neutrophils',
-            'eosinophils',
-            'basophils',
-            'trans_lymph',
-            'lymphocytes',
-            'monocytes']
+        exclude = ['test','test_info']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -259,7 +234,7 @@ class FBCForm(forms.ModelForm):
 class UreaAndElectrolyteForm(forms.ModelForm):
     class Meta:
         model = UreaAndElectrolyte
-        fields = ['urea', 'sodium', 'potassium', 'bicarbonate', 'chloride', 'caretinine']
+        fields = ['urea', 'sodium', 'potassium', 'bicarbonate', 'chloride', 'creatinine']
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -928,6 +903,37 @@ class StoolForm(forms.ModelForm):
             test_info.save()
         return stool
 
+
+class Swab_pus_asiprate_mcsForm(forms.ModelForm):
+    class Meta:
+        model = Swab_Pus_Aspirate_MCS
+        exclude = ['test','test_info']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen,
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        swap_pus_aspirate = super().save(commit=False)
+        if commit:
+            swap_pus_aspirate.save()
+            test_info = swap_pus_aspirate.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return swap_pus_aspirate
 
 class BloodCultureForm(forms.ModelForm):
     class Meta:

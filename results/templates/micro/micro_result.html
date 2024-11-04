@@ -4,7 +4,7 @@
 {% block content %}
 <div class="p-4 mx-2">
   <div class="max-w-md text-center mx-auto bg-white rounded-xl shadow-black shadow-2xl p-8">
-    <h1 class="text-sm uppercase font-bold mb-6">GENERAL TEST</h1>
+    <h1 class="text-sm  mb-6 uppercase">Microbiology Form</h1>
     <form method="post" class="space-y-6 text-xs">
       {% csrf_token %}
       <div class="mb-2 uppercase text-cyan-900 px-10">
@@ -21,12 +21,11 @@
       {%endfor%}
     </div>
       </div>
-
-      <button type="submit" class="text-xs uppercase bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-      save
+      <button type="submit" class="uppercase text-xs bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        save
       </button>
     </form>
-
   </div>
 </div>
+
 {% endblock %}

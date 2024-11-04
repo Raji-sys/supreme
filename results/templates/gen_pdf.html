@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +7,7 @@
     <style>
         @page {
             size: A4 portrait;
-            margin: 1.5cm;
+            margin: 1.3cm;
         }
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -15,6 +16,7 @@
             color: #333;
         }
         .header {
+            margin-top: 0;
             text-align: center;
             margin-bottom: 30px;
             border-bottom: 2px solid #e63946;
@@ -25,6 +27,7 @@
             font-size: 28px;
             margin-bottom: 5px;
             font-weight: 700;
+            margin-top: 0;
         }
         .meta-info {
             margin-bottom: 20px;
@@ -84,13 +87,30 @@
             text-align: center;
             margin-top: 10px;
         }
+        .logo-container{
+            text-align: center;
+            margin-top: 0;
+        }
+        .logo-image{
+            width: 100px;
+            display: flex;
+            align-items: flex-start;
+            margin-top: 0;
+            
+        }
+        p{
+            padding: 0;
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Supreme Diagnostic Laboratories</h1>
+        <h1 class="uppercase">
+            <img class="logo-image" src="{% static "images/logo.jpg" %}" alt="logo">&nbsp;&nbsp;
+            SUPREME DIAGNOSTIC LABORATORIES</h1>
         <p>No 301 Hadejia Road, Yankaba, P.O. Box 4982, Kano.<br>
-           Tel: 080-59455403, 064-978055 | E-Mail: supremelab@yahoo.com</p>
+           Tel: 080-59455403, 064-978055 | E-Mail: danielordia@gmail.com</p>
+        <p><strong>RC:</strong>2550480</p>
     </div>
 
     <div class="meta-info">
@@ -105,14 +125,27 @@
             <table>
 
                 <tr>
-                    <td>
+                    <td colspan="2">
                         <strong>Patient:</strong> {{ item.patient|default:"N/A"|upper }}
                     </td>
-                    <td>
+                    <td colspan="2">
+                        <strong>Hospital/Private:</strong> {{ item.patient.hospital_clinic|default:"N/A"|upper }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
                         <strong>Age:</strong> {{ item.patient.age|default:"N/A"|upper }}
                     </td>
-                    <td>
+                    <td colspan="2">
                         <strong>Sex:</strong> {{ item.patient.gender|default:"N/A"|upper }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                     <strong>Approved by Scientist:</strong> {{username}}
+                    </td>
+                    <td colspan="2">
+                        <strong>Sign:</strong>
                     </td>
                 </tr>
             </table>
@@ -124,11 +157,7 @@
             </tr>
             <tr class="parameters">
                 <th colspan="2">Parameter</th>
-                <th colspan="2">Result</th>
-            </tr>
-            <tr>
-                <td colspan="2">Result Code</td>
-                <td colspan="2">{{ item.result_code|default:"N/A" }}</td>
+                <th colspan="2">values</th>
             </tr>
             <tr>
                 <td colspan="2">Nature of Specimen</td>
@@ -142,31 +171,12 @@
                 <td colspan="2">Comments</td>
                 <td colspan="2">{{ item.comments|default:"N/A" }}</td>
             </tr>
-            <tr>
-                <td colspan="2">Collected By</td>
-                <td colspan="2">{{ item.collected_by|default:"N/A" }}</td>
-            </tr>
-            <tr>
-                <td colspan="2">Reported By</td>
-                <td colspan="2">{{ item.updated_by|default:"N/A" }}</td>
-            </tr>
-            <tr>
-                <td colspan="2">Date Collected</td>
-                <td colspan="2">{{ item.collected|default:"N/A" }}</td>
-            </tr>
-            <tr>
-                <td colspan="2">Date Reported</td>
-                <td colspan="2">{{ item.updated|default:"N/A" }}</td>
-            </tr>
         </table>
     {% endif %}
 
 
-
     {% endfor %}
     </div>
-    <div class="footer">
-        <p>This is a computer-generated report and does not require a signature. | Page 1 of 1</p>
-    </div>
+
 </body>
 </html>
