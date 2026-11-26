@@ -403,27 +403,34 @@ class FBC2(models.Model):
         verbose_name = 'FBC 2'
         verbose_name_plural = 'FBC 2'
 
-    def rows(self):
-        """Every parameter with a value, ready for display:
-        label, value, unit, range text, and flag ('H', 'L' or '')."""
+    def rows(self, include_empty=False):
+        """Parameters ready for display: label, value, unit, range text and
+        flag ('H', 'L' or ''). By default only parameters that have a result;
+        include_empty=True lists all of them (blank result until entered)."""
         out = []
         for field, label, unit, low, high in FBC2_PARAMETERS:
             value = getattr(self, field)
-            if value in (None, ''):
+            if value in (None, '') and not include_empty:
                 continue
+            value = value or ''
             flag = ''
             try:
                 number = float(str(value).strip())
+            except ValueError:
+                number = None  # blank, or free text such as "<0.1": never flagged
+            if number is not None:
                 if number < float(low):
                     flag = 'L'
                 elif number > float(high):
                     flag = 'H'
-            except ValueError:
-                pass  # free text such as "<0.1" - shown as entered, never flagged
             out.append({'label': label, 'value': value,
                         'unit': fbc2_unit_text(unit), 'unit_html': _unit_html(unit),
                         'range': f"{low} - {high}", 'flag': flag})
         return out
+
+    def all_rows(self):
+        """Every parameter, blank where no result yet - for the printed report."""
+        return self.rows(include_empty=True)
 
     def __str__(self):
         return f"FBC 2 - {self.test_info}"

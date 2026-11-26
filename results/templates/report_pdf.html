@@ -463,10 +463,11 @@
                 <th>Unit</th>
                 <th>Reference Range</th>
             </tr>
-            {% for r in item.fbc2_test.rows %}
+            {# all 19 rows always; result stays blank until it is entered #}
+            {% for r in item.fbc2_test.all_rows %}
             <tr>
                 <td>{{ r.label }}</td>
-                <td>{{ r.value }}{% if r.flag %} <span style="color:#e63946;">{{ r.flag }}</span>{% endif %}</td>
+                <td>{% if r.value %}{{ r.value }}{% if r.flag %} <span style="color:#e63946;">{{ r.flag }}</span>{% endif %}{% else %}&nbsp;{% endif %}</td>
                 {# never an empty cell: xhtml2pdf collapses the whole column around one #}
                 <td>{% if r.unit_html %}{{ r.unit_html|safe }}{% else %}&nbsp;{% endif %}</td>
                 <td>{{ r.range }}</td>
