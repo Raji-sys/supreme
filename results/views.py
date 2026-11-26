@@ -2403,7 +2403,7 @@ def ultrasound_report_pdf(request):
         code_str = ", ".join(map(str, sorted(result_codes)))
         result = f" {code_str}, Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}, By: {username}"
     else:
-        result = f" {code_str}, Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}, By: {username}"
+        result = f"Generated on: {ndate.strftime('%d-%B-%Y at %I:%M %p')}, By: {username}"
     context = {
         'user':user,
         'f': f, 
