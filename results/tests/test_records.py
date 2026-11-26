@@ -236,7 +236,7 @@ class DepartmentReportFilterTests(LabTestCase):
 
 class ChempathRangeTests(LabTestCase):
     """Blood glucose ranges as the lab specified them (26 Nov 2026):
-    FBS 3.0-6.0 mmol/L, RBS 3.0-7.0 mmol/L."""
+    FBS 3.0-6.0, RBS 3.0-7.0, 2HR PP 3.0-7.0 mmol/L."""
 
     def printed(self, test_type):
         from django.template.loader import get_template
@@ -252,6 +252,11 @@ class ChempathRangeTests(LabTestCase):
         html = self.printed('RANDOM')
         self.assertIn('3.0-7.0', html)
         self.assertNotIn('3.0-6.11', html)
+
+    def test_two_hour_post_prandial_range(self):
+        html = self.printed('2HR_PP')
+        self.assertIn('3.0-7.0', html)
+        self.assertNotIn('3.89-6.11', html)
 
 
 class LayoutStandardTests(LabTestCase):
