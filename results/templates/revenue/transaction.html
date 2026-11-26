@@ -3,7 +3,7 @@
 {%block title%}TRANSACTION HISTORY{%endblock%}
 {%block page_title%}
 
-<div class="flex items-center justify-between px-4 py-2 bg-white">
+<div class="flex flex-wrap items-center justify-between gap-2 px-4 py-2 bg-white">
   <!-- Left section: Back button and title -->
   <div class="flex items-center">
     <a href="{% url 'revenue' %}" class="mr-2">
@@ -13,7 +13,7 @@
   </div>
 
   <!-- Middle section: Filter buttons -->
-  <div class="flex space-x-2">
+  <div class="flex flex-wrap gap-2">
     <a href="?status=all" 
        class="px-3 py-1 text-xs rounded {% if current_filter == 'all' %}bg-sky-600 text-white{% else %}bg-sky-100 text-sky-600{% endif %}">
       All ({{ total_count }})
@@ -29,7 +29,7 @@
   </div>
 
   <!-- Right section: Transaction stats -->
-  <div class="flex items-center space-x-2">
+  <div class="flex flex-wrap items-center gap-2">
     <span class="bg-sky-600 text-white text-xs px-3 py-1 rounded flex items-center">
       Today: {{ today_transactions }} (&#x20A6;{{ today_worth|floatformat:2 }})
     </span>
@@ -42,7 +42,7 @@
     </span>
     {% endif %}
     {% if request.GET.urlencode %}
-    <div class="flex space-x-2">
+    <div class="flex flex-wrap gap-2">
       <a href="?" class="text-sky-600 hover:text-sky-700">
         <i class="fa-solid fa-rotate"></i>
       </a>
@@ -57,7 +57,7 @@
 {%block content %}
 
 <div class="">
-    <div class="mx-2 md:mx-20 rounded-b-xl p-2 shadow-black shadow-sm bg-sky-50">
+    <div class="rounded-b-xl p-2 bg-sky-50 shadow-2xl shadow-black">
       <div class="text-sky-900">
         <form method="get" class="text-xs text-center">
           {% for field in payFilter.form %}

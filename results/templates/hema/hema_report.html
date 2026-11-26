@@ -5,7 +5,7 @@
 <div class="mt-2">
 <div class="grid grid-rows-2 mt-0 relative ">
     <div class="center-2 h-full overflow-y-auto ">
-        <div class="flex flex-row justify-center items-center md:mx-20 mx-2 rounded-xl p-4 shadow-2xl bg-green-50 text-black m-2">
+        <div class="flex flex-row justify-center items-center rounded-xl p-4 bg-green-50 text-black m-2 shadow-2xl shadow-black">
           <form method="get" class="text-xs text-center uppercase">
             {% for field in hema_filter.form %}
                 {{field.errors}}
@@ -38,7 +38,7 @@
     <!-- end of first grid -->
 
     {% if request.GET.urlencode %}
-  <div class="md:mx-20 mx-2 rounded-xl p-4 bg-green-50">
+  <div class="rounded-xl p-4 bg-green-50">
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-green-500">
           <thead class="bg-green-100">

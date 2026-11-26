@@ -10,10 +10,10 @@
 {% endblock %}
 {% block content %}
 <div class="py-2">
-  <div class="max-w-md text-center mx-auto bg-white rounded-xl shadow-black shadow-sm p-8">
+  <div class="max-w-md text-center mx-auto bg-white rounded-xl p-8 shadow-2xl shadow-black">
     <form method="post" class="space-y-2 text-xs">
       {% csrf_token %}
-      <div class="mb-2 uppercase text-cyan-900 px-10">
+      <div class="mb-2 uppercase text-cyan-900 px-4 md:px-10">
         <div class="grid grid-cols-1 gap-2">
           {% for field in user_form %}
           <div>

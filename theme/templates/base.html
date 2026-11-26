@@ -104,13 +104,16 @@
 
     </header>
     {%if request.path != '/'%}
-    <div class="page-title bg-white p-2 mx-20">
+    {# Every page shares one width: max-w-6xl (1152px), centred, 16px gutter on phones. #}
+    <div class="px-4">
+    <div class="page-title bg-white p-2 max-w-6xl mx-auto">
         {% block page_title %}{% endblock %}
+    </div>
     </div>
     {% endif %}
     {% endif %}
 
-    <main class="flex-grow container mx-auto py-6">
+    <main class="flex-grow max-w-6xl mx-auto px-4 py-6">
         {% if messages %}
         <section class="max-w-xl mx-auto text-center border-cyan-700 p-4 m-2">
             {% for message in messages %}

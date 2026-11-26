@@ -1,3 +1,4 @@
+import re
 """Patients, payments/receipts, General tests, Ultrasound, letters, staff accounts."""
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -253,9 +254,28 @@ class ChempathRangeTests(LabTestCase):
         self.assertNotIn('3.0-6.11', html)
 
 
-class DashboardLayoutTests(LabTestCase):
+class LayoutStandardTests(LabTestCase):
+    """One page width for the whole app (set once in base.html): max-w-6xl,
+    centred, 16px gutter on phones. Cards don't add their own side margins."""
 
-    def test_dashboard_is_four_columns_and_does_not_stretch_edge_to_edge(self):
-        r = self.client.get(reverse('dashboard'))
-        self.assertContains(r, 'lg:grid-cols-4')
-        self.assertContains(r, 'max-w-6xl mx-auto')
+    STANDARD_MAIN = '<main class="flex-grow max-w-6xl mx-auto px-4 py-6">'
+
+    def test_every_page_uses_the_standard_width(self):
+        for name in ('index', 'dashboard', 'revenue', 'hematology_request', 'pay_list', 'patients_list', 'report'):
+            with self.subTest(page=name):
+                self.assertContains(self.client.get(reverse(name)), self.STANDARD_MAIN, html=False)
+
+    def test_title_bar_matches_the_page_width(self):
+        self.assertContains(self.client.get(reverse('dashboard')),
+                            'class="page-title bg-white p-2 max-w-6xl mx-auto"', html=False)
+
+    def test_no_template_adds_its_own_page_margins(self):
+        from pathlib import Path
+        root = Path(__file__).resolve().parents[2] / 'results/templates'
+        offenders = [f'{t.relative_to(root)}' for t in root.rglob('*.html')
+                     if re.search(r'\b(md:mx-20|ml-28)\b|class="[^"]*\bcontainer mx-auto', t.read_text())]
+        self.assertEqual(offenders, [])
+
+    def test_dashboards(self):
+        self.assertContains(self.client.get(reverse('dashboard')), 'lg:grid-cols-4')   # pathology: 4 columns
+        self.assertContains(self.client.get(reverse('revenue')), 'md:grid-cols-3')    # revenue: 3 columns

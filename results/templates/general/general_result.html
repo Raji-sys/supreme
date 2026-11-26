@@ -2,12 +2,12 @@
 {% load static %}
 
 {% block content %}
-<div class="p-4 mx-2">
-  <div class="max-w-xl text-center mx-auto bg-white rounded-xl shadow-black shadow-2xl p-8">
+<div class="p-4">
+  <div class="max-w-xl text-center mx-auto bg-white rounded-xl p-8 shadow-2xl shadow-black">
     <h1 class="text-sm uppercase font-bold mb-6">GENERAL TEST FORM</h1>
     <form method="post" class="space-y-6 text-xs">
       {% csrf_token %}
-      <div class="mb-2 uppercase text-cyan-900 px-10">
+      <div class="mb-2 uppercase text-cyan-900 px-4 md:px-10">
         <div class="grid grid-cols-5 gap-4">
         {% for field in form %}
         <div class="grid grid-cols-6">
