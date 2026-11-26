@@ -141,6 +141,19 @@ if [[ $CHECK_ONLY == 1 ]]; then
   exit 0
 fi
 
+# --- 3b. the test suite must pass before anything touches the server --------
+echo "==> [3b] Running the test suite locally (about a minute) ..."
+TEST_LOG=$(mktemp /tmp/supreme_tests.XXXXXX)
+if venv/bin/python manage.py test results --debug-mode --noinput >"$TEST_LOG" 2>&1; then
+  grep -E '^Ran ' "$TEST_LOG" | sed 's/^/      /'
+  echo "    All tests passed."
+  rm -f "$TEST_LOG"
+else
+  grep -E '^(FAIL|ERROR):|^Ran |^FAILED' "$TEST_LOG" | sed 's/^/      /'
+  echo "    TESTS FAILED - nothing was sent to the server. Full output: $TEST_LOG"
+  exit 1
+fi
+
 ask "Back up the server and push?"
 
 # --- 4. backups ----------------------------------------------------------
@@ -188,6 +201,15 @@ if [[ "$PENDING" != "0" ]]; then
   rvenv "python manage.py migrate" | sed 's/^/      /'
 else
   echo "    No migrations pending."
+fi
+
+echo "==> [6b] Catalogue check (is every requestable test in Admin -> Generic tests?) ..."
+if CAT_OUT=$(rvenv "python manage.py check_catalogue" 2>&1); then
+  sed 's/^/      /' <<<"$CAT_OUT"
+else
+  sed 's/^/      /' <<<"$CAT_OUT"
+  echo "    WARNING: the tests listed above CANNOT be requested until their catalogue rows"
+  echo "    are fixed in Admin. The code is fine; this is data on the server. Continuing."
 fi
 
 if [[ ${#NEED_COLLECTSTATIC[@]} -gt 0 ]]; then
