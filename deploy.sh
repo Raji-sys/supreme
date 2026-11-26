@@ -101,9 +101,13 @@ for f in "${DELETED[@]:-}"; do
   fi
 done
 
-if ! git diff --quiet "$TAG" HEAD -- requirements.txt; then
-  echo "    NOTE: requirements.txt changed - install the new packages on the server by hand:"
-  git diff "$TAG" HEAD -- requirements.txt | grep '^+[^+]' | sed 's/^+/      /'
+# requirements.txt never ships. Compare it with what the server venv really has.
+MISSING_PKGS=$(comm -23 <(grep -v '^\s*#' requirements.txt | sed '/^\s*$/d' | tr 'A-Z_' 'a-z-' | sort -u) \
+                        <(rvenv "pip freeze" 2>/dev/null | tr 'A-Z_' 'a-z-' | sort -u) || true)
+if [[ -n "$MISSING_PKGS" ]]; then
+  echo "    NOTE: requirements.txt has packages the server venv lacks - install by hand:"
+  sed 's/^/      /' <<<"$MISSING_PKGS"
+  echo "      (ssh $REMOTE \"cd $RPATH && venv/bin/pip install -r requirements.txt\" after pushing it)"
 fi
 
 # --- 3. static files -----------------------------------------------------
