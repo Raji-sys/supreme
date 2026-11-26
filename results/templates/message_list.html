@@ -1,0 +1,298 @@
+<!-- templates/letter/message_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Letter Messages</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        h2 {
+            color: #e63946;
+            font-size: 18px;
+            margin: 0;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 8px;
+            flex: 1;
+        }
+        .btn {
+            padding: 5px 10px;
+            font-size: 11px;
+            text-decoration: none;
+            border-radius: 3px;
+            border: 1px solid;
+            margin: 0;
+            font-weight: bold;
+            display: inline-block;
+            width: 60px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .btn-add {
+            display: inline-block;
+            padding: 6px 12px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            font-size: 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            background-color: #007bff;
+            border: 1px solid #005b8f;
+        }
+        .btn-add:hover {
+            background-color: #0056b3;
+        }
+        .btn-back {
+            background-color: #6c757d;
+            color: white;
+            border-color: #5a6268;
+        }
+        .btn-back:hover {
+            background-color: #5a6268;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            font-size: 12px;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .sn {
+            width: 5%;
+            text-align: center;
+            font-weight: bold;
+            color: #555;
+        }
+        .subject {
+            width: 20%;
+        }
+        .content {
+            width: 60%;
+            text-align: justify;
+        }
+        .actions {
+            width: 15%;
+            white-space: nowrap;
+        }
+
+        .btn-edit {
+            background-color: #ffc107;
+            color: #000;
+            border-color: #e0a800;
+            margin-right: 4px;
+        }
+        .btn-edit:hover {
+            background-color: #e0a800;
+            color: white;
+        }
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+            border-color: #c82333;
+            margin-right: 4px;
+        }
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+        .btn-print {
+            background-color: #28a745;
+            color: white;
+            border-color: #1e7e34;
+        }
+        .btn-print:hover {
+            background-color: #1e7e34;
+        }
+
+        .empty-msg {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+                font-size: 11px;
+            }
+            table {
+                font-size: 11px;
+            }
+            th, td {
+                padding: 6px;
+            }
+            .btn {
+                width: auto;
+                padding: 3px 8px;
+                font-size: 10px;
+            }
+        }
+
+.message-alert {
+    background-color: #dcfce7;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    padding: 1rem;
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
+.alert-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    font-weight: bold;
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    text-decoration: none;
+    color: #374151;
+}
+
+.alert-message {
+    color: #15803d;
+    font-weight: 600;
+    margin: 0;
+    padding-right: 2rem;
+}
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding: 15px 0;
+    border-top: 1px solid #ddd;
+}
+
+.page-info {
+    font-size: 12px;
+    color: #666;
+}
+
+.page-links {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-page {
+    background-color: #007bff;
+    color: white;
+    border-color: #005b8f;
+    padding: 5px 10px;
+    font-size: 11px;
+    text-decoration: none;
+    border-radius: 3px;
+    border: 1px solid;
+}
+
+.btn-page:hover {
+    background-color: #0056b3;
+}
+    </style>
+    
+</head>
+<body>
+    
+    <div class="container">
+{% if messages %}
+<section class="messages-section">
+    {% for message in messages %}
+    <div class="message-alert">
+        <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+        <p class="alert-message">{{ message }}</p>
+    </div>
+    {% endfor %}
+</section>
+{% endif %}
+        <!-- Header with Title and Back Button -->
+        <div class="header">
+            <h2>Letterhead   Messages</h2>
+            <a href="{% url 'dashboard' %}" class="btn btn-back">Back</a>
+        </div>
+
+        <a href="{% url 'message_create' %}" class="btn-add">+ Add New</a>
+
+{% if page_obj %}
+    <table>
+        <thead>
+            <tr>
+                <th class="sn">#</th>
+                <th class="subject">Subject</th>
+                <th class="content">Content Preview</th>
+                <th class="actions">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for msg in page_obj %}
+                <tr>
+                    <td class="sn">{{ page_obj.start_index|add:forloop.counter0 }}</td>
+                    <td class="subject">{{ msg.subject|default:"No Subject" }}</td>
+                    <td class="content">{{ msg.content|truncatechars:180 }}</td>
+                    <td class="actions">
+                        <a href="{% url 'message_update' msg.pk %}" class="btn btn-edit">Edit</a>
+                        <a href="{% url 'message_delete' msg.pk %}" class="btn btn-delete">Delete</a>
+                        <a href="{% url 'letter_pdf' msg.pk %}" class="btn btn-print">Print</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        <span class="page-info">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }} 
+            ({{ page_obj.paginator.count }} total)
+        </span>
+        
+        <div class="page-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1" class="btn btn-page">First</a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-page">Previous</a>
+            {% endif %}
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="btn btn-page">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-page">Last</a>
+            {% endif %}
+        </div>
+    </div>
+{% else %}
+    <p class="empty-msg">No messages found. Click "Add New Message" to create one.</p>
+{% endif %}
+</body>
+</html>

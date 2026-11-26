@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Official Letter</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1.3cm;
+        }
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: 11px;
+            line-height: 1.6;
+            color: #020b85;
+            font-weight: 700;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 6px;
+            border-bottom: 2px solid #e63946;
+            padding-bottom: 2px;
+        }
+        .header h1 {
+            color: #e63946;
+            font-size: 28px;
+            margin: 0;
+            font-weight: 700;
+        }
+        .logo-image {
+            width: 90px;
+            vertical-align: middle;
+        }
+        .meta-info {
+            text-align: right;
+            font-size: 10px;
+            margin-bottom: 20px;
+            color: #000;
+        }
+        .recipient-info {
+            text-align: left;
+            font-size: 11px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: #020b85;
+        }
+        .letter-title {
+            font-size: 14px;
+            color: #0e0102;
+            margin: 20px 0 16px;
+            text-align: center;
+            font-weight: 700;
+        }
+        .letter-title u {
+            text-decoration-thickness: 2px;
+            text-underline-offset: 3px;
+            color: #020b85;
+        }
+        .letter-content {
+            font-size: 11px;
+            line-height: 1.8;
+            color: #020b85;
+            white-space: pre-line;
+            font-weight: 700;
+            text-align: justify;
+            margin-bottom: 30px;
+        }
+        .letter-closing {
+            font-size: 11px;
+            font-weight: 700;
+            color: #020b85;
+            margin-top: 30px;
+            line-height: 2;
+        }
+        .signature-block {
+            margin-top: 10px;
+        }
+        .signature-line {
+            display: inline-block;
+            width: 250px;
+            border-top: 1px solid #000;
+            margin-top: 24px;
+        }
+        .signatory {
+            font-size: 11px;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Letterhead -->
+    <div class="header">
+        <h1 class="uppercase">
+            <img class="logo-image" src="{% static 'images/lg1.png' %}" alt="logo">&nbsp;&nbsp;
+            SUPREME DIAGNOSTIC LABORATORIES
+        </h1>
+        <p>No 301 Hadejia Road, Yankaba, P.O. Box 4982, Kano.<br>
+           Tel: 0805-945-5403, 0703-113-2665 &nbsp;-&nbsp; E-Mail: supremediagnosticlaboratories@gmail.com</p>
+        <strong>RC:</strong> 2550480
+    </div>
+
+    <!-- Date - Top Right -->
+    <div class="meta-info">
+        Date: {{ letter_date }}
+    </div>
+
+    <!-- Recipient Info - Top Left -->
+    {% if message.recipient_name or message.recipient_address %}
+    <div class="recipient-info">
+        {% if message.recipient_name %}
+            {{ message.recipient_name }}<br>
+        {% endif %}
+        {% if message.recipient_address %}
+            {{ message.recipient_address|linebreaksbr }}
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Letter Title with Underlined Text Only -->
+    {% if message.subject %}
+        <div class="letter-title">
+            <u>{{ message.subject }}</u>
+        </div>
+    {% endif %}
+
+    <!-- Letter Message Body -->
+    <div class="letter-content">
+        {{ message.content }}
+    </div>
+
+    <!-- Closing -->
+    <div class="letter-closing">
+        Yours faithfully,<br>
+        <div class="signature-block">
+            <div class="signature-line"></div>
+            <div class="signatory">
+                <strong>Signed by Management</strong><br>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

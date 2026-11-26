@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{%load static %}
+{%block page_title%}<div class="flex justify-center"><a href="{%url 'general' %}"><i class="fa-solid fa-backward fa-2xl mr-4"></i></a>GENERAL RESULT LIST</div>{%endblock%}
+{% block content %}
+<div class="mt-4">
+  <div class="md:mx-20 mx-2 rounded-xl p-4 shadow-black shadow-2xl bg-gray-50">
+  <div class="overflow-x-auto">
+  <table class="min-w-full divide-y divide-gray-500">
+    <thead class="bg-gray-100">
+      <tr class="text-xs">
+        <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S/N</th>
+        <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">id</th>
+        <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Test
+        </th>
+        <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Patient
+        </th>
+        <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Result
+        </th>
+        <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Date Reported
+        </th>
+        <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Report By
+        </th>
+      </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200 uppercase">
+      {% for result in general_results %}
+      <tr class="text-xs bg-gray-50 hover:bg-gray-200 transition-colors duration-300">
+        <td class="p-3 whitespace-nowrap">
+          {{forloop.counter}}
+      </td>
+      <td class="p-3 whitespace-nowrap">
+        {{ result.id }}
+      </td>
+        <td class="p-3 whitespace-nowrap">
+          {%if result.test_1 is not None %}
+          {{ result.test_1|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if result.test_2 is not None %}
+          {{ result.test_2|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if result.test_3 is not None %}
+          {{ result.test_3|default_if_none:'' }} <br>
+          {%endif%}
+          {%if result.test_4 is not None %}
+          {{ result.test_4|default_if_none:'' }} <br>
+          {%endif%}
+          
+          {%if result.test_5 is not None %}
+          {{ result.test_5|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if result.test_6 is not None %}
+          {{ result.test_6|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if result.test_7 is not None %}
+          {{ result.test_7|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if result.test_8 is not None %}
+          {{ result.test_8|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if result.test_9 is not None %}
+          {{ result.test_9|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if result.test_10 is not None %}
+          {{ result.test_10|default_if_none:'' }} <br>
+          {%endif%}
+          
+          {%if result.test_11 is not None %}
+          {{ result.test_11|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if result.test_12 is not None %}
+          {{ result.test_12|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if result.test_13 is not None %}
+          {{ result.test_13|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if result.test_14 is not None %}
+          {{ result.test_14|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if result.test_15 is not None %}
+          {{ result.test_15|default_if_none:'' }}
+          {%endif%}
+
+
+        </td>
+        <td class="p-3 whitespace-nowrap">
+          <a href="{{result.patient.get_absolute_url}}" class="text-blue-500 hover:text-blue-700">
+          {{ result.patient }}
+          </a>
+        </td>
+        <td class="p-3 whitespace-nowrap">
+
+                {%if result.result_1 is not None%}
+                {{ result.result_1|default_if_none:'' }} <br>
+                {%endif%}
+                
+                {%if result.result_2 is not None%}
+                {{ result.result_2|default_if_none:'' }} <br>
+                {%endif%}
+
+                {%if result.result_3 is not None%}
+                {{ result.result_3|default_if_none:'' }}   <br>
+                {%endif%}
+
+                {%if result.result_4 is not None%}
+                {{ result.result_4|default_if_none:'' }} <br>
+                {%endif%}
+
+                {%if result.result_5 is not None%}
+                {{ result.result_5|default_if_none:'' }} <br>
+                {%endif%}
+
+                {%if result.result_6 is not None%}
+                {{ result.result_6|default_if_none:'' }} <br>
+                {%endif%}
+
+                {%if result.result_7 is not None%}
+                {{ result.result_7|default_if_none:'' }} <br>
+                {%endif%}
+
+                {%if result.result_8 is not None%}
+                {{ result.result_8|default_if_none:'' }} <br>
+                {%endif%}
+
+                {%if result.result_9 is not None%}
+                {{ result.result_9|default_if_none:'' }} <br>
+                {%endif%}
+
+                {%if result.result_10 is not None%}
+                {{ result.result_10|default_if_none:'' }} <br>
+                {%endif%}
+
+                {%if result.result_11 is not None%}
+                {{ result.result_11|default_if_none:'' }} <br>
+                {%endif%}
+
+                {%if result.result_12 is not None%}
+                {{ result.result_12|default_if_none:'' }} <br>
+                {%endif%}
+
+                {%if result.result_13 is not None%}
+                {{ result.result_13|default_if_none:'' }} <br>
+                {%endif%}
+
+                {%if result.result_14 is not None%}
+                {{ result.result_14|default_if_none:'' }} <br>
+                {%endif%}
+
+                {%if result.result_15 is not None%}
+                {{ result.result_15|default_if_none:'' }} <br>
+                {%endif%}
+        </td>
+        <td class="p-3 whitespace-nowrap">
+          {{ result.updated }}
+        </td>
+        <td class="p-3 whitespace-nowrap">
+          {{ request.user }}
+        </td>
+      </tr>
+      {% endfor %}
+      <tr class="flex justify-center text-center p-1">
+        <td class="">        
+     <div class="text-center flex justify-center items-center">
+       <span class=" items-center">
+         {% if page_obj.has_previous %}
+              <a href="?page=1" class="p-2 px-2 rounded-lg bg-cyan-900 text-white mr-2"><i class="fa-solid fa-angle-double-left fa-lg"></i></a>
+              <a href="?page={{page_obj.previous_page_number}}" class="p-2 px-2 rounded-lg bg-cyan-900 text-white"><i class="fa-solid fa-angle-left fa-lg"></i></a>
+              {% endif %}
+          </span>
+              <span class="text-sm text-purple-700 m-2 font-semibold">
+                  {{page_obj.number}} of {{page_obj.paginator.num_pages}}
+              </span>
+              <span class="flex item-center">
+                  {% if page_obj.has_next %}
+                  <a href="?page={{page_obj.next_page_number}}" class="p-2 px-2 rounded-lg bg-cyan-900 text-white mr-2"><i class="fa-solid fa-angle-right fa-lg"></i></a>
+                  <a href="?page={{page_obj.paginator.num_pages}}" class="p-2 px-2 rounded-lg bg-cyan-900 text-white"><i class="fa-solid fa-angle-double-right fa-lg"></i></a>
+                  {% endif %}
+              </span>
+            </div>
+          </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>
+</div>
+{% endblock %}

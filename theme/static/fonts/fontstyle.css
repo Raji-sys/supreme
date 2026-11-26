@@ -1,0 +1,14 @@
+@font-face{
+				font-family: 'Poppins';
+				src: url('Poppins/Poppins-SemiBold.ttf')
+			}
+			body{
+				font-family: 'Poppins';
+			}
+			@font-face{
+				font-family: 'Kode_Mono';
+				src: url('Kode_Mono/static/KodeMono-Medium.ttf')
+			}
+			.enom{
+				font-family: 'Kode_Mono';
+			}

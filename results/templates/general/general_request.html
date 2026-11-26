@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{%load static %}
+{%block page_title%}<div class="flex justify-center"><a href="{%url 'general' %}"><i class="fa-solid fa-backward fa-2xl mr-4"></i></a>GENERAL REQUEST LIST</div>{%endblock%}
+{% block content %}
+<div class="mt-4">
+  <div class="md:mx-20 mx-2 rounded-xl p-4 shadow-black shadow-sm bg-gray-50">
+  <div class="overflow-x-auto">
+  <table class="min-w-full divide-y divide-gray-500">
+    <thead class="bg-gray-100">
+      <tr class="text-xs text-center bg-emerald-100">
+        <th class="p-3  font-medium text-gray-500 uppercase tracking-wider">S/N</th>
+        <th class="p-3  font-medium text-gray-500 uppercase tracking-wider">ID</th>
+        <th class="p-3  text-xs font-medium text-rose-500 uppercase tracking-wider">
+          Test
+        </th>
+        <th class="p-3  font-medium text-gray-500 uppercase tracking-wider">
+          Price
+        </th>
+        <th class="p-3 font-medium text-gray-500 uppercase tracking-wider">
+          Payment Status
+        </th>
+        <th class="p-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Patient
+        </th>
+        <th class="p-3  text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Date Collected
+        </th>
+        <th class="p-3 font-medium text-gray-500 uppercase tracking-wider">
+          Requested By
+        </th>
+        <th class="p-3 font-medium text-gray-500 uppercase tracking-wider">
+          INPUT RESULT
+        </th>
+
+      </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200 uppercase">
+      {% for g in general_request %}
+      <tr class="bg-gray-50 hover:bg-gray-200 transition-colors duration-300 text-xs text-center uppercase">
+        <td class="p-3 whitespace-nowrap">
+          {{forloop.counter}}
+      </td>
+      <td class="p-3 whitespace-nowrap">
+        {{ g.id|default_if_none:'' }}
+      </td>
+        <td class="p-3 whitespace-nowrap text-rose-500">
+          {%if g.test_1 is not None %}
+          {{ g.test_1|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if g.test_2 is not None %}
+          {{ g.test_2|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if g.test_3 is not None %}
+          {{ g.test_3|default_if_none:'' }} <br>
+          {%endif%}
+          {%if g.test_4 is not None %}
+          {{ g.test_4|default_if_none:'' }} <br>
+          {%endif%}
+          
+          {%if g.test_5 is not None %}
+          {{ g.test_5|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if g.test_6 is not None %}
+          {{ g.test_6|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if g.test_7 is not None %}
+          {{ g.test_7|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if g.test_8 is not None %}
+          {{ g.test_8|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if g.test_9 is not None %}
+          {{ g.test_9|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if g.test_10 is not None %}
+          {{ g.test_10|default_if_none:'' }} <br>
+          {%endif%}
+          
+          {%if g.test_11 is not None %}
+          {{ g.test_11|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if g.test_12 is not None %}
+          {{ g.test_12|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if g.test_13 is not None %}
+          {{ g.test_13|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if g.test_14 is not None %}
+          {{ g.test_14|default_if_none:'' }} <br>
+          {%endif%}
+
+          {%if g.test_15 is not None %}
+          {{ g.test_15|default_if_none:'' }}
+          {%endif%}
+
+        </td>
+        <td class="p-3 whitespace-nowrap">
+          &#x20A6;{{ g.price|default_if_none:'' }}
+        </td>
+        {% if g.payment.status == False %}
+            <td class="p-3 whitespace-nowrap text-red-700">
+          <i class="fa-solid fa-x text-red-700 fa-2xl"></i>
+            </td>
+        {% else %}
+            <td class="p-3 whitespace-nowrap text-green-700">
+             <i class="fa-solid fa-thumbs-up fa-2xl"></i>
+           </td>
+        {% endif %}
+        <td class="p-3 whitespace-nowrap">
+          <a href="{{g.patient.get_absolute_url}}" class="text-blue-500 hover:text-blue-700">
+                {{ g.patient|default_if_none:'' }}
+                </a>
+        </td>
+        <td class="p-3 whitespace-nowrap">
+          {{ g.created|default_if_none:'' }}
+        </td>
+        <td class="p-3 whitespace-nowrap">
+          {{ g.collected_by }}
+        </td>
+        <td>
+          {% if g.payment.status == True %}
+          <a href="{% url 'general_result' g.patient.file_no g.id %}" class="text-green-500 hover:text-blue-700"><i class="fa-solid fa-plus-square fa-2xl"></i></a>
+          {%else%}
+          <i class="fa-solid fa-xmark-square text-red-700 fa-2xl"></i>
+          {%endif%}
+        </td>
+
+      </tr>
+      {% endfor %}
+      <tr class="flex justify-center text-center p-1">
+        <td class="">        
+     <div class="text-center flex justify-center items-center">
+       <span class=" items-center">
+         {% if page_obj.has_previous %}
+              <a href="?page=1" class="p-2 px-2 rounded-lg bg-cyan-900 text-white mr-2"><i class="fa-solid fa-angle-double-left fa-lg"></i></a>
+              <a href="?page={{page_obj.previous_page_number}}" class="p-2 px-2 rounded-lg bg-cyan-900 text-white"><i class="fa-solid fa-angle-left fa-lg"></i></a>
+              {% endif %}
+          </span>
+              <span class="text-sm text-purple-700 m-2 font-semibold">
+                  {{page_obj.number}} of {{page_obj.paginator.num_pages}}
+              </span>
+              <span class="flex item-center">
+                  {% if page_obj.has_next %}
+                  <a href="?page={{page_obj.next_page_number}}" class="p-2 px-2 rounded-lg bg-cyan-900 text-white mr-2"><i class="fa-solid fa-angle-right fa-lg"></i></a>
+                  <a href="?page={{page_obj.paginator.num_pages}}" class="p-2 px-2 rounded-lg bg-cyan-900 text-white"><i class="fa-solid fa-angle-double-right fa-lg"></i></a>
+                  {% endif %}
+              </span>
+            </div>
+          </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>
+</div>
+{% endblock %}

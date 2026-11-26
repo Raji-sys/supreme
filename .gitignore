@@ -1,0 +1,21 @@
+# Python / Django
+__pycache__/
+*.py[cod]
+venv/
+db.sqlite3
+.env
+
+# Laptop-only settings (DB credentials). The server has its own settings.py.
+lab/local_settings.py
+
+# collectstatic output - nginx serves this on the server, regenerated there.
+/static/
+
+# Tailwind / npm
+node_modules/
+
+# Patient data never goes in git.
+*.dump
+*.sql
+*.sql.gz
+*.backup

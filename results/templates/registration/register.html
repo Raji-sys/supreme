@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Create an account{% endblock %}
+{% block content %} 
+<div class="flex justify-center m-2 pb-6 ">
+  <div class="mt-4 text-sm sm:max-w-lg px-16 shadow-2xl border-double border-cyan-800 overflow-hidden shadow-black rounded-xl bg-gray-200">
+    <section class="text-center border-cyan-700 p-4 m-1">
+    </section>
+      <div class="block text-sm text-rose-700">
+        {% if form.errors %}
+        {{form.errors}}
+        {% endif %}
+      </div>
+    <form action="{% url 'register' %}" method="POST" class="text-xs">
+      {% csrf_token %}
+      <div class="mb-1 text-cyan-900">
+        <div class="flex justify-center">
+          <label for="uname">username</label>
+        </div>
+        <div class="flex justify-center mb-4">
+          <input
+            id="uname"
+            class="text-center mt-2 text-sm focus:outline-none border-b-4 border-cyan-900 text-cyan-950 py-2 rounded shadow-lg 
+            hover:border-cyan-700 focus:border-cyan-700"
+            type="text"
+            name="username"
+          />
+        </div>
+        <div class="flex justify-center">
+          <label for="email">email</label>
+        </div>
+        <div class="flex justify-center mb-4">
+          <input
+            id="email"
+            class="text-center mt-2 text-sm focus:outline-none border-b-4 border-cyan-900 text-cyan-950 py-2 rounded shadow-lg
+          hover:border-cyan-700 focus:border-cyan-700"
+            type="text"
+            name="email"
+          />
+        </div>
+        <div class="flex justify-center">
+          <label for="lname">surname</label>
+        </div>
+        <div class="flex justify-center mb-4">
+          <input
+            class="text-center mt-2 text-sm focus:outline-none border-b-4 border-cyan-900 text-cyan-950 py-2 rounded shadow-lg 
+            hover:border-cyan-700 focus:border-cyan-700"
+            type="text"
+            name="last_name"
+            id="lname"
+          />
+        </div>
+        <div class="flex justify-center">
+          <label for="fname">firstname</label>
+        </div>
+        <div class="flex justify-center mb-4">
+          <input
+            class="text-center mt-2 text-sm focus:outline-none border-b-4 border-cyan-900 text-cyan-950 py-2 rounded shadow-lg 
+            hover:border-cyan-700 focus:border-cyan-700"
+            type="text"
+            name="first_name"
+            id="fname"
+          />
+        </div>
+        <div class="flex justify-center">
+          <label for="password">password </label>
+        </div>
+        <div class="flex justify-center mb-4">
+          <input
+            class="text-center mt-2 text-sm focus:outline-none border-b-4 border-cyan-900 text-cyan-950 py-2 rounded shadow-lg 
+            hover:border-cyan-700 focus:border-cyan-700"
+            type="password"
+            name="password1"
+            id="password"
+          />
+        </div>
+        <div class="flex justify-center">
+          <label for="conpassword">confirm password </label>
+        </div>
+        <div class="flex justify-center mb-4">
+          <input
+            class="text-center mt-2 text-sm focus:outline-none border-b-4 border-cyan-900 text-cyan-950 py-2 rounded shadow-lg 
+            hover:border-cyan-700 focus:border-cyan-700"
+            type="password"
+            name="password2"
+            id="conpassword"
+          />
+        </div>
+        <div class="flex justify-center mb-4">
+          <input
+            class="text-xs uppercase mt-2 focus:opacity-10 border-b-4 border-gray-500 focus:border-cyan-600 bg-gradient-to-r
+             from-cyan-900 via-cyan-600 to-cyan-900 text-white py-2 rounded shadow-lg hover:shadow-xl text-center w-1/2"
+            type="submit"
+            value="Register"
+          />
+        </div>
+        <div class="m-4 p-4 flex items-center border-t-2 border-cyan-800">
+          {% if request.user.is_authenticated == False %}
+          <div class="text-cyan-800 text-xs">
+            <a
+              class="border-b-2 border-blue-600 text-sm text-blue-800 ml-1"
+              href="{%url 'login' %}"
+              >login</a
+            >
+            instead
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

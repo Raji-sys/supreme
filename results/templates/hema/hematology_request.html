@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{%load static %}
+{%block page_title%}<div class="flex justify-center"><a href="{%url 'hematology' %}"><i class="fa-solid fa-arrow-left fa-xl mr-4"></i></a>HEMATOLOGY REQUEST LIST</div>{%endblock%}
+{% block content %}
+<div class="">
+  <div class="mt-2 mx-2 md:mx-20 rounded-xl p-4 shadow-black shadow-sm bg-gray-50">
+  <div class="overflow-x-auto uppercase">
+  <table class="min-w-full divide-y divide-gray-500">
+    <thead class="bg-gray-100">
+      <tr class="text-xs bg-emerald-100 text-center">
+        <th class="p-3  font-medium text-gray-500 uppercase tracking-wider">#</th>
+        <th class="p-3  font-medium text-gray-500 uppercase tracking-wider">ID</th>
+        <th class="p-3  font-medium text-rose-500 uppercase tracking-wider">
+          Test
+        </th>
+        <th class="p-3  font-medium text-gray-500 uppercase tracking-wider">
+          Price
+        </th>
+        <th class="p-3 font-medium text-gray-500 uppercase tracking-wider">
+          Payment Status
+        </th>
+        <th class="p-3 font-medium text-gray-500 uppercase tracking-wider">
+          Patient
+        </th>
+        <th class="p-3 font-medium text-gray-500 uppercase tracking-wider">
+          Date Collected
+        </th>
+        <th class="p-3 font-medium text-gray-500 uppercase tracking-wider">
+          Requested By
+        </th>
+      </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200">
+      {% for r in hematology_request %}
+      <tr class="text-center text-xs bg-gray-50 hover:bg-gray-200 transition-colors duration-300 uppercase">
+        <td class="p-3 whitespace-nowrap">
+          {{forloop.counter}}
+      </td>
+      <td class="p-3 whitespace-nowrap">
+        {{ r.id|default_if_none:'' }}
+      </td>
+        <td class="p-3 whitespace-nowrap text-rose-400">
+          {{ r.payment.service|default_if_none:'' }}
+        </td>
+        <td class="p-3 whitespace-nowrap">
+          &#x20A6;{{ r.payment.price|default_if_none:'' }}
+        </td>
+        {% if r.payment.status == False %}
+            <td class="p-3 whitespace-nowrap text-red-700">
+          <i class="fa-solid fa-x text-red-700 fa-2xl"></i>
+            </td>
+        {% else %}
+            <td class="p-3 whitespace-nowrap text-green-700">
+             <i class="fa-solid fa-thumbs-up fa-2xl"></i>
+           </td>
+        {% endif %}
+        <td class="p-3 whitespace-nowrap text-blue-500">
+          <a href="{{r.patient.get_absolute_url}}">
+                  {{ r.patient|default_if_none:'' }}
+                </a>
+        </td>
+        <td class="p-3 whitespace-nowrap">
+          {{ r.created|default_if_none:'' }}
+        </td>
+        <td class="p-3 whitespace-nowrap">
+          {{ r.collected_by|default_if_none:'' }}
+        </td>
+        <td>
+       </tr>
+      {% endfor %}
+      <tr class="flex justify-center text-center p-1">
+        <td class="">        
+     <div class="text-center flex justify-center items-center">
+       <span class=" items-center">
+         {% if page_obj.has_previous %}
+              <a href="?page=1" class="p-2 px-2 rounded-lg bg-cyan-900 text-white mr-2"><i class="fa-solid fa-angle-double-left fa-lg"></i></a>
+              <a href="?page={{page_obj.previous_page_number}}" class="p-2 px-2 rounded-lg bg-cyan-900 text-white"><i class="fa-solid fa-angle-left fa-lg"></i></a>
+              {% endif %}
+          </span>
+              <span class="text-sm text-purple-700 m-2 font-semibold">
+                  {{page_obj.number}} of {{page_obj.paginator.num_pages}}
+              </span>
+              <span class="flex item-center">
+                  {% if page_obj.has_next %}
+                  <a href="?page={{page_obj.next_page_number}}" class="p-2 px-2 rounded-lg bg-cyan-900 text-white mr-2"><i class="fa-solid fa-angle-right fa-lg"></i></a>
+                  <a href="?page={{page_obj.paginator.num_pages}}" class="p-2 px-2 rounded-lg bg-cyan-900 text-white"><i class="fa-solid fa-angle-double-right fa-lg"></i></a>
+                  {% endif %}
+              </span>
+            </div>
+          </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>
+</div> 
+{% endblock %}

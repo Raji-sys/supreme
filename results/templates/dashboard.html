@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}DASHBOARD{% endblock %}
+{%block page_title%}<div class="flex justify-center"><a href="{%url 'index' %}"><i class="fa-solid fa-arrow-left fa-xl mr-4"></i></a>PATHOLOGY DASHBOARD</div>{%endblock%}
+{% block content %}
+<section class="max-w-xl mx-auto text-center border-cyan-700 p-2 m-1">
+  {% for message in messages %}
+  <div class="">
+    <div class="bg-green-100 rounded-2xl text-sm p-4" uk-alert>
+      <a href class="uk-alert-close font-bold" uk-close></a>
+      <p class="text-green-700 font-semibold">{{ message }}</p>
+    </div>
+  </div>
+  {% endfor %}
+</section>
+<div class="">
+  <div class=" mx-auto">
+    <div class="bg-white rounded-xl shadow-black shadow-2xl">
+    <div class="p-6 md:p-10 text-center grid grid-cols-2 md:grid-cols-4 gap-2">
+      <div>
+        <a href="{% url 'hematology' %}" class="block">
+          <div class=" hover:bg-white hover:text-gray-600 text-white bg-emerald-500  rounded-lg shadow-lg p-6 border-2 border-white transition duration-300">
+            <div class=" uppercase text-xs">Hematology</div>
+          </div>
+        </a>
+      </div>
+      <div>
+        <a href="{% url 'chempath' %}" class="block">
+          <div class="bg-blue-500 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-6 border-2 border-white transition duration-300">
+            <div class="uppercase text-xs">Chemical Pathology</div>
+          </div>
+        </a>
+      </div>
+      <div>
+        <a href="{% url 'micro' %}" class="block">
+          <div class="bg-purple-600 border-2 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-6 transition duration-300">
+            <div class="uppercase text-xs">Microbiology</div>
+          </div>
+        </a>
+      </div>
+      <div>
+        <a href="{% url 'serology' %}" class="block">
+          <div class="bg-amber-500 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-6 border-2 border-white transition duration-300">
+            <div class="uppercase text-xs">Serology</div>
+          </div>
+        </a>
+      </div>
+      <div>
+        <a href="{% url 'general' %}" class="block">
+          <div class="bg-pink-500 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-6 border-2 border-white transition duration-300">
+            <div class="uppercase text-xs">General</div>
+          </div>
+        </a>
+      </div>
+      <div>
+        <a href="{% url 'report' %}" class="block">
+          <div class="bg-gray-500 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-6 border-2 border-white transition duration-300">
+            <div class="uppercase text-xs">Report</div>
+          </div>
+        </a>
+      </div>
+
+      <div>
+        <a href="{% url 'ultrasound' %}" class="block">
+          <div class="bg-red-500 hover:bg-white text-white hover:text-gray-600 rounded-lg shadow-lg p-6 border-2 border-white transition duration-300">
+            <div class="uppercase text-xs">Ultrasound</div>
+          </div>
+        </a>
+      </div>
+    
+     <div>
+        <a href="{% url 'message_list' %}" class="block">
+          <div class="text-black hover:text-gray-600 rounded-lg shadow-lg p-6 border-2 border-white transition duration-300">
+            <div class="uppercase text-xs">Letter</div>
+          </div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+<!-- Create New Patient Form -->
+{% extends 'base.html' %}
+{% load static %}
+{% block page_title %}
+  <div class="flex justify-center uppercase">
+    <a href="{% url 'index' %}"><i class="fa-solid fa-arrow-left fa-xl mr-4"></i></a>
+     PATIENT FORM
+  </div>
+{% endblock %}
+
+{% block content %}
+<div class="rounded-xl bg-white mx-auto w-fit mt-4 p-10">
+    {% if form.errors %}
+    <div class="uk-alert-danger block text-xs uppercase text-rose-700 rounded-xl" uk-alert>
+        <a href class="uk-alert-close font-bold" uk-close></a>
+        <p>{{form.errors}}</p>
+    </div>
+        {% endif %}
+<form method="post" enctype="multipart/form-data" class="text-xs">
+{% csrf_token %}
+<div class="uppercase text-cyan-900">
+    <p class="text-green-900 text-sm font-bold text-center border-b border-green-700">enter patient information</p>
+    <div class="grid grid-cols-1 p-4 gap-4">
+  {% for field in form %}
+    <div class="text-center text-xs">
+        <div class="">
+            <label for="{{field.id_for_label}}">{{ field.label_tag }}</label>
+        </div>
+        <div class="text-xs">
+            {{ field }}
+        </div>
+        </div>
+        {%endfor%}
+      </div>
+        <div class="gap-1 flex justify-center align-middle p-2">
+        <input type="submit" value="save" class="text-md focus:opacity-10 uppercase focus:border-green-900 hover:bg-white hover:text-green-600 hover:border-2 hover:border-green-600
+        bg-green-700 text-white py-3 px-8 rounded shadow-lg hover:shadow-xl">
+      </div>
+</div>
+</form>
+</div>
+{% endblock %}
+

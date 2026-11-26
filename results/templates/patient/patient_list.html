@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+{%block title%}patient list{%endblock%}
+{%block page_title%}<div class="flex justify-center"><a href="{%url 'index' %}"><i class="fa-solid fa-arrow-left fa-xl mr-4"></i></a>PATIENT LIST</div>{%endblock%}
+{%block content %}
+<div class="mt-2 p-4">
+    <div class="max-w-6xl mx-auto rounded-b-xl p-4 shadow-black shadow-sm bg-emerald-50">
+      <div class="flex justify-between">
+      <div class="m-2 md:m-2 text-center flex-1">
+        <span class="shadow-sm shadow-emerald-700 gap-4 bg-emerald-700 text-white uppercase text-xs border-b-2 border-emerald-900 py-2 px-2 rounded-xl mx-2 w-fit">
+          <span class=" shadow-white text-xs p-1 rounded-full bg-white text-emerald-900">{{total_patient}}</span>&nbsp;patients registered
+                  </span>
+              </div>
+              {% if request.GET.q %}
+              <span class="gap-4  text-blue-600 uppercase text-xs font-medium rounded-xl w-fit m-3">
+               <span class="text-sm rounded-full bg-white text-blue-600 font-medium border border-blue-600 p-2">{{ search_count }}</span>&nbsp;{%if search_count <= 1 %}patient {%else%} patients {% endif %}match your search
+                      <a href="?" class=" p-2 focus:opacity-10  focus:border-emerald-600 bg-orange-500 text-white rounded shadow-lg hover:shadow-sm text-center w-fit">
+                          <i class="fa-solid fa-rotate fa-lg text-white"></i></a>
+                      </span>
+                      {%endif%}
+              <div class="m-2 text-emerald-900 text-center flex-1">
+                <form method="get" class="text-xs text-center">
+                  <div class="text-center">
+                    <input type="field.field.widget.input_type" name="q" placeholder="Search by:Names, File No, or Phone No"
+                           class="md:text-center text-xs focus:outline-none w-1/3 md:w-1/2 text-emerald-950 p-2
+                                  rounded shadow-sm shadow-emerald-900 border-emerald-900 border"
+                           value="{{query|default:''}}">
+                    <button type="submit" class="shadow-sm shadow-emerald-700 w-fit p-2 focus:opacity-10 uppercase border-gray-500 focus:border-emerald-600 bg-emerald-700 text-white rounded hover:border-emerald-700 ">
+                      <i class="fa-solid fa-search fa-xl "></i>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+      <div class="overflow-x-auto px-4 md:px-10 m-4">
+        <table class="min-w-full divide-y divide-emerald-200">
+          <thead class="bg-emerald-50">
+            <tr class="text-xs">
+                <th class="px-6 py-3 text-left text-xs font-medium text-emerald-500 uppercase tracking-wider">
+                    S/N
+                </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-emerald-500 uppercase tracking-wider">
+                Patient Number
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-emerald-500 uppercase tracking-wider">
+                name
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-emerald-500 uppercase tracking-wider">
+                Date of Birth
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-emerald-500 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-emerald-200">
+            {% for p in patients %}
+            <tr class="bg-emerald-100 hover:bg-emerald-200 transition-colors duration-300 text-xs">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    {{forloop.counter}}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  {{ p.file_no }}
+                </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <a href="{{p.get_absolute_url}}" class="text-blue-500 hover:text-blue-700">
+                  {{ p.full_name }}
+                </a>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                {{ p.age }}
+              </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="space-x-4">
+                    <a href="{% url 'update_patient' p.id %}" class="text-blue-500 hover:text-blue-700">edit</a>
+                </span>
+              </td>
+              <td>
+                
+              </td>
+            </tr>
+            {% empty %}
+            <tr class="bg-white">
+              <td colspan="2" class="px-6 py-4 text-center text-emerald-500">
+                No patients found
+              </td>
+            </tr>
+            {% endfor %}
+            <tr class="flex justify-center text-center p-1">
+              <td class="">        
+           <div class="text-center flex justify-center items-center">
+             <span class=" items-center">
+               {% if page_obj.has_previous %}
+                    <a href="?page=1" class="p-2 px-2 rounded-lg bg-cyan-900 text-white mr-2"><i class="fa-solid fa-angle-double-left fa-lg"></i></a>
+                    <a href="?page={{page_obj.previous_page_number}}" class="p-2 px-2 rounded-lg bg-cyan-900 text-white"><i class="fa-solid fa-angle-left fa-lg"></i></a>
+                    {% endif %}
+                </span>
+                    <span class="text-sm text-purple-700 m-2 font-semibold">
+                        {{page_obj.number}} of {{page_obj.paginator.num_pages}}
+                    </span>
+                    <span class="flex item-center">
+                        {% if page_obj.has_next %}
+                        <a href="?page={{page_obj.next_page_number}}" class="p-2 px-2 rounded-lg bg-cyan-900 text-white mr-2"><i class="fa-solid fa-angle-right fa-lg"></i></a>
+                        <a href="?page={{page_obj.paginator.num_pages}}" class="p-2 px-2 rounded-lg bg-cyan-900 text-white"><i class="fa-solid fa-angle-double-right fa-lg"></i></a>
+                        {% endif %}
+                    </span>
+                  </div>
+                </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{%endblock%}
