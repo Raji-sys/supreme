@@ -225,7 +225,7 @@ class PatientDetailView(DetailView):
     context_object_name='patient'
 
     def get_object(self, queryset=None):
-        return Patient.objects.get(file_no=self.kwargs['file_no'])
+        return get_object_or_404(Patient, file_no=self.kwargs['file_no'])
     
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
