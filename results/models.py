@@ -23,6 +23,22 @@ class SerialNumberField(models.CharField):
         return name, path, args, kwargs
 
 
+def next_serial(model, field, prefix, width):
+    """Next code after the highest NUMBER already used, e.g. GEN724 after GEN723.
+
+    Do not use order_by(field).last() for this: codes are text, and as text
+    'GEN1000' sorts BEFORE 'GEN999', so after 999 the "last" code would stay
+    GEN999 forever, every new record would get GEN1000 again, and the unique
+    constraint would reject it. Comparing numbers keeps working past 999/9999.
+    """
+    numbers = [
+        int(code[len(prefix):])
+        for code in model.objects.filter(**{f'{field}__startswith': prefix}).values_list(field, flat=True)
+        if code[len(prefix):].isdigit()
+    ]
+    return f"{prefix}{(max(numbers) + 1) if numbers else 1:0{width}d}"
+
+
 class Profile(models.Model):
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     dep = (
@@ -199,15 +215,7 @@ class GeneralTestResult(models.Model):
  
     def save(self, *args, **kwargs):
         if not self.result_code:
-            last_instance = self.__class__.objects.order_by('result_code').last()
-
-            if last_instance:
-                last_result_code = int(last_instance.result_code.removeprefix('GEN'))
-                new_result_code = f"GEN{last_result_code + 1:03d}"
-            else:
-                new_result_code = "GEN001"
-
-            self.result_code = new_result_code
+            self.result_code = next_serial(GeneralTestResult, 'result_code', 'GEN', 3)
 
         super().save(*args, **kwargs)
 
@@ -255,15 +263,7 @@ class Testinfo(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.code:
-            prefix = "SUP"
-            last_instance = Testinfo.objects.filter(code__startswith=prefix).order_by('code').last()
-
-            if last_instance:
-                last_number = int(last_instance.code[3:])
-                new_number = last_number + 1    
-            else:
-                new_number = 1
-            self.code = f"{prefix}{new_number:04d}"
+            self.code = next_serial(Testinfo, 'code', 'SUP', 4)
         super().save(*args, **kwargs)
 
     def __str__(self):
