@@ -210,11 +210,66 @@ class StaffAccountTests(LabTestCase):
         self.assertEqual(self.user.first_name, 'Dan')
         self.assertEqual(self.user.profile.department, 'MICROBIOLOGY')
 
-    def test_delete_staff(self):
-        other = User.objects.create_user('temp', password='x')
+    def test_removing_staff_deactivates_and_keeps_their_work(self):
+        other = User.objects.create_user('temp', password='temp-pass-1', first_name='Temp', last_name='Staff')
         prof = Profile.objects.create(user=other)
-        self.client.post(reverse('profile-delete', args=[prof.pk]))
-        self.assertFalse(User.objects.filter(username='temp').exists())
+        info = make_lab_test(self.patient, other, 'genotype')        # 'requested by' = other
+        r = self.client.post(reverse('profile-delete', args=[prof.pk]))
+        self.assertRedirects(r, reverse('profiles_list'), fetch_redirect_response=False)
+        other.refresh_from_db()
+        self.assertFalse(other.is_active)                               # access removed
+        self.assertTrue(Profile.objects.filter(pk=prof.pk).exists())   # nothing deleted
+        info.refresh_from_db()
+        self.assertEqual(info.collected_by, other)                      # name stays on their work
+        listed = self.client.get(reverse('profiles_list')).context['profiles']
+        self.assertNotIn(prof, listed)                                  # off the staff list
+        self.assertFalse(self.client.login(username='temp', password='temp-pass-1'))
+
+    def test_cannot_remove_own_account(self):
+        r = self.client.post(reverse('profile-delete', args=[self.user.profile.pk]), follow=True)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.is_active)
+        self.assertContains(r, "remove your own account")
+
+
+class DeletingAUserNeverDeletesRecordsTests(LabTestCase):
+    """Even a real delete (e.g. from Admin) must not take any lab work with it."""
+
+    def test_hard_delete_keeps_payments_requests_results_and_patients(self):
+        from results.models import GenericTest, Testinfo, Genotype
+        cashier = User.objects.create_user('cashier', password='x')
+        Profile.objects.create(user=cashier)
+        info = make_lab_test(self.patient, cashier, 'genotype')
+        info.payment.user = cashier                 # a payment taken by this cashier
+        info.payment.save()
+        info.genotype = None
+        Genotype.objects.filter(test_info=info).update(result='AS')
+        g = GeneralTestResult.objects.create(patient=self.patient, test_1='ESR', collected_by=cashier, updated_by=cashier)
+        u = Ultrasound.objects.create(patient=self.patient, price=1, collected_by=cashier)
+        linked_patient = make_patient(9, user=cashier)
+
+        cashier.delete()
+
+        info.refresh_from_db(); info.payment.refresh_from_db()
+        self.assertIsNone(info.payment.user)
+        self.assertIsNone(info.collected_by)
+        self.assertEqual(Genotype.objects.get(test_info=info).result, 'AS')
+        self.assertTrue(GeneralTestResult.objects.filter(pk=g.pk).exists())
+        self.assertTrue(Ultrasound.objects.filter(pk=u.pk).exists())
+        self.assertTrue(Patient.objects.filter(pk=linked_patient.pk).exists())
+
+    def test_every_link_to_a_user_is_safe(self):
+        """Any field pointing at a user, in any results model, must not CASCADE
+        (Profile is the one exception - it IS the user's own record)."""
+        from django.apps import apps
+        from django.db.models import CASCADE
+        bad = []
+        for model in apps.get_app_config('results').get_models():
+            for f in model._meta.get_fields():
+                if getattr(f, 'related_model', None) is User and f.concrete and f.remote_field.on_delete is CASCADE \
+                        and model.__name__ != 'Profile':
+                    bad.append(f'{model.__name__}.{f.name}')
+        self.assertEqual(bad, [], 'deleting a user would delete these records')
 
 
 class DepartmentReportFilterTests(LabTestCase):

@@ -72,7 +72,8 @@ class Profile(models.Model):
 
         
 class Patient(models.Model):
-    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+    # SET_NULL: deleting a user account must never delete a patient's record.
+    user = models.OneToOneField(User, null=True, on_delete=models.SET_NULL)
     file_no = SerialNumberField(default="", editable=False,max_length=20,null=False,blank=True)
     surname = models.CharField(max_length=300, blank=True, null=True)
     other_names = models.CharField(max_length=300, blank=True, null=True)
@@ -113,7 +114,9 @@ class Patient(models.Model):
 
 
 class Paypoint(models.Model):
-    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    # SET_NULL: deleting a staff account must never delete the payments they took
+    # (and, through them, the test requests and results hanging off each payment).
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     patient=models.ForeignKey(Patient,null=True, on_delete=models.CASCADE,related_name="patient_payments")
     unit = models.CharField(max_length=1000, null=True, blank=True)
     service = models.CharField(max_length=1000, null=True, blank=True)

@@ -151,22 +151,40 @@ class ProfileUpdateView(LoginRequiredMixin, View):
 class ProfileListView(ListView):
     model = Profile
     template_name = "profile/profile_list.html"
-    context_object_name = 'profiles'    
+    context_object_name = 'profiles'
 
-class UserDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    def get_queryset(self):
+        # Removed staff are deactivated, not deleted (see UserDeleteView).
+        return super().get_queryset().filter(user__is_active=True)
+
+
+class UserDeleteView(LoginRequiredMixin, DeleteView):
+    """'Delete' on the staff list REMOVES ACCESS, it does not delete.
+
+    The account is deactivated: the person can no longer log in and drops off
+    the staff list, but every request, result and payment they worked on keeps
+    their name. (A real delete would blank 'requested by' / 'reported by' on
+    all of it.) An admin can reactivate them in Admin -> Users."""
     model = User
     template_name = 'profile/confirm_delete.html'
     success_url = reverse_lazy('profiles_list')
-    success_message = "User and associated profile deleted successfully!"
 
     def get_object(self, queryset=None):
         profile_id = self.kwargs.get('pk')
         profile = get_object_or_404(Profile, pk=profile_id)
         return get_object_or_404(User, profile=profile)
 
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, self.success_message)
-        return super().delete(request, *args, **kwargs)
+    def form_valid(self, form):
+        user = self.get_object()
+        if user == self.request.user:
+            messages.error(self.request, "You can't remove your own account while logged in with it.")
+            return redirect(self.success_url)
+        user.is_active = False
+        user.save(update_fields=['is_active'])
+        messages.success(self.request, f"{user.get_full_name() or user.username} can no longer log in. "
+                                       f"Their past work is kept, with their name on it.")
+        return redirect(self.success_url)
+
 
 class PatientCreateView(CreateView):
     model = Patient
