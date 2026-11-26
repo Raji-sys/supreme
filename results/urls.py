@@ -181,3 +181,18 @@ urlpatterns = [
 
     path('', include('django.contrib.auth.urls')),
 ]
+
+
+# Every page needs a logged-in user, except the ones that let you log in/out.
+# Done here, in one place, instead of decorating ~100 views one by one - and a
+# page added later is covered without anyone remembering to protect it.
+# (The auth.urls include is a URLResolver and is left as Django ships it:
+# password change already requires login; reset is the public flow.)
+from django.contrib.auth.decorators import login_required
+from django.urls import URLPattern
+
+PUBLIC_URL_NAMES = {'login', 'logout'}
+
+for _pattern in urlpatterns:
+    if isinstance(_pattern, URLPattern) and _pattern.name not in PUBLIC_URL_NAMES:
+        _pattern.callback = login_required(_pattern.callback)

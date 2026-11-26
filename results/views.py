@@ -88,7 +88,9 @@ class CustomLoginView(LoginView):
     template_name = 'login.html'
 
     def get_success_url(self):
-        return reverse_lazy('index')
+        # Back to the page that sent them to log in (?next=), else home.
+        # get_redirect_url() only returns same-site URLs.
+        return self.get_redirect_url() or reverse_lazy('index')
 
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
