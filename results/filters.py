@@ -1,14 +1,27 @@
+import re
+
 import django_filters
 from django import forms
 from django.db.models import Q
 from .models import *
 
 
+def filter_code_number(queryset, name, value):
+    """Code (id) search that ignores thousands separators and spaces.
+    Screens show codes the way Django prints numbers, e.g. '2,610', while the
+    printed report says 2610 - staff may type either. Anything that isn't a
+    number matches nothing (rather than erroring)."""
+    digits = re.sub(r'[,\s]', '', value or '')
+    if not digits.isdigit():
+        return queryset.none()
+    return queryset.filter(**{name: int(digits)})
+
+
 class GenFilter(django_filters.FilterSet):
     id = django_filters.CharFilter(
         label='id',
         field_name="id",
-        lookup_expr='iexact'
+        method=filter_code_number,
     )
     collected = django_filters.DateFilter(label="date collected", field_name="collected",lookup_expr='exact', widget=forms.DateInput(attrs={'type': 'date'}), input_formats=['%d-%m-%Y', '%Y-%m-%d', '%m/%d/%Y'])   
     patient_no=django_filters.NumberFilter(label='pn', field_name="patient__file_no",lookup_expr='exact')
@@ -43,7 +56,7 @@ class TestFilter(django_filters.FilterSet):
     id = django_filters.CharFilter(
         label='id',
         field_name="id",
-        lookup_expr='iexact'
+        method=filter_code_number,
     )
     collected = django_filters.DateFilter(
         label="date collected",

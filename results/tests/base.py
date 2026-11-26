@@ -140,11 +140,28 @@ def valid_post_data(form):
     return data
 
 
+def start_ids_above_999():
+    """Make every table hand out ids from 100,000 up, so the whole suite runs
+    with the kind of numbers the live server has (and more): anything that
+    breaks past 999 - a comma in a link, a fixed-width code - fails here."""
+    from django.apps import apps
+    from django.db import connection
+    models = list(apps.get_app_config('results').get_models()) + [User]
+    with connection.cursor() as cursor:
+        for model in models:
+            table = model._meta.db_table
+            cursor.execute(
+                f"SELECT setval(pg_get_serial_sequence(%s, 'id'), "
+                f"GREATEST((SELECT COALESCE(MAX(id), 0) FROM \"{table}\") + 1, 100000), false)",
+                [table])
+
+
 class LabTestCase(TestCase):
-    """Catalogue + one logged-in member of staff + one patient."""
+    """Catalogue + one logged-in member of staff + one patient, ids >= 100,000."""
 
     @classmethod
     def setUpTestData(cls):
+        start_ids_above_999()
         make_catalogue()
         cls.user = make_staff()
         cls.patient = make_patient()
