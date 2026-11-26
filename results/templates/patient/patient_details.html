@@ -763,7 +763,7 @@
                       <td class=" p-3 whitespace-nowrap">{{ forloop.counter }}</td>
                       <td class=" p-3 whitespace-nowrap">{{ test_info.id|default_if_none:'N/A'}}</td>
                       <td class=" p-3 whitespace-nowrap">{{ test_info.bgl_test.test_type|default_if_none:'N/A' }}</td>
-                      <td class=" p-3 whitespace-nowrap">{{ test_info.bgl_test.result|default_if_none:'N/A'}}</td>
+                      <td class=" p-3 whitespace-nowrap">{% if test_info.bgl_test.test_type == '2HR_PP' %}FBS: {{ test_info.bgl_test.fbs_result|default_if_none:'-' }} &middot; 2HRS PP: {{ test_info.bgl_test.result|default_if_none:'-' }}{% else %}{{ test_info.bgl_test.result|default_if_none:'N/A'}}{% endif %}</td>
                       <td class=" p-3 whitespace-nowrap">{{ test_info.updated }}</td>
                       <td class=" p-3 whitespace-nowrap"> <a href="{%url 'update_blood_glucose' patient.file_no test_info.id %}" class=" hover:text-green-700"><i class="fa-solid fa-edit fa-2xl"></i></a></td>
                     </tr>

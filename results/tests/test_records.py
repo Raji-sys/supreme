@@ -290,28 +290,57 @@ class DepartmentReportFilterTests(LabTestCase):
 
 
 class ChempathRangeTests(LabTestCase):
-    """Blood glucose ranges as the lab specified them (26 Nov 2026):
-    FBS 3.0-6.0, RBS 3.0-7.0, 2HR PP 3.0-7.0 mmol/L."""
+    """Blood glucose as the lab specified (26 Nov 2026), mmol/L:
+    Fasting (FBS) 3.0-6.0, Random (RBS) 3.0-7.0.
+    2HR PP prints under its own heading with the FBS row above it:
+    FBS 3.0-6.0, 2HRS PP 3.0-7.0."""
 
-    def printed(self, test_type):
+    def printed(self, test_type, result='5.0', fbs=None):
         from django.template.loader import get_template
         info = make_lab_test(self.patient, self.user, 'blood_glucose')
-        info.bgl_test.test_type, info.bgl_test.result = test_type, '5.0'
-        info.bgl_test.save()
-        return get_template('report_pdf.html').render({'f': [info], 'user': self.user, 'result': ''})
+        bg = info.bgl_test
+        bg.test_type, bg.result, bg.fbs_result = test_type, result, fbs
+        bg.save()
+        html = get_template('report_pdf.html').render({'f': [info], 'user': self.user, 'result': ''})
+        return re.sub(r'\s+', ' ', html), info
 
-    def test_fasting_range(self):
-        self.assertIn('3.0-6.0', self.printed('FASTING'))
+    def test_fasting(self):
+        html, _ = self.printed('FASTING')
+        self.assertIn('Blood Glucose Test', html)
+        self.assertIn('3.0-6.0', html)
+        self.assertNotIn('2 Hours Post Prandial', html)
 
-    def test_random_range(self):
-        html = self.printed('RANDOM')
+    def test_random(self):
+        html, _ = self.printed('RANDOM')
+        self.assertIn('Blood Glucose Test', html)
         self.assertIn('3.0-7.0', html)
         self.assertNotIn('3.0-6.11', html)
 
-    def test_two_hour_post_prandial_range(self):
-        html = self.printed('2HR_PP')
-        self.assertIn('3.0-7.0', html)
+    def test_two_hour_post_prandial_has_fbs_row_above(self):
+        html, _ = self.printed('2HR_PP', result='6.8', fbs='5.2')
+        self.assertIn('2 Hours Post Prandial', html)
+        self.assertNotIn('Blood Glucose Test', html)
+        fbs = html.index('<td>FBS</td> <td>5.2</td> <td>mmol/L</td> <td>3.0-6.0</td>')
+        pp = html.index('<td>2HRS PP</td> <td>6.8</td> <td>mmol/L</td> <td>3.0-7.0</td>')
+        self.assertLess(fbs, pp, 'FBS row must come first')
         self.assertNotIn('3.89-6.11', html)
+
+    def test_two_hour_pp_before_results_prints_blank_cells(self):
+        """Never an empty <td> (xhtml2pdf collapses the column) and never N/A."""
+        html, info = self.printed('2HR_PP', result=None, fbs=None)
+        self.assertIn('<td>FBS</td> <td>&nbsp;</td>', html)
+        self.assertIn('<td>2HRS PP</td> <td>&nbsp;</td>', html)
+        self.assertPdf(self.client.get(reverse('report_pdf'), {'id': info.pk}))
+
+    def test_form_has_fbs_box_and_saves_it(self):
+        info = make_lab_test(self.patient, self.user, 'blood_glucose')
+        url = reverse('update_blood_glucose', args=[self.patient.file_no, info.pk])
+        self.assertContains(self.client.get(url), 'FBS result (2 hour post prandial only)')
+        self.client.post(url, {'test_type': '2HR_PP', 'fbs_result': '5.2', 'result': '6.8', 'nature_of_specimen': 'BLOOD'})
+        info.refresh_from_db()
+        self.assertEqual((info.bgl_test.fbs_result, info.bgl_test.result), ('5.2', '6.8'))
+        folder = self.client.get(reverse('patient_details', args=[self.patient.file_no]))
+        self.assertContains(folder, 'FBS: 5.2 &middot; 2HRS PP: 6.8', html=False)
 
 
 class LayoutStandardTests(LabTestCase):

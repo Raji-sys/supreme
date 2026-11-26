@@ -672,6 +672,30 @@
 
 {% if item.bgl_test %}
 <table>
+    {% if item.bgl_test.test_type == '2HR_PP' %}
+    {# 2HR PP: the fasting result sits above the 2-hour result #}
+    <tr class="test-info">
+        <th colspan="4">2 Hours Post Prandial</th>
+    </tr>
+    <tr class="parameters">
+        <th>Test</th>
+        <th>Result</th>
+        <th>Unit</th>
+        <th>Reference Range</th>
+    </tr>
+    <tr>
+        <td>FBS</td>
+        <td>{{ item.bgl_test.fbs_result|default:"&nbsp;" }}</td>
+        <td>mmol/L</td>
+        <td>3.0-6.0</td>
+    </tr>
+    <tr>
+        <td>2HRS PP</td>
+        <td>{{ item.bgl_test.result|default:"&nbsp;" }}</td>
+        <td>mmol/L</td>
+        <td>3.0-7.0</td>
+    </tr>
+    {% else %}
     <tr class="test-info">
         <th colspan="4">Blood Glucose Test</th>
     </tr>
@@ -690,13 +714,12 @@
                 3.0-6.0
             {% elif item.bgl_test.test_type == 'RANDOM' %}
                 3.0-7.0
-            {% elif item.bgl_test.test_type == '2HR_PP' %}
-                3.0-7.0
             {% else %}
                 N/A
             {% endif %}
         </td>
     </tr>
+    {% endif %}
 </table>
 {% endif %}
 

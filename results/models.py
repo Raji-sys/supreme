@@ -526,6 +526,8 @@ class BloodGlucose(models.Model):
     test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
     test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='bgl_test',null=True, blank=True)
     test_type = models.CharField(max_length=100, choices=GLUCOSE_TEST_TYPES,null=True)
+    # 2HR PP only: the fasting result, printed in a row above the 2-hour result.
+    fbs_result = models.CharField('FBS result (2 hour post prandial only)', max_length=100, null=True, blank=True)
     result = models.CharField(max_length=100,null=True)
     comment = models.CharField(max_length=3000,null=True, blank=True)
 
