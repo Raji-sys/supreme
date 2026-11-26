@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from .models import *
 User = get_user_model()
 from django.forms import DateInput
+from django.utils.html import format_html, format_html_join
 
 class CustomUserCreationForm(UserCreationForm):
     department = forms.ChoiceField(choices=Profile.dep, required=False)
@@ -42,10 +43,32 @@ class ProfileUpdateForm(forms.ModelForm):
             field.widget.attrs.update({'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'})
 
 
+class SuggestionsInput(forms.TextInput):
+    """A plain text box that also offers suggestions as you type (HTML
+    <datalist>). Anything can still be typed - the suggestions only help
+    staff spell the common answers the same way."""
+    def __init__(self, suggestions, attrs=None):
+        super().__init__(attrs)
+        self.suggestions = suggestions
+
+    def render(self, name, value, attrs=None, renderer=None):
+        attrs = dict(attrs or {})
+        list_id = f"{attrs.get('id', 'id_' + name)}_suggestions"
+        attrs.update({'list': list_id, 'autocomplete': 'off'})
+        options = format_html_join('', '<option value="{}">', ((s,) for s in self.suggestions))
+        return format_html('{}<datalist id="{}">{}</datalist>',
+                           super().render(name, value, attrs, renderer), list_id, options)
+
+
 class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient
         fields = ['surname', 'other_names', 'gender','age', 'phone','hospital_clinic']
+        # Age stays free text: many patients don't know their age, so staff
+        # write ADULT or CHILD. The suggestions just keep that consistent
+        # (instead of AD / CH / ADULT / CHILD side by side).
+        widgets = {'age': SuggestionsInput(['ADULT', 'CHILD'])}
+
     def __init__(self, *args, **kwargs):
         super(PatientForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
