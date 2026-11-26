@@ -232,6 +232,7 @@ class PatientDetailView(DetailView):
         context['blood_group'] = patient.test_info.filter(bg_test__isnull=False).order_by('-created').select_related('bg_test')
         context['genotype'] = patient.test_info.filter(gt_test__isnull=False).order_by('-created').select_related('gt_test')
         context['fbc'] = patient.test_info.filter(fbc_test__isnull=False).order_by('-created').select_related('fbc_test')
+        context['fbc2'] = patient.test_info.filter(fbc2_test__isnull=False).order_by('-created').select_related('fbc2_test')
 
         context['urea_electrolyte'] = patient.test_info.filter(ue_test__isnull=False).order_by('-created').select_related('ue_test')
         context['liver_function'] = patient.test_info.filter(lf_test__isnull=False).order_by('-created').select_related('lf_test')
@@ -1049,6 +1050,40 @@ class FBCCreateView(View):
         except Exception as e:
             messages.error(request, f'Error creating FBC test: {str(e)}')
         
+        return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+class FBC2CreateView(View):
+    @transaction.atomic
+    def get(self, request, file_no):
+        try:
+            patient = get_object_or_404(Patient, file_no=file_no)
+            generic_test = get_object_or_404(GenericTest, name__iexact='Full Blood Count 2')
+
+            payment = Paypoint.objects.create(
+                patient=patient,
+                status=False,
+                unit=generic_test.lab,
+                service=generic_test.name,
+                price=generic_test.price,
+            )
+
+            test_info = Testinfo.objects.create(
+                patient=patient,
+                collected_by=request.user,
+                payment=payment
+            )
+
+            FBC2.objects.create(
+                test=generic_test,
+                test_info=test_info
+            )
+
+            messages.success(request, 'FBC 2 test created successfully')
+        except Exception as e:
+            messages.error(request, f'Error creating FBC 2 test: {str(e)}')
+
         return redirect(reverse('patient_details', kwargs={'file_no': file_no}))
 
 # chempath 
@@ -2103,6 +2138,12 @@ class GenotypeUpdateView(BaseLabResultUpdateView):
 class FBCUpdateView(BaseLabResultUpdateView):
     model = FBC
     form_class = FBCForm
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+class FBC2UpdateView(BaseLabResultUpdateView):
+    model = FBC2
+    form_class = FBC2Form
 
 # chempath 
 class UreaAndElectrolyteUpdateView(BaseLabResultUpdateView):

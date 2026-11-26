@@ -229,7 +229,43 @@ class FBCForm(forms.ModelForm):
             test_info.cleared = self.cleaned_data.get('cleared')
             test_info.save()
         return fbc
-    
+
+
+class FBC2Form(forms.ModelForm):
+    """Same behaviour as FBCForm; fields come from FBC2_PARAMETERS order."""
+    class Meta:
+        model = FBC2
+        fields = [p[0] for p in FBC2_PARAMETERS] + ['comment']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for name, label, unit, low, high in FBC2_PARAMETERS:
+            self.fields[name].label = f"{label} ({fbc2_unit_text(unit)})" if unit else label
+            self.fields[name].help_text = f"Ref: {low} - {high}"
+        if self.instance and self.instance.test_info:
+            self.fields['nature_of_specimen'] = forms.CharField(
+                initial=self.instance.test_info.nature_of_specimen or 'BLOOD',
+                required=False
+            )
+            self.fields['cleared'] = forms.BooleanField(
+                initial=self.instance.test_info.cleared,
+                required=False
+            )
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'text-center text-xs focus:outline-none border border-green-400 p-2 rounded shadow-lg focus:shadow-xl focus:border-green-200'
+            })
+
+    def save(self, commit=True):
+        fbc2 = super().save(commit=False)
+        if commit:
+            fbc2.save()
+            test_info = fbc2.test_info
+            test_info.nature_of_specimen = self.cleaned_data.get('nature_of_specimen')
+            test_info.cleared = self.cleaned_data.get('cleared')
+            test_info.save()
+        return fbc2
+
 
 class UreaAndElectrolyteForm(forms.ModelForm):
     class Meta:

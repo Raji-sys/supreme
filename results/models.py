@@ -319,6 +319,116 @@ class FBC(models.Model):
     comment = models.CharField(max_length=3000,null=True, blank=True)
 
 
+# FBC 2: the 3-part differential analyser printout (WBC/Lymph/Mid/Gran ...).
+# One row per parameter, in the order the analyser prints them:
+#   (field name, label, unit, reference low, reference high)
+# These drive the entry form, the patient folder and the PDF. To change a
+# reference range, change it HERE - nowhere else needs touching.
+FBC2_PARAMETERS = [
+    ('wbc',         'WBC',     'x10^9/L',  '4.0',   '11.0'),
+    ('lymph_count', 'Lymph#',  'x10^9/L',  '0.8',   '4.0'),
+    ('mid_count',   'Mid#',    'x10^9/L',  '0.1',   '1.2'),
+    ('gran_count',  'Gran#',   'x10^9/L',  '2.0',   '7.0'),
+    ('lymph_pct',   'Lymph%',  '%',        '25.0',  '45.0'),
+    ('mid_pct',     'Mid%',    '%',        '3.0',   '14.0'),
+    ('gran_pct',    'Gran%',   '%',        '45.0',  '75.0'),
+    ('hgb',         'HGB',     'g/dL',     '11.0',  '16.0'),
+    ('rbc',         'RBC',     'x10^12/L', '3.50',  '5.50'),
+    ('hct',         'HCT',     '%',        '33.0',  '47.0'),
+    ('mcv',         'MCV',     'fL',       '80.0',  '100.0'),
+    ('mch',         'MCH',     'pg',       '27.0',  '34.0'),
+    ('mchc',        'MCHC',    'g/dL',     '32.0',  '36.0'),
+    ('rdw_cv',      'RDW-CV',  '%',        '11.0',  '16.0'),
+    ('rdw_sd',      'RDW-SD',  'fL',       '35.0',  '56.0'),
+    ('plt',         'PLT',     'x10^9/L',  '150',   '400'),
+    ('mpv',         'MPV',     'fL',       '6.5',   '12.0'),
+    ('pdw',         'PDW',     '',         '9.0',   '17.0'),
+    ('pct',         'PCT',     '%',        '0.108', '0.282'),
+]
+
+
+_SUPERSCRIPT = str.maketrans('0123456789', '⁰¹²³⁴⁵⁶⁷⁸⁹')
+
+
+def fbc2_unit_text(unit):
+    """'x10^9/L' -> 'x10⁹/L' for the browser."""
+    if '^' not in unit:
+        return unit
+    head, tail = unit.split('^', 1)
+    digits = ''.join(ch for ch in tail if ch.isdigit())
+    return head + digits.translate(_SUPERSCRIPT) + tail[len(digits):]
+
+
+def _unit_html(unit):
+    """'x10^9/L' -> 'x10<sup>9</sup>/L' for the PDF (its font has no superscript glyphs)."""
+    if '^' not in unit:
+        return unit
+    head, tail = unit.split('^', 1)
+    digits = ''.join(ch for ch in tail if ch.isdigit())
+    return f"{head}<sup>{digits}</sup>{tail[len(digits):]}"
+
+
+def _fbc2_result_field():
+    # Labels and reference ranges are applied by FBC2Form from FBC2_PARAMETERS,
+    # so changing a range never needs a migration.
+    return models.CharField(max_length=20, null=True, blank=True)
+
+
+class FBC2(models.Model):
+    test = models.ForeignKey(GenericTest, on_delete=models.CASCADE, null=True, blank=True)
+    test_info = models.OneToOneField(Testinfo, on_delete=models.CASCADE, related_name='fbc2_test', null=True, blank=True)
+
+    wbc = _fbc2_result_field()
+    lymph_count = _fbc2_result_field()
+    mid_count = _fbc2_result_field()
+    gran_count = _fbc2_result_field()
+    lymph_pct = _fbc2_result_field()
+    mid_pct = _fbc2_result_field()
+    gran_pct = _fbc2_result_field()
+    hgb = _fbc2_result_field()
+    rbc = _fbc2_result_field()
+    hct = _fbc2_result_field()
+    mcv = _fbc2_result_field()
+    mch = _fbc2_result_field()
+    mchc = _fbc2_result_field()
+    rdw_cv = _fbc2_result_field()
+    rdw_sd = _fbc2_result_field()
+    plt = _fbc2_result_field()
+    mpv = _fbc2_result_field()
+    pdw = _fbc2_result_field()
+    pct = _fbc2_result_field()
+    comment = models.CharField(max_length=3000, null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'FBC 2'
+        verbose_name_plural = 'FBC 2'
+
+    def rows(self):
+        """Every parameter with a value, ready for display:
+        label, value, unit, range text, and flag ('H', 'L' or '')."""
+        out = []
+        for field, label, unit, low, high in FBC2_PARAMETERS:
+            value = getattr(self, field)
+            if value in (None, ''):
+                continue
+            flag = ''
+            try:
+                number = float(str(value).strip())
+                if number < float(low):
+                    flag = 'L'
+                elif number > float(high):
+                    flag = 'H'
+            except ValueError:
+                pass  # free text such as "<0.1" - shown as entered, never flagged
+            out.append({'label': label, 'value': value,
+                        'unit': fbc2_unit_text(unit), 'unit_html': _unit_html(unit),
+                        'range': f"{low} - {high}", 'flag': flag})
+        return out
+
+    def __str__(self):
+        return f"FBC 2 - {self.test_info}"
+
+
 class BloodGroup(models.Model):
     BLOOD_GROUP_CHOICES = [
         ('A+', 'A+'),

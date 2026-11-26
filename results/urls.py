@@ -71,6 +71,9 @@ urlpatterns = [
     path('fbc/create/<str:file_no>/', FBCCreateView.as_view(), name='create_fbc'),
     path('fbc/update/<str:file_no>/<int:test_info_pk>/', FBCUpdateView.as_view(), name='update_fbc'),
 
+    path('fbc2/create/<str:file_no>/', FBC2CreateView.as_view(), name='create_fbc2'),
+    path('fbc2/update/<str:file_no>/<int:test_info_pk>/', FBC2UpdateView.as_view(), name='update_fbc2'),
+
     # chempath
     path('urea-electrolyte/create/<str:file_no>/', UECreateView.as_view(), name='create_urea_electrolyte'),
     path('urea-electrolyte/update/<str:file_no>/<int:test_info_pk>/', UreaAndElectrolyteUpdateView.as_view(), name='update_urea_electrolyte'),

@@ -116,6 +116,10 @@
         .sg{
             text-align: left;
         }
+        /* FBC 2 has 19 rows: tighter rows keep it on one page with the footer */
+        table.fbc2 td, table.fbc2 th {
+            padding: 2px;
+        }
     </style>
 </head>
 <body>
@@ -446,6 +450,37 @@
             </tr>
             </table>
             {%endif%}
+        {% endif %}
+
+        {% if item.fbc2_test %}
+        <table class="fbc2">
+            <tr class="test-info">
+                <th colspan="4">Full Blood Count (FBC)</th>
+            </tr>
+            <tr class="parameters">
+                <th>Parameter</th>
+                <th>Result</th>
+                <th>Unit</th>
+                <th>Reference Range</th>
+            </tr>
+            {% for r in item.fbc2_test.rows %}
+            <tr>
+                <td>{{ r.label }}</td>
+                <td>{{ r.value }}{% if r.flag %} <span style="color:#e63946;">{{ r.flag }}</span>{% endif %}</td>
+                {# never an empty cell: xhtml2pdf collapses the whole column around one #}
+                <td>{% if r.unit_html %}{{ r.unit_html|safe }}{% else %}&nbsp;{% endif %}</td>
+                <td>{{ r.range }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+            {% if item.fbc2_test.comment %}
+            <table>
+            <tr>
+                <th colspan="1">Comment</th>
+                <td colspan="3">{{ item.fbc2_test.comment }}</td>
+            </tr>
+            </table>
+            {% endif %}
         {% endif %}
 
 

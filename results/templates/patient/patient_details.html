@@ -29,7 +29,8 @@
             <ul class="uk-subnav uk-subnav-pill uppercase flex justify-center gap-2 " uk-switcher="animation: uk-animation-slide-left-medium, uk-animation-slide-right-medium">
               <li><a href="#" class="rounded-lg ">blood group</a></li>
               <li><a href="#" class="rounded-lg ">genotype</a></li>
-              <li><a href="#" class="rounded-lg ">full blood count</a></li>
+              <li><a href="#" class="rounded-lg ">full blood count 1</a></li>
+              <li><a href="#" class="rounded-lg ">full blood count 2</a></li>
             </ul>
             
             <div class="uk-switcher uk-margin">
@@ -370,6 +371,76 @@
                   </table>
                 </div>
               </div>  
+
+              <!-- full blood count 2 (3-part differential analyser) -->
+              <div>
+                <div>
+              <a href="{% url 'create_fbc2' patient.file_no %}" class="text-xs text-amber-600 hover:text-green-700">
+                  <i class="fa-solid fa-plus fa-2xl"></i> SEND REQUEST
+              </a>
+                </div>
+                <div class="overflow-x-auto max-h-[50vh] p-2">
+                  <table class="min-w-full divide-y divide-cyan-200 mb-4">
+                    <thead class="bg-cyan-50">
+                      <tr class="text-xs">
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">#</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">code</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">result</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">Date</th>
+                        <th class=" p-3  text-xs font-medium text-cyan-500 uppercase tracking-wider">input result</th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-cyan-200">
+                      {% for test_info in fbc2 %}
+                      <tr class="text-xs bg-cyan-100 hover:bg-cyan-200 transition-colors duration-300">
+                          <td class="p-3 whitespace-nowrap">{{ forloop.counter }}</td>
+                          <td class="p-3 whitespace-nowrap">{{ test_info.id|default_if_none:'N/A' }}</td>
+                          <td class="p-3 whitespace-nowrap">
+                            {% with rows=test_info.fbc2_test.rows %}
+                            {% if rows %}
+                            <details>
+                              <summary class="bg-blue-600 p-2 text-white rounded-lg text-center text-xs cursor-pointer">OPEN RESULT</summary>
+                              <div class="text-blue-600 h-fit w-fit text-xs overflow-x-auto max-h-[50vh] rounded-md p-4 text-left">
+                                <table class="w-full">
+                                  <tr class="text-gray-500 uppercase">
+                                    <th class="px-2 py-1 text-left">Parameter</th>
+                                    <th class="px-2 py-1 text-right">Result</th>
+                                    <th class="px-2 py-1 text-left">Unit</th>
+                                    <th class="px-2 py-1 text-left">Ref. range</th>
+                                  </tr>
+                                  {% for r in rows %}
+                                  <tr class="border-b">
+                                    <td class="px-2 py-1 font-medium">{{ r.label }}</td>
+                                    <td class="px-2 py-1 text-right {% if r.flag %}text-red-600 font-bold{% endif %}">{{ r.value }}{% if r.flag %} {{ r.flag }}{% endif %}</td>
+                                    <td class="px-2 py-1">{{ r.unit }}</td>
+                                    <td class="px-2 py-1 text-gray-500">{{ r.range }}</td>
+                                  </tr>
+                                  {% endfor %}
+                                </table>
+                                {% if test_info.fbc2_test.comment %}
+                                <p class="mt-2"><span class="font-medium">Comment:</span> {{ test_info.fbc2_test.comment }}</p>
+                                {% endif %}
+                              </div>
+                            </details>
+                            {% else %}
+                            <span class="text-gray-400">awaiting result</span>
+                            {% endif %}
+                            {% endwith %}
+                          </td>
+                          <td class="p-3 whitespace-nowrap">{{ test_info.updated|default_if_none:'N/A' }}</td>
+                          <td class="p-3 whitespace-nowrap">  <a href="{% url 'update_fbc2' patient.file_no test_info.id %}" class="text-xs  hover:text-green-700">
+                            <i class="fa-solid fa-edit fa-2xl"></i> </a>
+                          </td>
+                      </tr>
+                      {% empty %}
+                      <tr>
+                          <td colspan="5" class="p-3 text-center">No FBC 2 tests yet.</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
 
 
             
