@@ -231,3 +231,31 @@ class DepartmentReportFilterTests(LabTestCase):
     def test_ultrasound_report_ignores_stray_name_param(self):
         self.assertEqual(self.client.get(reverse('ultrasound_report') + '?name=x').status_code, 200)
         self.assertPdf(self.client.get(reverse('ultrasound_report_pdf') + '?name=x'))
+
+
+class ChempathRangeTests(LabTestCase):
+    """Blood glucose ranges as the lab specified them (26 Nov 2026):
+    FBS 3.0-6.0 mmol/L, RBS 3.0-7.0 mmol/L."""
+
+    def printed(self, test_type):
+        from django.template.loader import get_template
+        info = make_lab_test(self.patient, self.user, 'blood_glucose')
+        info.bgl_test.test_type, info.bgl_test.result = test_type, '5.0'
+        info.bgl_test.save()
+        return get_template('report_pdf.html').render({'f': [info], 'user': self.user, 'result': ''})
+
+    def test_fasting_range(self):
+        self.assertIn('3.0-6.0', self.printed('FASTING'))
+
+    def test_random_range(self):
+        html = self.printed('RANDOM')
+        self.assertIn('3.0-7.0', html)
+        self.assertNotIn('3.0-6.11', html)
+
+
+class DashboardLayoutTests(LabTestCase):
+
+    def test_dashboard_is_four_columns_and_does_not_stretch_edge_to_edge(self):
+        r = self.client.get(reverse('dashboard'))
+        self.assertContains(r, 'lg:grid-cols-4')
+        self.assertContains(r, 'max-w-6xl mx-auto')
